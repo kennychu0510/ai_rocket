@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    background-image: url('./media/space_background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    
+}
+
+#scoreboard {
+    display: flex;
+    justify-content: center;
+    font-size: 24px;
+    margin: 10px;
+}
+
+#scoreboard > *{
+    width: 200px;
+}
+
+#title {
+    text-align: center;
+}
+
+#score {
+    margin-right: auto;
+}
+
+#time {
+    margin-left: auto;
+}
+
+#control-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#control-panel>* {
+    margin: 10px;
+
+}
