@@ -1,4 +1,5 @@
 "use strict";
+/* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
 if (!_canvas)
     throw new Error('canvas not found');
@@ -7,22 +8,19 @@ let _c = canvas.getContext('2d');
 if (!_c)
     throw new Error('canvas not found');
 const c = _c;
-/* QUERY SELECTORS */
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
 const rocketSpeed = getDOMElement('#rocket-speed');
-// TIMER
-const timerMilliseconds = getDOMElement('#millisecond');
-const timerSeconds = getDOMElement('#second');
+const resetBtn = getDOMElement('#reset');
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard)
     throw new Error('score-board not found');
 const scoreboard = _scoreboard;
-const resetBtn = getDOMElement('#reset');
-resetBtn.addEventListener('click', () => {
-    location.reload();
-});
+/* TIMER */
+const timerMilliseconds = getDOMElement('#millisecond');
+const timerSeconds = getDOMElement('#second');
+/* CANVAS */
 const body = document.querySelector('body');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 100;
@@ -230,7 +228,7 @@ const statusMsgPosition = {
     y: canvas.height / 2
 };
 const statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`, statusMsgPosition);
-/* RENDER PER FRAME */
+/* RENDER CANVAS */
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, canvas.width, canvas.height);
@@ -274,6 +272,9 @@ window.addEventListener('keydown', ({ key }) => {
         }
         userCar.changeDirection(key);
     }
+});
+resetBtn.addEventListener('click', () => {
+    location.reload();
 });
 canvas.addEventListener('click', (e) => {
     if (!addStarMode)
