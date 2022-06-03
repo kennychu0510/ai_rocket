@@ -16,6 +16,10 @@ const currentScore = getDOMElement('#current-score')
 const totalScore = getDOMElement('#total-score')
 const genStarBtn = getDOMElement('#gen-star')
 
+// TIMER
+const timerMilliseconds = getDOMElement('#millisecond')
+const timerSeconds = getDOMElement('#second')
+
 const _scoreboard = document.querySelector('#scoreboard')
 if (!_scoreboard) throw new Error('score-board not found')
 const scoreboard = _scoreboard as HTMLElement
@@ -50,7 +54,9 @@ addStarBtn.addEventListener('click', () => {
 
 /* GAME STATES */
 let addStarMode = false
-let gameStart = false
+let gameStarted = false
+let startTime: Date
+let totalStars: number
 
 /* MEDIA */
 const spaceshipImg = new Image()
@@ -106,6 +112,7 @@ class Rocket {
     private alive: boolean
     private angle: number
     private turn: number
+    public collectedStars: number
     constructor(position: Position, velocity: Position) {
         this.position = position
         this.velocity = velocity
@@ -115,6 +122,7 @@ class Rocket {
         this.image = spaceshipImg
         this.alive = true
         this.angle = 90
+        this.collectedStars = 0
     }
 
     draw() {
@@ -178,6 +186,7 @@ class Rocket {
                 listOfStars = listOfStars.filter(thisStar => thisStar !== star)
                 let scoreNum = +currentScore.textContent!
                 currentScore.textContent! = String(scoreNum + 1)
+                this.collectedStars++
                 break
             }
         }
@@ -197,7 +206,7 @@ class Rocket {
         })
     }
 
-    stop(){
+    stop() {
         this.velocity.y = 0
         this.velocity.x = 0
         this.alive = false
@@ -231,7 +240,7 @@ class CanvasText {
 /* CREATE NEW CAR */
 const availableDirections = ['w', 's', 'd', 'a']
 const userCar = new Rocket(
-    { x: canvas.width/10, y: canvas.height/4 },
+    { x: canvas.width / 10, y: canvas.height / 4 },
     { x: 0, y: 0 }
 )
 
@@ -244,20 +253,29 @@ let listOfStars: Position[] = []
 /* CANVAS TEXTS */
 const statusMsgPosition = {
     x: canvas.width / 2,
-    y: scoreboard.getBoundingClientRect().bottom
+    y: canvas.height / 2
 }
-const statusMessage = new CanvasText(`w a s d to move`, statusMsgPosition)
+const statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`, statusMsgPosition)
 
 /* RENDER PER FRAME */
 function animate() {
     requestAnimationFrame(animate)
     c.clearRect(0, 0, canvas.width, canvas.height)
-    
+
     /* CHECK IF ALL STARS COLLECTED */
-    if (listOfStars.length === 0 && gameStart) {
+    if (totalStars === userCar.collectedStars && gameStarted) {
         statusMessage.updateMsg('Well Done!')
         userCar.stop()
-        gameStart = false
+        const endTime = new Date()
+        console.log(`time taken: ` + (+endTime - +startTime) / 1000)
+        gameStarted = false
+    }
+
+    /* UPDATE TIMER */
+    if (gameStarted) {
+        const timeTaken = Number(new Date()) - +startTime
+        timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0')
+        timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0')
     }
 
     outerBoundary.draw()
@@ -282,8 +300,11 @@ EVENT LISTENERS
 */
 window.addEventListener('keydown', ({ key }) => {
     if (availableDirections.includes(key)) {
-        if (!gameStart) {
-            gameStart = true
+        if (!gameStarted && listOfStars.length > 0) {
+            gameStarted = true
+            startTime = new Date()
+            totalStars = listOfStars.length
+            statusMessage.updateMsg('')
         }
         userCar.changeDirection(key)
     }

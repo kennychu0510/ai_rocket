@@ -11,6 +11,9 @@ const c = _c;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
+// TIMER
+const timerMilliseconds = getDOMElement('#millisecond');
+const timerSeconds = getDOMElement('#second');
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard)
     throw new Error('score-board not found');
@@ -41,7 +44,9 @@ addStarBtn.addEventListener('click', () => {
 });
 /* GAME STATES */
 let addStarMode = false;
-let gameStart = false;
+let gameStarted = false;
+let startTime;
+let totalStars;
 /* MEDIA */
 const spaceshipImg = new Image();
 spaceshipImg.src = './media/spaceship.png';
@@ -91,6 +96,7 @@ class Rocket {
     alive;
     angle;
     turn;
+    collectedStars;
     constructor(position, velocity) {
         this.position = position;
         this.velocity = velocity;
@@ -100,6 +106,7 @@ class Rocket {
         this.image = spaceshipImg;
         this.alive = true;
         this.angle = 90;
+        this.collectedStars = 0;
     }
     draw() {
         c.save();
@@ -160,6 +167,7 @@ class Rocket {
                 listOfStars = listOfStars.filter(thisStar => thisStar !== star);
                 let scoreNum = +currentScore.textContent;
                 currentScore.textContent = String(scoreNum + 1);
+                this.collectedStars++;
                 break;
             }
         }
@@ -213,18 +221,26 @@ let listOfStars = [];
 /* CANVAS TEXTS */
 const statusMsgPosition = {
     x: canvas.width / 2,
-    y: scoreboard.getBoundingClientRect().bottom
+    y: canvas.height / 2
 };
-const statusMessage = new CanvasText(`w a s d to move`, statusMsgPosition);
+const statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`, statusMsgPosition);
 /* RENDER PER FRAME */
 function animate() {
     requestAnimationFrame(animate);
     c.clearRect(0, 0, canvas.width, canvas.height);
     /* CHECK IF ALL STARS COLLECTED */
-    if (listOfStars.length === 0 && gameStart) {
+    if (totalStars === userCar.collectedStars && gameStarted) {
         statusMessage.updateMsg('Well Done!');
         userCar.stop();
-        gameStart = false;
+        const endTime = new Date();
+        console.log(`time taken: ` + (+endTime - +startTime) / 1000);
+        gameStarted = false;
+    }
+    /* UPDATE TIMER */
+    if (gameStarted) {
+        const timeTaken = Number(new Date()) - +startTime;
+        timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
+        timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
     }
     outerBoundary.draw();
     statusMessage.draw();
@@ -244,8 +260,11 @@ EVENT LISTENERS
 */
 window.addEventListener('keydown', ({ key }) => {
     if (availableDirections.includes(key)) {
-        if (!gameStart) {
-            gameStart = true;
+        if (!gameStarted && listOfStars.length > 0) {
+            gameStarted = true;
+            startTime = new Date();
+            totalStars = listOfStars.length;
+            statusMessage.updateMsg('');
         }
         userCar.changeDirection(key);
     }
