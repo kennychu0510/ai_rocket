@@ -37,10 +37,11 @@ canvas.height = window.innerHeight - 100
 const boundarySize = 40
 const starSize = 20
 
-const trackTopBound = 50
-const trackBotBound = canvas.height - 50
-const trackLeftBound = 50
-const trackRightBound = canvas.width - 50
+const boundaryOffset = 20 
+const trackTopBound = boundaryOffset
+const trackBotBound = canvas.height - boundaryOffset
+const trackLeftBound = boundaryOffset
+const trackRightBound = canvas.width - boundaryOffset
 
 const addStarBtn = getDOMElement('#add-star')
 addStarBtn.addEventListener('click', () => {
