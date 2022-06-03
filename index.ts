@@ -196,6 +196,12 @@ class Rocket {
             angle_degrees: this.angle,
         })
     }
+
+    stop(){
+        this.velocity.y = 0
+        this.velocity.x = 0
+        this.alive = false
+    }
 }
 
 class CanvasText {
@@ -206,7 +212,7 @@ class CanvasText {
     constructor(message: string, position: Position) {
         this.message = message
         this.font = '30px Arial'
-        this.color = 'white'
+        this.color = 'cyan'
         this.position = position
     }
 
@@ -225,7 +231,7 @@ class CanvasText {
 /* CREATE NEW CAR */
 const availableDirections = ['w', 's', 'd', 'a']
 const userCar = new Rocket(
-    { x: 100, y: 150 },
+    { x: canvas.width/10, y: canvas.height/4 },
     { x: 0, y: 0 }
 )
 
@@ -238,7 +244,7 @@ let listOfStars: Position[] = []
 /* CANVAS TEXTS */
 const statusMsgPosition = {
     x: canvas.width / 2,
-    y: canvas.height - 10
+    y: scoreboard.getBoundingClientRect().bottom
 }
 const statusMessage = new CanvasText(`w a s d to move`, statusMsgPosition)
 
@@ -246,6 +252,13 @@ const statusMessage = new CanvasText(`w a s d to move`, statusMsgPosition)
 function animate() {
     requestAnimationFrame(animate)
     c.clearRect(0, 0, canvas.width, canvas.height)
+    
+    /* CHECK IF ALL STARS COLLECTED */
+    if (listOfStars.length === 0 && gameStart) {
+        statusMessage.updateMsg('Well Done!')
+        userCar.stop()
+        gameStart = false
+    }
 
     outerBoundary.draw()
     statusMessage.draw()
@@ -278,9 +291,9 @@ window.addEventListener('keydown', ({ key }) => {
 
 canvas.addEventListener('click', (e) => {
     if (!addStarMode) return
-    const x_coor = e.clientX - starSize / 2
-    const y_coor = e.clientY - scoreboard.getBoundingClientRect().bottom - starSize
-    const position = { x: x_coor, y: y_coor }
+    const x = e.clientX - starSize / 2
+    const y = e.clientY - scoreboard.getBoundingClientRect().bottom - starSize
+    const position = { x, y }
     addAStar(position)
 })
 
@@ -291,9 +304,9 @@ genStarBtn.addEventListener('click', () => {
     const minY = trackTopBound + offset
     const maxX = trackRightBound - offset
     const minX = trackLeftBound + offset
-    const x_coor = Math.floor(Math.random() * (maxX - minX + 1) + minX)
-    const y_coor = Math.floor(Math.random() * (maxY - minY + 1) + minY)
-    const position = { x: x_coor, y: y_coor }
+    const x = Math.floor(Math.random() * (maxX - minX + 1) + minX)
+    const y = Math.floor(Math.random() * (maxY - minY + 1) + minY)
+    const position = { x, y }
     addAStar(position)
 })
 
