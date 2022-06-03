@@ -11,6 +11,7 @@ const c = _c;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
+const rocketSpeed = getDOMElement('#rocket-speed');
 // TIMER
 const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
@@ -183,12 +184,16 @@ class Rocket {
             x_speed: this.velocity.x,
             y_speed: this.velocity.y,
             angle_degrees: this.angle,
+            acceleration: this.acceleration
         });
     }
     stop() {
         this.velocity.y = 0;
         this.velocity.x = 0;
         this.alive = false;
+    }
+    changeAcceleration(acceleration) {
+        this.acceleration = acceleration;
     }
 }
 class CanvasText {
@@ -289,6 +294,12 @@ genStarBtn.addEventListener('click', () => {
     const y = Math.floor(Math.random() * (maxY - minY + 1) + minY);
     const position = { x, y };
     addAStar(position);
+});
+rocketSpeed.value = String(userCar.stats().acceleration);
+rocketSpeed.addEventListener('change', () => {
+    if (Number(rocketSpeed.value) <= 0)
+        return;
+    userCar.changeAcceleration(Number(rocketSpeed.value));
 });
 /*
 ----------------------------------------------------------------

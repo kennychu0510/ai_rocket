@@ -20,7 +20,7 @@ main {
     margin: 10px;
 }
 
-#scoreboard > *{
+#scoreboard>* {
     width: 200px;
 }
 
@@ -36,13 +36,17 @@ main {
     margin-left: auto;
 }
 
-#control-panel {
+#bottom-panel {
+    margin: 0 20px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
-#control-panel>* {
-    margin: 10px;
+#control-panel-left > * {
+    margin-right: 5px
+}
 
+input {
+    width: 50px;
 }
