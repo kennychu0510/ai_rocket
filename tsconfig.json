@@ -6,5 +6,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "incremental": true,
+    "outDir": "public"
   },
+  "include": [
+      "index.ts"
+  ]
 }
