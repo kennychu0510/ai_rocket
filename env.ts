@@ -5,7 +5,7 @@ config()
 
 export const env = {
     DB_NAME: '',
-    DB_USER: '',
+    DB_USERNAME: '',
     DB_PASSWORD: ''
 }
 

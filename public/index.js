@@ -53,10 +53,6 @@ spaceshipImg.src = './media/spaceship.png';
 const starImg = new Image();
 starImg.src = './media/star.png';
 class Boundary {
-    top;
-    right;
-    bot;
-    left;
     constructor(top, right, bot, left) {
         this.top = top;
         this.right = right;
@@ -75,9 +71,6 @@ class Boundary {
     }
 }
 class Star {
-    position;
-    image;
-    size;
     constructor(position) {
         this.position = position;
         this.image = starImg;
@@ -88,15 +81,6 @@ class Star {
     }
 }
 class Rocket {
-    position;
-    velocity;
-    size;
-    acceleration;
-    image;
-    alive;
-    angle;
-    turn;
-    collectedStars;
     constructor(position, velocity) {
         this.position = position;
         this.velocity = velocity;
@@ -195,10 +179,6 @@ class Rocket {
     }
 }
 class CanvasText {
-    message;
-    font;
-    color;
-    position;
     constructor(message, position) {
         this.message = message;
         this.font = '30px Arial';

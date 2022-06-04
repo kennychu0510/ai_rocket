@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "ESnext",
-    "target": "ES2022",
+    "target": "es6",
+    "module": "commonjs",
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "incremental": true,
-    "outDir": "public"
+    "outDir": "public",
+    "esModuleInterop": true
   },
   "include": [
       "index.ts"
