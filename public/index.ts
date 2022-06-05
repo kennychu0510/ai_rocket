@@ -172,6 +172,7 @@ class Rocket {
         this.draw()
         if (this.position.y < trackTopBound || this.position.y + this.size > trackBotBound || this.position.x < trackLeftBound || (this.position.x + this.size) > trackRightBound) {
             this.alive = false
+            gameStarted = false
             statusMessage.updateMsg('you have crashed!')
             return
         }
