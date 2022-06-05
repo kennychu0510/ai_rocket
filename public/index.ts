@@ -410,7 +410,17 @@ boundaryModeBtn.addEventListener('click', () => {
 });
 
 saveStarsBtn.addEventListener('click', () => {
-  fetch('/save-stars')
+  const starMap = {
+    count: listOfStars.length,
+    coordinates: JSON.stringify(listOfStars),
+  };
+  fetch('/save-stars', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      starMap,
+    }),
+  })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
