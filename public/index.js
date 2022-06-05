@@ -24,11 +24,9 @@ const scoreboard = _scoreboard;
 const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
 /* CANVAS */
-const body = document.querySelector('body');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 100;
 /* VARIABLES */
-const boundarySize = 40;
 const starSize = 20;
 const boundaryOffset = 20;
 const trackTopBound = boundaryOffset;
@@ -38,12 +36,13 @@ const trackRightBound = canvas.width - boundaryOffset;
 /* GAME STATES */
 let addStarModeOn = false;
 let gameStarted = false;
-const boundaryModeOn = true;
 let startTime;
 let totalStars;
 /* MEDIA */
 const spaceshipImg = new Image();
-spaceshipImg.src = './media/spaceship.png';
+spaceshipImg.src = './media/rocket.png';
+const spaceshipFlyingImg = new Image();
+spaceshipFlyingImg.src = './media/rocket_flying.png';
 const starImg = new Image();
 starImg.src = './media/star.png';
 /* OBJECTS */
@@ -93,9 +92,10 @@ class Rocket {
         this.position = position;
         this.velocity = velocity;
         this.acceleration = 1.5;
-        this.size = 40;
+        this.size = 50;
         this.turn = 45;
-        this.image = spaceshipImg;
+        this.image_static = spaceshipImg;
+        this.image_flying = spaceshipFlyingImg;
         this.alive = true;
         this.angle = 90;
         this.collectedStars = 0;
@@ -105,7 +105,14 @@ class Rocket {
         c.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
         c.rotate(this.angle * Math.PI / 180);
         c.translate(-(this.position.x + this.size / 2), -(this.position.y + this.size / 2));
-        c.drawImage(this.image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.size, this.size);
+        let image;
+        if (this.velocity.x == 0 && this.velocity.y === 0) {
+            image = this.image_static;
+        }
+        else {
+            image = this.image_flying;
+        }
+        c.drawImage(image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.size, this.size);
         // c.fillRect(this.position.x, this.position.y, this.size, this.size)
         // c.fill()
         c.restore();
