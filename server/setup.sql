@@ -1,2 +1,5 @@
 CREATE DATABASE ai_rocket;
-CREATE ROLE ai_rocket WITH PASSWORD 'ai_rocket' CREATEDB;
+
+CREATE ROLE ai_rocket
+WITH
+  PASSWORD 'ai_rocket' CREATEDB;

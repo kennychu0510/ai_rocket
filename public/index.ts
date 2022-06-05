@@ -17,12 +17,13 @@ const totalScore = getDOMElement('#total-score')
 const genStarBtn = getDOMElement('#gen-star')
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement
 const resetBtn = getDOMElement('#reset')
+const saveStarsBtn = getDOMElement('#save-stars')
 
 const _scoreboard = document.querySelector('#scoreboard')
 if (!_scoreboard) throw new Error('score-board not found')
 const scoreboard = _scoreboard as HTMLElement
 
-/* TIMER */ 
+/* TIMER */
 const timerMilliseconds = getDOMElement('#millisecond')
 const timerSeconds = getDOMElement('#second')
 
@@ -36,7 +37,7 @@ canvas.height = window.innerHeight - 100
 const boundarySize = 40
 const starSize = 20
 
-const boundaryOffset = 20 
+const boundaryOffset = 20
 const trackTopBound = boundaryOffset
 const trackBotBound = canvas.height - boundaryOffset
 const trackLeftBound = boundaryOffset
@@ -343,6 +344,10 @@ rocketSpeed.value = String(userCar.stats().acceleration)
 rocketSpeed.addEventListener('change', () => {
     if (Number(rocketSpeed.value) <= 0) return
     userCar.changeAcceleration(Number(rocketSpeed.value))
+})
+
+saveStarsBtn.addEventListener('click', () => {
+
 })
 
 /* 

@@ -14,24 +14,17 @@
 ////////////////////////////////////
 
 
-map
------
-id pk
-obstacles string
-
-
 stars
 -----
 id pk
 count 
-coordinates point
+coordinates string
 
 
 highscore
 ---------
 id pk
 user string
-map fk - map.id
 stars fk - stars.id
 time time
 
