@@ -1,5 +1,5 @@
-import type {Knex} from 'knex';
-import {env} from './env';
+import type { Knex } from 'knex';
+import { env } from './env';
 // Update with your config settings.
 
 const config: { [key: string]: Knex.Config } = {
