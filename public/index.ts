@@ -205,8 +205,8 @@ class Rocket {
       }
     }
 
-    /* DETECT STAR COLLECTION */
-    for (const [i, star] of listOfStars.entries()) {
+    /* DETECT STARS COLLECTED */
+    for (const star of listOfStars) {
       const dx = (this.position.x + this.size / 2) - (star.x + 10);
       const dy = (this.position.y + this.size / 2) - (star.y + 10);
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -341,6 +341,7 @@ window.addEventListener('keydown', ({ key }) => {
       startTime = new Date();
       totalStars = listOfStars.length;
       statusMessage.updateMsg('');
+      gameInstructions.updateMsg('');
     }
     userRocket.changeDirection(key);
   }
@@ -379,7 +380,10 @@ genStarBtn.addEventListener('click', () => {
   const position = { x, y };
   addAStar(position);
 });
+
+// UPDATE ROCKET SPEED DISPLAY VALUE
 rocketSpeed.value = String(userRocket.stats().acceleration);
+
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
   userRocket.changeAcceleration(Number(rocketSpeed.value));
@@ -393,6 +397,15 @@ boundaryModeBtn.addEventListener('click', () => {
     outerBoundary.turnOnBoundary();
     boundaryModeBtn.textContent = 'Turn Off Boundary';
   }
+});
+
+saveStarsBtn.addEventListener('click', () => {
+  fetch('/save-stars')
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+    });
 });
 /*
 ----------------------------------------------------------------
