@@ -7,6 +7,7 @@ export const env = {
   DB_NAME: '',
   DB_USERNAME: '',
   DB_PASSWORD: '',
+  PORT: 8100,
 };
 
 populateEnv(env);
