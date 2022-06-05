@@ -22,6 +22,8 @@
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "prefer-destructuring": "off",
-    "require-jsdoc": "off"
+    "require-jsdoc": "off",
+    "object-curly-spacing": ["error", "always"],
+    "no-unused-vars": "warn"
   }
 }
