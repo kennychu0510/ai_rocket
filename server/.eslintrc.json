@@ -21,6 +21,8 @@
     "require-jsdoc": "off",
     "object-curly-spacing": ["error", "always"],
     "no-unused-vars": "warn",
-    "indent": ["error", 2]
+    "indent": ["error", 2],
+    "max-len": "off",
+    "new-cap": "off"
   }
 }

@@ -14,17 +14,17 @@
 ////////////////////////////////////
 
 
-stars
+star_map
 -----
 id pk
 count 
 coordinates string
 
 
-highscore
+scores
 ---------
 id pk
 user string
-stars fk - stars.id
+star_map_id fk - star_map.id
 time time
 
