@@ -4,7 +4,7 @@ const _canvas = document.querySelector('canvas');
 if (!_canvas)
     throw new Error('canvas not found');
 const canvas = _canvas;
-let _c = canvas.getContext('2d');
+const _c = canvas.getContext('2d');
 if (!_c)
     throw new Error('canvas not found');
 const c = _c;
@@ -38,7 +38,7 @@ const trackRightBound = canvas.width - boundaryOffset;
 /* GAME STATES */
 let addStarModeOn = false;
 let gameStarted = false;
-let boundaryModeOn = true;
+const boundaryModeOn = true;
 let startTime;
 let totalStars;
 /* MEDIA */
@@ -53,16 +53,29 @@ class Boundary {
         this.right = right;
         this.bot = bot;
         this.left = left;
+        this.color = 'red';
+        this.boundaryModeOn = false;
     }
     draw() {
         c.beginPath();
-        c.strokeStyle = 'red';
+        c.strokeStyle = this.color;
         c.moveTo(this.left, this.top);
         c.lineTo(this.right, this.top);
         c.lineTo(this.right, this.bot);
         c.lineTo(this.left, this.bot);
         c.closePath();
         c.stroke();
+    }
+    turnOffBoundary() {
+        this.color = 'green';
+        this.boundaryModeOn = false;
+    }
+    turnOnBoundary() {
+        this.color = 'red';
+        this.boundaryModeOn = true;
+    }
+    getBoundaryMode() {
+        return this.boundaryModeOn;
     }
 }
 class Star {
@@ -132,7 +145,7 @@ class Rocket {
     }
     update() {
         this.draw();
-        if (boundaryModeOn) {
+        if (outerBoundary.getBoundaryMode()) {
             if (this.position.y < trackTopBound || this.position.y + this.size > trackBotBound || this.position.x < trackLeftBound || (this.position.x + this.size) > trackRightBound) {
                 this.alive = false;
                 gameStarted = false;
@@ -141,19 +154,27 @@ class Rocket {
             }
         }
         else {
-            if (this.position.y < trackTopBound || this.position.y + this.size > trackBotBound || this.position.x < trackLeftBound || (this.position.x + this.size) > trackRightBound) {
-                this.alive = false;
-                gameStarted = false;
+            if (this.position.y < trackTopBound) {
+                this.position.y = trackBotBound - this.size;
+            }
+            if (this.position.y + this.size > trackBotBound) {
+                this.position.y = trackTopBound;
+            }
+            if (this.position.x < trackLeftBound) {
+                this.position.x = trackRightBound - this.size;
+            }
+            if (this.position.x + this.size > trackRightBound) {
+                this.position.x = trackLeftBound;
             }
         }
         /* DETECT STAR COLLECTION */
-        for (let [i, star] of listOfStars.entries()) {
+        for (const [i, star] of listOfStars.entries()) {
             const dx = (this.position.x + this.size / 2) - (star.x + 10);
             const dy = (this.position.y + this.size / 2) - (star.y + 10);
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance < this.size / 2 + 10) {
-                listOfStars = listOfStars.filter(thisStar => thisStar !== star);
-                let scoreNum = +currentScore.textContent;
+                listOfStars = listOfStars.filter((thisStar) => thisStar !== star);
+                const scoreNum = +currentScore.textContent;
                 currentScore.textContent = String(scoreNum + 1);
                 this.collectedStars++;
                 break;
@@ -170,7 +191,7 @@ class Rocket {
             x_speed: this.velocity.x,
             y_speed: this.velocity.y,
             angle_degrees: this.angle,
-            acceleration: this.acceleration
+            acceleration: this.acceleration,
         });
     }
     stop() {
@@ -209,7 +230,7 @@ let listOfStars = [];
 /* CANVAS TEXTS */
 const statusMsgPosition = {
     x: canvas.width / 2,
-    y: canvas.height / 2
+    y: canvas.height / 2,
 };
 const statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`, statusMsgPosition);
 const gameInstructions = new CanvasText(`Add stars to start the game`, { x: canvas.width / 2, y: canvas.height * 2 / 3 });
@@ -231,12 +252,10 @@ function animate() {
         timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
         timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
     }
-    if (boundaryModeOn) {
-        outerBoundary.draw();
-    }
+    outerBoundary.draw();
     statusMessage.draw();
     gameInstructions.draw();
-    for (let star of listOfStars) {
+    for (const star of listOfStars) {
         const newStar = new Star(star);
         newStar.draw();
     }
@@ -299,14 +318,13 @@ rocketSpeed.addEventListener('change', () => {
         return;
     userRocket.changeAcceleration(Number(rocketSpeed.value));
 });
-saveStarsBtn.addEventListener('click', () => {
-});
 boundaryModeBtn.addEventListener('click', () => {
-    boundaryModeOn = !boundaryModeOn;
-    if (boundaryModeOn) {
+    if (outerBoundary.getBoundaryMode()) {
+        outerBoundary.turnOffBoundary();
         boundaryModeBtn.textContent = 'Turn On Boundary';
     }
     else {
+        outerBoundary.turnOnBoundary();
         boundaryModeBtn.textContent = 'Turn Off Boundary';
     }
 });
