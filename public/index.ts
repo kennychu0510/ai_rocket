@@ -75,7 +75,7 @@ class Boundary {
     this.bot = bot;
     this.left = left;
     this.color = 'red';
-    this.boundaryModeOn = false;
+    this.boundaryModeOn = true;
   }
   draw() {
     c.beginPath();
