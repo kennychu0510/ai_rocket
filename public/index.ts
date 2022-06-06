@@ -1,5 +1,5 @@
 import { degreeToRadian, getDOMElement } from './functions.js';
-import { Position } from './type';
+import { Position } from './type.js';
 
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
@@ -57,6 +57,73 @@ spaceshipFlyingImg.src = './media/rocket_2.png';
 const starImg = new Image();
 starImg.src = './media/star.png';
 
+class Game {
+  private statusMessage: CanvasText;
+  private gameInstructions: CanvasText;
+  private addStarModeOn: boolean;
+  private gameStarted: boolean;
+  private startTime: Date;
+  private totalStars: number;
+  private starSize: number;
+  private stars: Star[];
+  private ctx: CanvasRenderingContext2D;
+  private canvasWidth: number;
+  private canvasHeight: number;
+  constructor(
+    private rocket: Rocket,
+    private boundary: Boundary,
+    private canvas: HTMLCanvasElement,
+  ) {
+    this.statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`,
+      {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+      });
+    this.gameInstructions = new CanvasText(`Add stars to start the game`,
+      { x: canvas.width / 2, y: canvas.height * 2 / 3 });
+    this.addStarModeOn = false;
+    this.gameStarted = false;
+    this.startTime = new Date();
+    this.totalStars = 0;
+    this.starSize = 0;
+    this.stars = [];
+    this.ctx = this.canvas.getContext('2d')!;
+    this.canvasWidth = window.innerWidth;
+    this.canvasHeight = window.innerHeight - 100;
+  }
+  newGame() {
+    this.stars = [];
+  }
+  addStar(position: Position) {
+    const newStar = new Star(position);
+    this.stars.push(newStar);
+  }
+  startGame() {
+    this.gameStarted = true;
+    this.startTime = new Date();
+    this.totalStars = this.stars.length;
+    this.statusMessage.updateMsg('');
+    this.gameInstructions.updateMsg('');
+  }
+  // animate = () => {
+  //   requestAnimationFrame(this.animate());
+  //   this.ctx.clearRect(0, 0, this.canvas.width, this.canvasHeight);
+  //   this.boundary.draw();
+  //   this.statusMessage.draw();
+  //   this.gameInstructions.draw();
+  //   if (this.gameStarted) {
+  //     const timeTaken = Number(new Date()) - +startTime;
+  //     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
+  //     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
+  //   }
+
+  //   for (const star of this.stars) {
+  //     star.draw();
+  //   }
+  // };
+}
+
+
 /* OBJECTS */
 class Boundary {
   private top: number;
@@ -106,7 +173,7 @@ class Star {
   constructor(position: Position) {
     this.position = position;
     this.image = starImg;
-    this.size = starSize;
+    this.size = 0.015 * canvas.width;
   }
 
   draw() {
@@ -127,8 +194,8 @@ class Rocket {
   constructor(position: Position, velocity: Position) {
     this.position = position;
     this.velocity = velocity;
-    this.acceleration = 1.5;
-    this.size = 30;
+    this.acceleration = 0.002 * canvas.width;
+    this.size = 0.02 * canvas.width;
     this.turn = 45;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
@@ -260,7 +327,8 @@ class CanvasText {
   private position: Position;
   constructor(message: string, position: Position) {
     this.message = message;
-    this.font = '30px Arial';
+    const fontSize = canvas.height * 0.05;
+    this.font = `${fontSize}px Arial`;
     this.color = 'yellow';
     this.position = position;
   }
@@ -333,6 +401,13 @@ function animate() {
 }
 
 animate();
+
+/* SET UP NEW GAME */
+const game = new Game(
+  new Rocket({ x: canvas.width / 10, y: canvas.height / 4 }, { x: 0, y: 0 }),
+  new Boundary(trackTopBound, trackRightBound, trackBotBound, trackLeftBound),
+  canvas,
+);
 
 
 /*
