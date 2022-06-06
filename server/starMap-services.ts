@@ -1,4 +1,5 @@
 import { Knex as KnexType } from 'knex';
+import { json } from 'stream/consumers';
 import { StarMap } from './types';
 
 export class StarMapService {
@@ -7,6 +8,7 @@ export class StarMapService {
   async createStarMap(starMap: StarMap): Promise<number> {
     const count = starMap.count;
     const coordinates = starMap.coordinates;
+    console.log(count, coordinates);
     const row = await this.knex
       .insert({
         count: count,
