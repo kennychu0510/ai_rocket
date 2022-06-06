@@ -319,9 +319,6 @@ genStarBtn.addEventListener('click', () => {
     const y = Math.floor(Math.random() * (maxY - minY + 1) + minY);
     const position = { x, y };
     addAStar(position);
-    addAStar(position);
-    addAStar(position);
-    addAStar(position);
 });
 // UPDATE ROCKET SPEED DISPLAY VALUE
 rocketSpeed.value = String(userRocket.stats().acceleration);
@@ -341,9 +338,14 @@ boundaryModeBtn.addEventListener('click', () => {
     }
 });
 saveStarsBtn.addEventListener('click', () => {
+    const listOfStarsPercentage = listOfStars.map((coor) => {
+        coor.x = coor.x / canvas.width;
+        coor.y = coor.y / canvas.height;
+        return coor;
+    });
     const starMap = {
         count: listOfStars.length,
-        coordinates: JSON.stringify(listOfStars),
+        coordinates: JSON.stringify(listOfStarsPercentage),
     };
     fetch('/star-map', {
         method: 'POST',
