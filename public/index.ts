@@ -18,6 +18,7 @@ const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
+const easyMode = getDOMElement('#easy-mode');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -428,6 +429,14 @@ saveStarsBtn.addEventListener('click', () => {
       console.log(json.id);
     });
 });
+
+easyMode.addEventListener('click', () => {
+  fetch('/easy-mode', {
+    method: 'GET',
+  })
+  
+})
+
 /*
 ----------------------------------------------------------------
 FUNCTIONS

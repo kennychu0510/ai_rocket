@@ -21,7 +21,8 @@ export class StarMapService {
   async getStarMaps(): Promise<StarMap[]> {
     const results = await this.knex
       .select('id', 'count', 'coordinates')
-      .from('star_map');
+      .from('star_map')
+      .where('count', '4');
     return results;
   }
 }

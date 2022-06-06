@@ -3,9 +3,14 @@ import path from 'path';
 import { StarMapService } from './starMap-services';
 import { knex } from './knex';
 import { StarMapController } from './starMap-controller';
+import { ObsMapService } from './obsMap-services';
+import { ObsMapController } from './obsMap-controller';
 
 const starMapService = new StarMapService(knex);
 export const starMapController = new StarMapController(starMapService);
+
+const obsMapService = new ObsMapService(knex);
+export const obsMapController = new ObsMapController(obsMapService);
 
 import { routes } from './routes';
 export const app = express();

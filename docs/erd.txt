@@ -20,7 +20,7 @@ id pk
 count 
 coordinates text
 
-obstacles_map
+obs_map
 -----
 id pk
 count
