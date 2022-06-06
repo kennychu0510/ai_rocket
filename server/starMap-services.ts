@@ -9,8 +9,8 @@ export class StarMapService {
     const coordinates = starMap.coordinates;
     const row = await this.knex
       .insert({
-        count,
-        coordinates,
+        count: count,
+        coordinates: coordinates,
       })
       .into('star_map')
       .returning('id');
