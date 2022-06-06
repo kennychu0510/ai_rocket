@@ -52,10 +52,10 @@ let totalStars: number;
 
 /* MEDIA */
 const spaceshipImg = new Image();
-spaceshipImg.src = './media/rocket.png';
+spaceshipImg.src = './media/rocket_1.png';
 
 const spaceshipFlyingImg = new Image();
-spaceshipFlyingImg.src = './media/rocket_flying.png';
+spaceshipFlyingImg.src = './media/rocket_2.png';
 
 
 const starImg = new Image();
@@ -132,7 +132,7 @@ class Rocket {
     this.position = position;
     this.velocity = velocity;
     this.acceleration = 1.5;
-    this.size = 50;
+    this.size = 30;
     this.turn = 45;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
@@ -153,7 +153,7 @@ class Rocket {
       image = this.image_flying;
     }
 
-    c.drawImage(image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.size, this.size);
+    c.drawImage(image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.size, this.size*2);
     // c.fillRect(this.position.x, this.position.y, this.size, this.size)
     // c.fill()
     c.restore();
@@ -414,7 +414,7 @@ saveStarsBtn.addEventListener('click', () => {
     count: listOfStars.length,
     coordinates: JSON.stringify(listOfStars),
   };
-  fetch('/save-stars', {
+  fetch('/test', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

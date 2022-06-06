@@ -1,14 +1,19 @@
 import express from 'express';
 import path from 'path';
+import { StarMapService } from './star-services';
+import { knex } from './knex';
+import { StarMapController } from './star-controller';
 
+const starMapService = new StarMapService(knex);
+export const starMapController = new StarMapController(starMapService);
+
+import { routes } from './routes';
 export const app = express();
 app.use(express.static('../public'));
 app.use(express.json());
 
-app.post('/save-stars', (req, res) => {
-  const starMap = req.body;
-  console.log(starMap);
-});
+app.use('/', routes);
+
 
 /* PUT AT THE VERY BOTTOM */
 app.use((req, res) => {
