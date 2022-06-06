@@ -1,3 +1,4 @@
+import { degreeToRadian, getDOMElement } from './functions.js';
 import { Position } from './type';
 
 /* QUERY SELECTORS */
@@ -275,7 +276,6 @@ class CanvasText {
     c.fillText(this.message, this.position.x, this.position.y);
   }
 }
-
 /* CREATE NEW ROCKET */
 const availableDirections = ['w', 's', 'd', 'a'];
 const userRocket = new Rocket(
@@ -433,15 +433,6 @@ saveStarsBtn.addEventListener('click', () => {
 FUNCTIONS
 ----------------------------------------------------------------
 */
-function getDOMElement(element: string) {
-  const _element = document.querySelector(element);
-  if (!_element) throw new Error(`${_element} not found`);
-  return _element;
-}
-
-function degreeToRadian(degree: number) {
-  return degree * Math.PI / 180;
-}
 
 function addAStar(position: Position) {
   listOfStars.push(position);

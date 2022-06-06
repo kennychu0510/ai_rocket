@@ -1,5 +1,5 @@
 export type StarMap = {
-  id: number
+  id?: number
   count: number
   coordinates: string
 }
