@@ -3,6 +3,11 @@ type Position = {
     y: number
 }
 
+type BlackholeType = {
+  blackhole1: Position,
+  blackhole2: Position
+}
+
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
 if (!_canvas) throw new Error('canvas not found');
@@ -15,12 +20,13 @@ const c = _c;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
+const genMeteorBtn = getDOMElement('#gen-meteor');
+const genBlackholeBtn = getDOMElement('#gen-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
-
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
 const scoreboard = _scoreboard as HTMLElement;
@@ -36,6 +42,8 @@ canvas.height = window.innerHeight - 100;
 
 /* VARIABLES */
 const starSize = 20;
+const meteoriteSize = 50;
+const blackholeSize = 80;
 
 const boundaryOffset = 20;
 const trackTopBound = boundaryOffset;
@@ -57,10 +65,23 @@ spaceshipImg.src = './media/rocket.png';
 const spaceshipFlyingImg = new Image();
 spaceshipFlyingImg.src = './media/rocket_flying.png';
 
+const meteoriteImg = new Image();
+meteoriteImg.src = './media/meteorite.png';
 
 const starImg = new Image();
 starImg.src = './media/star.png';
 
+const blackholeImg = new Image();
+blackholeImg.src = './media/blackhole.png';
+
+const spaceshipDamagedImg = new Image();
+spaceshipDamagedImg.src = './media/spaceship_damaged.png';
+
+const spaceshipDecadeImg = new Image();
+spaceshipDecadeImg.src = './media/spaceship_decade.png';
+
+const boomImg = new Image();
+boomImg.src = './media/boom.png';
 /* OBJECTS */
 class Boundary {
   private top: number;
@@ -117,6 +138,38 @@ class Star {
     c.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
   }
 }
+
+class Meteorite {
+  private position: Position;
+  private image: HTMLImageElement;
+  private size: number;
+  constructor(position: Position) {
+    this.position = position;
+    this.image = meteoriteImg;
+    this.size = meteoriteSize;
+  }
+
+  draw() {
+    c.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
+  }
+}
+
+class Blackhole {
+  private position: Position;
+  private image: HTMLImageElement;
+  private size: number;
+  constructor(position: Position) {
+    this.position = position;
+    this.image = blackholeImg;
+    this.size = blackholeSize;
+  }
+
+  draw() {
+    c.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
+  }
+}
+
+
 class Rocket {
   private position: Position;
   private velocity: Position;
@@ -193,6 +246,9 @@ class Rocket {
 
   update() {
     this.draw();
+    if (!this.alive) {
+      return;
+    }
     if (outerBoundary.getBoundaryMode()) {
       if (this.position.y < trackTopBound || this.position.y + this.size > trackBotBound || this.position.x < trackLeftBound || (this.position.x + this.size) > trackRightBound) {
         this.alive = false;
@@ -229,6 +285,78 @@ class Rocket {
                 break;
       }
     }
+
+    /* METEORITE COLLISION DECTION */
+    for (const meteorite of listOfMeteorite) {
+      const dx = (this.position.x + this.size /2 ) - (meteorite.x + meteoriteSize/2);
+      const dy = (this.position.y + this.size /2 ) - (meteorite.y + meteoriteSize/2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < this.size / 2 + meteoriteSize/2) {
+        this.velocity.x = -this.velocity.x;
+        this.velocity.y = -this.velocity.y;
+        this.image_static = spaceshipDecadeImg;
+        this.image_flying = spaceshipDecadeImg;
+        if (this.acceleration == 0.65) {
+          this.image_static = boomImg;
+          this.image_flying = boomImg;
+          this.alive = false;
+          break;
+        }
+        if (this.acceleration == 0.75) {
+          this.acceleration = 0.65;
+          spaceshipDamagedImg;
+          this.image_static = spaceshipDamagedImg;
+          this.image_flying = spaceshipDamagedImg;
+          break;
+        }
+        this.acceleration = 0.75;
+        this.image_static = spaceshipDecadeImg;
+        this.image_flying = spaceshipDecadeImg;
+        break;
+      }
+    }
+
+
+    /* BLACKHOLE TELEPORTING */
+    for (const blackholePair of listOfBlackhole) {
+      const dx1 = (this.position.x + this.size /2 ) - (blackholePair.blackhole1.x + blackholeSize /2);
+      const dy1 = (this.position.y + this.size /2 ) - (blackholePair.blackhole1.y + blackholeSize /2);
+      const dx2 = (this.position.x + this.size /2 ) - (blackholePair.blackhole2.x + blackholeSize /2);
+      const dy2 = (this.position.y + this.size /2 ) - (blackholePair.blackhole2.y + blackholeSize /2);
+      const distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+      const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      const range = this.size /2 + blackholeSize / 2;
+
+      if (distance1 <= range/2) {
+        // if (dx1 < range && dx1 > 0) {
+        //   this.position.x = blackholePair.blackhole2.x -dddda range
+        // } else {
+        //   this.position.x = blackholePair.blackhole2.x + range
+        // }
+        // if (dy1 < range && dy1 > 0) {
+        //   this.position.y = blackholePair.blackhole2.y - range
+        // } else {
+        //   this.position.y = blackholePair.blackhole2.y + range
+        // }
+
+        this.position.x = blackholePair.blackhole2.x - dx1 * 2;
+        this.position.y = blackholePair.blackhole2.y - dy1 * 2;
+      } else if (distance2 <= range/2) {
+        // if (dx2 < range && dx2 > 0) {
+        //   this.position.x = blackholePair.blackhole1.x - range
+        // } else  {
+        //   this.position.x = blackholePair.blackhole1.x + range
+        // }
+        // if (dy2 < range && dy2 > 0) {
+        //   this.position.y = blackholePair.blackhole1.y - range
+        // } else  {
+        //   this.position.y = blackholePair.blackhole1.y + range
+        // }
+        this.position.x = blackholePair.blackhole1.x - dx2 * 2;
+        this.position.y = blackholePair.blackhole1.y - dy2 * 2;
+      }
+    }
+
 
     /* UPDATE ROCKET LOCATION IN NEXT FRAME TO MIMIC MOVEMENT */
     this.position.y += this.velocity.y;
@@ -293,6 +421,12 @@ const outerBoundary = new Boundary(trackTopBound, trackRightBound, trackBotBound
 /* CREATE NEW STARS */
 let listOfStars: Position[] = [];
 
+/* CREATE NEW METEORITE */
+const listOfMeteorite: Position[] = [];
+
+/* CREATE NEW PAIRS OF BLACKHOLE */
+const listOfBlackhole: BlackholeType[] = [];
+
 /* CANVAS TEXTS */
 const statusMsgPosition = {
   x: canvas.width / 2,
@@ -331,7 +465,23 @@ function animate() {
     newStar.draw();
   }
 
+  for (const meteorite of listOfMeteorite) {
+    const newMeteorite = new Meteorite(meteorite);
+    newMeteorite.draw();
+  }
+
+  for (const blackholePair of listOfBlackhole) {
+    const blackhole1 = blackholePair.blackhole1;
+    const blackhole2 = blackholePair.blackhole2;
+
+    const newBlackhole1 = new Blackhole(blackhole1);
+    const newBlackhole2 = new Blackhole(blackhole2);
+    newBlackhole1.draw();
+    newBlackhole2.draw();
+  }
+
   // userCar.slowDown()
+
   userRocket.update();
   // console.log(userCar.stats())
 }
@@ -391,6 +541,38 @@ genStarBtn.addEventListener('click', () => {
   addAStar(position);
 });
 
+genMeteorBtn.addEventListener('click', () => {
+  // Offset to prevent star appearing at the boundaries
+  const offset = 100;
+  const maxY = trackBotBound - offset;
+  const minY = trackTopBound + offset;
+  const maxX = trackRightBound - offset;
+  const minX = trackLeftBound + offset;
+  const x = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+  const y = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+  const position = { x, y };
+  addAMeteorite(position);
+});
+
+genBlackholeBtn.addEventListener('click', () => {
+  // Offset to prevent star appearing at the boundaries
+  const offset = 100;
+  const maxY = trackBotBound - offset;
+  const minY = trackTopBound + offset;
+  const maxX = trackRightBound - offset;
+  const minX = trackLeftBound + offset;
+  const x1 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+  const y1 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+  const x2 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+  const y2 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+  const position1 = { x: x1, y: y1 };
+  const position2 = { x: x2, y: y2 };
+  const blackholePair: BlackholeType = {
+    blackhole1: position1,
+    blackhole2: position2,
+  };
+  addABlackholePair(blackholePair);
+});
 // UPDATE ROCKET SPEED DISPLAY VALUE
 rocketSpeed.value = String(userRocket.stats().acceleration);
 
@@ -446,3 +628,12 @@ function addAStar(position: Position) {
   listOfStars.push(position);
   totalScore.textContent = String(listOfStars.length);
 }
+
+function addAMeteorite(position: Position) {
+  listOfMeteorite.push(position);
+}
+
+function addABlackholePair(blackholePair: BlackholeType) {
+  listOfBlackhole.push(blackholePair);
+}
+
