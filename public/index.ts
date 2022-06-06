@@ -407,9 +407,9 @@ boundaryModeBtn.addEventListener('click', () => {
 
 saveStarsBtn.addEventListener('click', () => {
   const listOfStarsPercentage = listOfStars.map((coor) => {
-    coor.x = coor.x / canvas.width;
-    coor.y = coor.y / canvas.height;
-    return coor;
+    const newX = coor.x / canvas.width;
+    const newY = coor.y / canvas.height;
+    return { x: newX, y: newY };
   });
   const starMap = {
     count: listOfStars.length,
