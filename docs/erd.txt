@@ -20,6 +20,12 @@ id pk
 count 
 coordinates text
 
+obstacles_map
+-----
+id pk
+count
+coordinates text
+
 
 scores
 ---------
