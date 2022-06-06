@@ -1,8 +1,8 @@
 import express from 'express';
 import path from 'path';
-import { StarMapService } from './star-services';
+import { StarMapService } from './starMap-services';
 import { knex } from './knex';
-import { StarMapController } from './star-controller';
+import { StarMapController } from './starMap-controller';
 
 const starMapService = new StarMapService(knex);
 export const starMapController = new StarMapController(starMapService);

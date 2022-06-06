@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { StarMapService } from './star-services';
+import { StarMapService } from './starMap-services';
 import { StarMap } from './types';
 
 export class StarMapController {
