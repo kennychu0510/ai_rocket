@@ -27,7 +27,6 @@ count
 coordinates text
 
 
-
 scores
 ---------
 id pk
