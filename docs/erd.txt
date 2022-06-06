@@ -18,7 +18,7 @@ star_map
 -----
 id pk
 count 
-coordinates string
+coordinates text
 
 
 scores
