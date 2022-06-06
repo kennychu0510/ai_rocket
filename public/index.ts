@@ -1,7 +1,4 @@
-type Position = {
-    x: number,
-    y: number
-}
+import { Position } from './type';
 
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
@@ -29,7 +26,6 @@ const scoreboard = _scoreboard as HTMLElement;
 const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
 
-
 /* CANVAS */
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 100;
@@ -56,7 +52,6 @@ spaceshipImg.src = './media/rocket_1.png';
 
 const spaceshipFlyingImg = new Image();
 spaceshipFlyingImg.src = './media/rocket_2.png';
-
 
 const starImg = new Image();
 starImg.src = './media/star.png';
@@ -216,19 +211,20 @@ class Rocket {
     }
 
     /* DETECT STARS COLLECTED */
-    for (const star of listOfStars) {
+    for (let i = 0; i < listOfStars.length; i++) {
+      const star = listOfStars[i];
       const dx = (this.position.x + this.size / 2) - (star.x + 10);
       const dy = (this.position.y + this.size / 2) - (star.y + 10);
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < this.size / 2 + 10) {
-        listOfStars = listOfStars.filter((thisStar) => thisStar !== star);
-        const scoreNum = +currentScore.textContent!;
-                currentScore.textContent! = String(scoreNum + 1);
-                this.collectedStars++;
-                break;
+        listOfStars.splice(i, 1);
+        i--;
+        this.collectedStars++;
+        currentScore.textContent = String(this.collectedStars);
       }
     }
+
 
     /* UPDATE ROCKET LOCATION IN NEXT FRAME TO MIMIC MOVEMENT */
     this.position.y += this.velocity.y;
@@ -291,7 +287,7 @@ const userRocket = new Rocket(
 const outerBoundary = new Boundary(trackTopBound, trackRightBound, trackBotBound, trackLeftBound);
 
 /* CREATE NEW STARS */
-let listOfStars: Position[] = [];
+const listOfStars: Position[] = [];
 
 /* CANVAS TEXTS */
 const statusMsgPosition = {
