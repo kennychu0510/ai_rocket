@@ -18,7 +18,7 @@ export class StarMapController {
       return;
     }
     const addedStarMap = await this.starService.createStarMap(starMap);
-    res.json({ msg: addedStarMap });
+    res.json({ id: addedStarMap });
   };
 
   test = async (req: Request, res: Response) => {

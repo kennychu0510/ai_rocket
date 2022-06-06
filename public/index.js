@@ -342,7 +342,7 @@ saveStarsBtn.addEventListener('click', () => {
         count: listOfStars.length,
         coordinates: JSON.stringify(listOfStars),
     };
-    fetch('/test', {
+    fetch('/star-map', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -352,7 +352,7 @@ saveStarsBtn.addEventListener('click', () => {
         .then((res) => res.json())
         .catch((err) => ({ error: String(err) }))
         .then((json) => {
-        console.log(json);
+        console.log(json.id);
     });
 });
 /*
