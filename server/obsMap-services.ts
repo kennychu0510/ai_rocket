@@ -1,6 +1,7 @@
 import { Knex as KnexType } from 'knex';
 import { ObsMap } from './types';
 
+//123
 export class ObsMapService {
   constructor (private knex: KnexType){}
 
