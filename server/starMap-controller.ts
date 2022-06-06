@@ -12,7 +12,7 @@ export class StarMapController {
   };
 
   create = async (req: Request, res: Response) => {
-    const starMap: StarMap = req.body;
+    const starMap: StarMap = req.body.starMap;
     if (starMap.count < 0 ) {
       res.status(400).json({ msg: 'no stars are added' });
       return;
