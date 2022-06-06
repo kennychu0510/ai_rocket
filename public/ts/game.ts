@@ -21,13 +21,15 @@ export class Game {
   private canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
   public gameBoundaries: GameBoundary;
+  private initialPosition: Position;
   constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary) {
     this.canvas = canvas,
     this.canvasWidth = window.innerWidth;
     this.canvasHeight = window.innerHeight - 100;
     this.ctx = this.canvas.getContext('2d')!;
+    this.initialPosition = { x: this.canvasWidth / 10, y: this.canvasHeight / 4 };
     this.boundary = new Boundary(gameBoundaries.top, gameBoundaries.right, gameBoundaries.bot, gameBoundaries.left, this.ctx),
-    this.rocket = new Rocket({ x: canvas.width / 10, y: canvas.height / 4 }, { x: 0, y: 0 }, this.canvasWidth, this.ctx, this.boundary),
+    this.rocket = new Rocket(this.initialPosition, { x: 0, y: 0 }, this.canvasWidth, this.ctx, this.boundary),
     this.statusMessage = new CanvasText(`W to move, A + D to turn, S to stop`,
       {
         x: canvas.width / 2,
@@ -43,9 +45,6 @@ export class Game {
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
     this.gameBoundaries = gameBoundaries;
-  }
-  newGame() {
-    this.stars = [];
   }
 
   addStar(position: Position) {
@@ -124,6 +123,22 @@ export class Game {
 
   draw() {
     this.statusMessage.draw();
+    this.statusMessage.draw();
+    this.gameInstructions.draw();
+    this.boundary.draw();
+  }
+
+  reset() {
+    this.statusMessage.updateMsg('W to move, A + D to turn, S to stop');
+    this.gameInstructions.updateMsg('Add stars to start the game');
+    this.rocket.reset();
+    this.rocket.setPosition({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
+    this.stars = [];
+    this.totalStars = 0;
+    this.gameStarted = false;
+    this.rocket.changeAcceleration(0.002 * this.canvasWidth);
+    // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
+    // console.log(this.initialPosition);
   }
   // animate = () => {
   //   requestAnimationFrame(this.animate());

@@ -7,11 +7,6 @@ import { GameBoundary } from './type.js';
 const _canvas = document.querySelector('canvas');
 if (!_canvas) throw new Error('canvas not found');
 const canvas = _canvas;
-
-// const _c = canvas.getContext('2d');
-// if (!_c) throw new Error('canvas not found');
-// const c = _c;
-
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
@@ -74,9 +69,7 @@ function animate() {
     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
   }
 
-  game.boundary.draw();
-  game.statusMessage.draw();
-  game.gameInstructions.draw();
+  game.draw();
 
   for (const star of game.stars) {
     star.draw();
@@ -114,7 +107,13 @@ addStarBtn.addEventListener('click', () => {
 });
 
 resetBtn.addEventListener('click', () => {
-  location.reload();
+  // location.reload();
+  game.reset();
+  totalScore.textContent = '0';
+  currentScore.textContent = '0';
+  timerMilliseconds.textContent = '000';
+  timerSeconds.textContent = '00';
+  rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
 });
 
 canvas.addEventListener('click', (e) => {

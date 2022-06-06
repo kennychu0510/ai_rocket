@@ -88,51 +88,6 @@ export class Rocket {
     }
   }
 
-  // update() {
-  //   this.draw();
-  //   if (this.boundary.getBoundaryMode()) {
-  //     if (this.position.y < trackTopBound || this.position.y + this.size > trackBotBound || this.position.x < trackLeftBound || (this.position.x + this.size) > trackRightBound) {
-  //       this.alive = false;
-  //       game.gameStarted = false;
-  //       game.statusMessage.updateMsg('you have crashed!');
-  //       return;
-  //     }
-  //   } else {
-  //     if (this.position.y < trackTopBound) {
-  //       this.position.y = trackBotBound - this.size;
-  //     }
-  //     if (this.position.y + this.size > trackBotBound) {
-  //       this.position.y = trackTopBound;
-  //     }
-  //     if (this.position.x < trackLeftBound) {
-  //       this.position.x = trackRightBound - this.size;
-  //     }
-  //     if (this.position.x + this.size > trackRightBound) {
-  //       this.position.x = trackLeftBound;
-  //     }
-  //   }
-
-  //   /* DETECT STARS COLLECTED */
-  //   for (let i = 0; i < game.stars.length; i++) {
-  //     const star = game.stars[i];
-  //     const dx = (this.position.x + this.size / 2) - (star.getX() + 10);
-  //     const dy = (this.position.y + this.size / 2) - (star.getY() + 10);
-  //     const distance = Math.sqrt(dx * dx + dy * dy);
-
-  //     if (distance < this.size / 2 + 10) {
-  //       game.stars.splice(i, 1);
-  //       i--;
-  //       this.collectedStars++;
-  //       currentScore.textContent = String(this.collectedStars);
-  //     }
-  //   }
-
-
-  //   /* UPDATE ROCKET LOCATION IN NEXT FRAME TO MIMIC MOVEMENT */
-  //   this.position.y += this.velocity.y;
-  //   this.position.x += this.velocity.x;
-  // }
-
   updateRocketPosition() {
     this.position.y += this.velocity.y;
     this.position.x += this.velocity.x;
@@ -156,5 +111,17 @@ export class Rocket {
   }
   changeAcceleration(acceleration: number) {
     this.acceleration = acceleration;
+  }
+
+  reset() {
+    this.stop();
+    this.alive = true;
+    this.angle = 90;
+    this.collectedStars = 0;
+  }
+
+  setPosition(position: Position) {
+    this.position = position;
+    this.velocity = { x: 0, y: 0 };
   }
 }
