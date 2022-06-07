@@ -32,7 +32,7 @@ export class Rocket {
   public collectedStars: number;
   private health: number;
   public teleportTimeout: number;
-  private stars: Set<Star>;
+  public stars: Set<Star>;
   private initialPosition: Position;
   constructor(private game: Game) {
     const canvasWidth = game.canvasWidth;
@@ -243,6 +243,7 @@ export class Rocket {
       if (distance < this.getC() / 2 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
+        console.log('got star');
         // currentScore.textContent = String(this.collectedStars);
       }
     }
@@ -303,5 +304,10 @@ export class Rocket {
         this.reduceHealth();
       }
     }
+  }
+
+  addStar(star: Star) {
+    this.stars.add(star);
+    console.log(this.stars);
   }
 }
