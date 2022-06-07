@@ -95,14 +95,19 @@ class RocketAI extends Rocket {
 
   draw() {
     this.game.ctx.beginPath();
-    this.game.ctx.arc(this.position.x + this.width/2, this.position.y + this.height/2, this.getC()/3, 0, 2*Math.PI);
+    this.game.ctx.arc(
+      this.position.x + this.width / 2,
+      this.position.y + this.height / 2,
+      this.getC() / 3,
+      0,
+      2 * Math.PI,
+    );
     this.game.ctx.fillStyle = this.color;
     this.game.ctx.fill();
     this.game.ctx.closePath();
     super.draw();
   }
 }
-
 
 export enum Move {
   none = 0,
