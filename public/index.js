@@ -237,6 +237,7 @@ class Rocket {
                 if (this.acceleration == 0.65) {
                     this.image_static = boomImg;
                     this.image_flying = boomImg;
+                    statusMessage.updateMsg('you have crashed!');
                     this.alive = false;
                     break;
                 }

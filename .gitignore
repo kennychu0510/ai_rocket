@@ -1,3 +1,5 @@
 node_modules
 .env
 *lock*
+public/backup/backup.js
+public/tsconfig.tsbuildinfo
