@@ -1,0 +1,30 @@
+# Visualize on https://quick-erd.surge.sh
+#
+# Relationship Types
+#  -    - one to one
+#  -<   - one to many
+#  >-   - many to one
+#  >-<  - many to many
+#  -0   - one to zero or one
+#  0-   - zero or one to one
+#  0-0  - zero or one to zero or one
+#  -0<  - one to zero or many
+#  >0-  - zero or many to one
+#
+////////////////////////////////////
+
+
+map
+----
+id pk
+stars text
+meteorites text
+black_holes text
+levels integer
+
+scores
+---------
+id pk
+user varchar(30)
+map_id fk >- map.id
+duration

@@ -1,0 +1,24 @@
+{
+  "name": "bad_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "cd client && npm run format && cd ../server && npm run format",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/c20-tw-bad-project-khj/ai_rocket.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/c20-tw-bad-project-khj/ai_rocket/issues"
+  },
+  "homepage": "https://gitlab.com/c20-tw-bad-project-khj/ai_rocket#readme",
+  "devDependencies": {
+    "husky": "^8.0.1"
+  }
+}
