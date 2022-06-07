@@ -72,6 +72,7 @@ export class Game {
     const newStar = new Star(position, this.canvasWidth, this.ctx);
     this.stars.push(newStar);
     this.totalStars++;
+    this.rocket.addStar(newStar);
   }
 
   addMeteorite(position: Position) {
@@ -158,7 +159,7 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.stars) {
+    for (const star of this.rocket.stars) {
       star.draw();
     }
 

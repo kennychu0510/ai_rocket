@@ -32,11 +32,9 @@ export class Rocket {
   public collectedStars: number;
   private health: number;
   public teleportTimeout: number;
-  private stars: Set<Star>;
+  public stars: Set<Star>;
   private initialPosition: Position;
-  constructor(
-    private game: Game,
-  ) {
+  constructor(private game: Game) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
     this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
@@ -222,19 +220,13 @@ export class Rocket {
       if (this.position.y < gameBoundaries.top) {
         this.position.y = gameBoundaries.bot - this.height;
       }
-      if (
-        this.position.y + this.height >
-        gameBoundaries.bot
-      ) {
+      if (this.position.y + this.height > gameBoundaries.bot) {
         this.position.y = gameBoundaries.top;
       }
       if (this.position.x < gameBoundaries.left) {
         this.position.x = gameBoundaries.right - this.width;
       }
-      if (
-        this.position.x + this.width >
-        gameBoundaries.right
-      ) {
+      if (this.position.x + this.width > gameBoundaries.right) {
         this.position.x = gameBoundaries.left;
       }
     }
@@ -243,18 +235,15 @@ export class Rocket {
   checkStarCollection() {
     for (const star of this.stars) {
       const dx =
-        this.position.x +
-        this.width / 2 -
-        (star.getX() + star.size / 2);
+        this.position.x + this.width / 2 - (star.getX() + star.size / 2);
       const dy =
-        this.position.y +
-        this.height / 2 -
-        (star.getY() + star.size / 2);
+        this.position.y + this.height / 2 - (star.getY() + star.size / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < this.getC() / 2 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
+        console.log('got star');
         // currentScore.textContent = String(this.collectedStars);
       }
     }
@@ -284,23 +273,15 @@ export class Rocket {
 
       if (distance1 <= range / 2 && this.teleportTimeout === 0) {
         this.position.x =
-          blackholePair.blackhole2.x +
-          blackholePair.size / 2 -
-          this.width / 2;
+          blackholePair.blackhole2.x + blackholePair.size / 2 - this.width / 2;
         this.position.y =
-          blackholePair.blackhole2.y +
-          blackholePair.size / 2 -
-          this.height / 2;
+          blackholePair.blackhole2.y + blackholePair.size / 2 - this.height / 2;
         this.setTeleportationTimeout();
       } else if (distance2 <= range / 2 && this.teleportTimeout === 0) {
         this.position.x =
-          blackholePair.blackhole1.x +
-          blackholePair.size / 2 -
-          this.width / 2;
+          blackholePair.blackhole1.x + blackholePair.size / 2 - this.width / 2;
         this.position.y =
-          blackholePair.blackhole1.y +
-          blackholePair.size / 2 -
-          this.height / 2;
+          blackholePair.blackhole1.y + blackholePair.size / 2 - this.height / 2;
         this.setTeleportationTimeout();
       }
     }
@@ -323,5 +304,10 @@ export class Rocket {
         this.reduceHealth();
       }
     }
+  }
+
+  addStar(star: Star) {
+    this.stars.add(star);
+    console.log(this.stars);
   }
 }
