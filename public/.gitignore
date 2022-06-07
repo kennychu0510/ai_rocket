@@ -1,2 +1,3 @@
 *.js
-*.tsbuildinfo
+tsconfig.tsbuildinfo
+dist
