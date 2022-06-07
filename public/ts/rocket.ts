@@ -31,6 +31,7 @@ export class Rocket {
   private ctx: CanvasRenderingContext2D;
   private boundary: Boundary;
   private health: number;
+  public teleportTimeout: number;
   constructor(position: Position, velocity: Position, canvasWidth: number, ctx: CanvasRenderingContext2D, boundary: Boundary) {
     this.position = position;
     this.velocity = velocity;
@@ -46,6 +47,7 @@ export class Rocket {
     this.ctx = ctx;
     this.boundary = boundary;
     this.health = 3;
+    this.teleportTimeout = 0;
   }
 
   draw() {
@@ -70,6 +72,10 @@ export class Rocket {
     // c.fill()
     this.ctx.restore();
     // c.rotate(10)
+    if (this.teleportTimeout > 0) {
+      this.teleportTimeout--;
+      console.log(new Date().getTime());
+    }
   }
 
   changeDirection(key: string) {
@@ -133,6 +139,8 @@ export class Rocket {
     this.alive = true;
     this.angle = 90;
     this.collectedStars = 0;
+    this.image_static = spaceshipImg;
+    this.image_flying = spaceshipFlyingImg;
   }
 
   setPosition(position: Position) {
@@ -159,5 +167,10 @@ export class Rocket {
       this.image_flying = boomImg;
       this.stop();
     }
+  }
+
+  setTeleportationTimeout() {
+    this.teleportTimeout = 60;
+    console.log(new Date().getTime());
   }
 }

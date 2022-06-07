@@ -127,12 +127,14 @@ export class Game {
       const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
       const range = this.rocket.getC() / 2 + blackholePair.size / 2;
 
-      if (distance1 <= range / 2) {
-        this.rocket.position.x = blackholePair.blackhole2.x - dx1 * 2;
-        this.rocket.position.y = blackholePair.blackhole2.y - dy1 * 2;
-      } else if (distance2 <= range / 2) {
-        this.rocket.position.x = blackholePair.blackhole1.x - dx2 * 2;
-        this.rocket.position.y = blackholePair.blackhole1.y - dy2 * 2;
+      if (distance1 <= range / 2 && this.rocket.teleportTimeout === 0) {
+        this.rocket.position.x = blackholePair.blackhole2.x + blackholePair.size / 2 - this.rocket.width / 2;
+        this.rocket.position.y = blackholePair.blackhole2.y + blackholePair.size / 2 - this.rocket.height / 2;
+        this.rocket.setTeleportationTimeout();
+      } else if (distance2 <= range / 2 && this.rocket.teleportTimeout === 0) {
+        this.rocket.position.x = blackholePair.blackhole1.x + blackholePair.size / 2 - this.rocket.width / 2;
+        this.rocket.position.y = blackholePair.blackhole1.y + blackholePair.size / 2 - this.rocket.height / 2;
+        this.rocket.setTeleportationTimeout();
       }
     }
   }
@@ -228,6 +230,8 @@ export class Game {
     this.rocket.reset();
     this.rocket.setPosition({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     this.stars = [];
+    this.meteorites = [];
+    this.blackholes = [];
     this.totalStars = 0;
     this.gameStarted = false;
     this.rocket.changeAcceleration(0.002 * this.canvasWidth);
