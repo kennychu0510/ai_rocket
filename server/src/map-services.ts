@@ -17,7 +17,7 @@ export class MapService {
       .insert({
         stars: JSON.stringify(stars),
         meteorites: JSON.stringify(meteorites),
-        blackholes: JSON.stringify(blackholes),
+        black_holes: JSON.stringify(blackholes),
         levels: 1,
       })
       .into('map')
@@ -34,7 +34,7 @@ export class MapService {
       console.log(row);
       row.stars = JSON.parse(row.stars);
       row.meteorites = JSON.parse(row.meteorites);
-      row.blackholes = JSON.parse(row.blackholes);
+      row.black_holes = JSON.parse(row.black_holes);
     });
     return results;
   }
