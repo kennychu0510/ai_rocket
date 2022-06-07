@@ -3,7 +3,7 @@ import { Game } from './game';
 import { Rocket } from './rocket';
 
 export class RocketGA {
-  private Population_size = 5;
+  private Population_size = 20;
   public Tick_Step = 500;
   private Survival_Rate = 0.9;
   private Mutation_Rate = 0.1;
@@ -44,6 +44,10 @@ export class RocketGA {
       rocket.draw();
     }
   }
+
+  reset() {
+    this.population = [];
+  }
   // evaluate() {
 
   // }
@@ -54,10 +58,7 @@ class RocketAI extends Rocket {
   survive: boolean;
   moves: Move[];
   rocketGA: RocketGA;
-  constructor(
-    game: Game,
-    rocketGA: RocketGA,
-  ) {
+  constructor(game: Game, rocketGA: RocketGA) {
     super(game);
     this.rocketGA = rocketGA;
     this.fitness = 0;
@@ -74,9 +75,9 @@ class RocketAI extends Rocket {
     case Move.up:
       {
         const x_direction =
-          this.acceleration * Math.sin(degreeToRadian(this.angle));
+            this.acceleration * Math.sin(degreeToRadian(this.angle));
         const y_direction =
-          -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
+            -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
         this.velocity.x = x_direction;
         this.velocity.y = y_direction;
       }
@@ -95,11 +96,10 @@ export enum Move {
   none = 0,
   up = 1,
   left = 2,
-  right = 3
+  right = 3,
 }
 
 // type Move = number // 0 = none, 1 = up, 2 = left, 3 = right
-
 
 function generateMoves(steps: number) {
   const listOfMoves: Move[] = [];
@@ -110,5 +110,5 @@ function generateMoves(steps: number) {
 }
 
 function getMove() {
-  return Math.floor(Math.random() * 4 ); // The maximum is inclusive and the minimum is inclusive
+  return Math.floor(Math.random() * 4); // The maximum is inclusive and the minimum is inclusive
 }

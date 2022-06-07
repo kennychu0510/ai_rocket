@@ -9,8 +9,6 @@ body {
 main {
   display: flex;
   justify-content: center;
-  min-height: 500px;
-  min-width: 800px;
 }
 
 #scoreboard {
@@ -52,3 +50,5 @@ main {
 input {
   width: 50px;
 }
+
+

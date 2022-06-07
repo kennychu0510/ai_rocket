@@ -19,6 +19,8 @@ const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
 const seedBtn = getDOMElement('#seed');
+const canvasContainer = getDOMElement('#canvas-container');
+console.log(canvasContainer);
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -30,19 +32,19 @@ const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
 const canvasOffset = 120;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - canvasOffset;
+canvas.height = window.innerHeight * 0.78;
+canvas.width = window.innerHeight * 1.8;
+console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
 const starSize = 20;
 const boundaryOffset = 20;
 
-
 const gameBoundaries: GameBoundary = {
   top: boundaryOffset,
-  bot: window.innerHeight - canvasOffset - boundaryOffset,
+  bot: canvas.height - boundaryOffset,
   left: boundaryOffset,
-  right: window.innerWidth - boundaryOffset,
+  right: canvas.width - boundaryOffset,
 };
 
 /* SET UP NEW GAME */
@@ -54,7 +56,11 @@ function animate() {
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   /* CHECK IF ALL STARS COLLECTED */
-  if (game.totalStars === game.rocket.collectedStars && game.gameStarted && !game.startAI) {
+  if (
+    game.totalStars === game.rocket.collectedStars &&
+    game.gameStarted &&
+    !game.startAI
+  ) {
     game.statusMessage.updateMsg('Well Done!');
     game.rocket.stop();
     const endTime = new Date();
@@ -180,4 +186,9 @@ saveStarsBtn.addEventListener('click', () => {
 seedBtn.addEventListener('click', () => {
   game.seed();
   game.startGame();
+});
+
+window.addEventListener('resize', () => {
+  canvas.height = window.innerHeight * 0.78;
+  canvas.width = window.innerHeight * 1.8;
 });

@@ -188,6 +188,7 @@ export class Game {
     this.totalStars = 0;
     this.gameStarted = false;
     this.rocket.changeAcceleration(0.002 * this.canvasWidth);
+    this.rocketGA.reset();
     // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     // console.log(this.initialPosition);
   }
