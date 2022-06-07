@@ -1,24 +1,29 @@
 {
-    "name": "public",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "lint": "npx eslint --fix ./*.ts",
-        "build": "tsc -p . --watch",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "@types/node": "^17.0.39",
-        "@typescript-eslint/eslint-plugin": "^5.27.0",
-        "@typescript-eslint/parser": "^5.27.0",
-        "eslint": "^8.17.0",
-        "ts-node": "^10.8.1",
-        "typescript": "^4.7.3"
-    },
-    "dependencies": {
-        "eslint-config-google": "^0.14.0"
-    }
+  "name": "public",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+      "lint": "npx eslint --fix ./ts/*",
+      "build": "tsc -p . --watch",
+      "prettify": "prettier --write ./ts.*",
+      "format": "npm run prettify && npm run lint",
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "prepare": "cd ../ && husky install ./public/.husky"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+      "@types/node": "^17.0.39",
+      "@typescript-eslint/eslint-plugin": "^5.27.0",
+      "@typescript-eslint/parser": "^5.27.0",
+      "eslint": "^8.17.0",
+      "husky": "^8.0.1",
+      "prettier": "^2.6.2",
+      "ts-node": "^10.8.1",
+      "typescript": "^4.7.3"
+  },
+  "dependencies": {
+  "eslint-config-google": "^0.14.0"
+  }
 }

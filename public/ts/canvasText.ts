@@ -6,7 +6,12 @@ export class CanvasText {
   private color: string;
   private position: Position;
   public ctx: CanvasRenderingContext2D;
-  constructor(message: string, position: Position, canvasHeight: number, ctx: CanvasRenderingContext2D) {
+  constructor(
+    message: string,
+    position: Position,
+    canvasHeight: number,
+    ctx: CanvasRenderingContext2D,
+  ) {
     this.message = message;
     const fontSize = canvasHeight * 0.05;
     this.font = `${fontSize}px Arial`;

@@ -2,5 +2,4 @@ CREATE DATABASE ai_rocket;
 
 CREATE ROLE ai_rocket
 WITH
-  LOGIN
-  PASSWORD 'ai_rocket' CREATEDB;
+  LOGIN PASSWORD 'ai_rocket' CREATEDB;

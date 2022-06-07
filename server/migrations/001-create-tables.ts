@@ -1,4 +1,4 @@
-import { Knex } from 'knex'
+import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
   if (!(await knex.schema.hasTable('star_location'))) {
@@ -42,8 +42,13 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
+<<<<<<< HEAD
   await knex.schema.dropTableIfExists('scores')
   await knex.schema.dropTableIfExists('black_hole_location')
   await knex.schema.dropTableIfExists('meteorite_location')
   await knex.schema.dropTableIfExists('star_location')
+=======
+  await knex.schema.dropTableIfExists('scores');
+  await knex.schema.dropTableIfExists('star_map');
+>>>>>>> main
 }

@@ -32,9 +32,14 @@ export class Rocket {
   private boundary: Boundary;
   private health: number;
   public teleportTimeout: number;
-  constructor(position: Position, velocity: Position, canvasWidth: number, ctx: CanvasRenderingContext2D, boundary: Boundary) {
-    this.position = position;
-    this.velocity = velocity;
+  constructor(
+    canvasWidth: number,
+    canvasHeight: number,
+    ctx: CanvasRenderingContext2D,
+    boundary: Boundary,
+  ) {
+    this.position = { x: canvasHeight/4, y: canvasWidth / 10 };
+    this.velocity = { x: 0, y: 0 };
     this.acceleration = 0.002 * canvasWidth;
     this.width = 0.02 * canvasWidth;
     this.height = this.width * 2;
@@ -52,9 +57,15 @@ export class Rocket {
 
   draw() {
     this.ctx.save();
-    this.ctx.translate(this.position.x + this.width / 2, this.position.y + this.height / 2);
-    this.ctx.rotate(this.angle * Math.PI / 180);
-    this.ctx.translate(-(this.position.x + this.width / 2), -(this.position.y + this.height / 2));
+    this.ctx.translate(
+      this.position.x + this.width / 2,
+      this.position.y + this.height / 2,
+    );
+    this.ctx.rotate((this.angle * Math.PI) / 180);
+    this.ctx.translate(
+      -(this.position.x + this.width / 2),
+      -(this.position.y + this.height / 2),
+    );
     let image;
     if (this.velocity.x == 0 && this.velocity.y === 0) {
       image = this.image_static;
@@ -67,21 +78,28 @@ export class Rocket {
       this.height = this.height * 1.5;
       this.width = this.height;
     }
-    this.ctx.drawImage(image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.width, this.height);
+    this.ctx.drawImage(
+      image,
+      this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
+      this.position.y + this.velocity.y,
+      this.width,
+      this.height,
+    );
     // c.fillRect(this.position.x, this.position.y, this.size, this.size)
     // c.fill()
     this.ctx.restore();
     // c.rotate(10)
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
-      console.log(new Date().getTime());
     }
   }
 
   changeDirection(key: string) {
     if (key === 'w') {
-      const x_direction = this.acceleration * Math.sin(degreeToRadian(this.angle));
-      const y_direction = -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
+      const x_direction =
+        this.acceleration * Math.sin(degreeToRadian(this.angle));
+      const y_direction =
+        -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
       console.log({ x_direction, y_direction });
       this.velocity.x = x_direction;
       this.velocity.y = y_direction;
@@ -115,14 +133,14 @@ export class Rocket {
   }
 
   stats() {
-    return ({
+    return {
       x: this.position.x,
       y: this.position.y,
       x_speed: this.velocity.x,
       y_speed: this.velocity.y,
       angle_degrees: this.angle,
       acceleration: this.acceleration,
-    });
+    };
   }
 
   stop() {
@@ -173,4 +191,6 @@ export class Rocket {
     this.teleportTimeout = 60;
     console.log(new Date().getTime());
   }
+
+  /* GENETIC ALGORITHM */
 }

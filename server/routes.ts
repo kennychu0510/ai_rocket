@@ -9,4 +9,3 @@ routes.get('/easy-mode', starMapController.get);
 routes.post('/star-map', starMapController.create);
 routes.post('/meteorite', meteoriteController.create);
 routes.post('/test', starMapController.test);
-
