@@ -2,7 +2,6 @@ import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { GameBoundary } from './type.js';
 
-
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
 if (!_canvas) throw new Error('canvas not found');
@@ -48,7 +47,6 @@ const gameBoundaries: GameBoundary = {
   right: window.innerWidth - boundaryOffset,
 };
 
-
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries);
 
@@ -70,7 +68,10 @@ function animate() {
   if (game.gameStarted) {
     const timeTaken = Number(new Date()) - +game.startTime;
     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-    timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
+    timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(
+      2,
+      '0',
+    );
   }
 
   game.draw();

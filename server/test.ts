@@ -1,7 +1,7 @@
 type Position = {
-  x: number,
-  y: number
-}
+  x: number;
+  y: number;
+};
 
 const coordinates: Position[] = [
   { x: 123, y: 456 },

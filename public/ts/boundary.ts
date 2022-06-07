@@ -6,7 +6,13 @@ export class Boundary {
   private color: string;
   private boundaryModeOn: boolean;
   private ctx: CanvasRenderingContext2D;
-  constructor(top: number, right: number, bot: number, left: number, ctx: CanvasRenderingContext2D) {
+  constructor(
+    top: number,
+    right: number,
+    bot: number,
+    left: number,
+    ctx: CanvasRenderingContext2D,
+  ) {
     this.top = top;
     this.right = right;
     this.bot = bot;

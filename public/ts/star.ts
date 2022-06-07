@@ -8,7 +8,11 @@ export class Star {
   private image: HTMLImageElement;
   public size: number;
   private ctx: CanvasRenderingContext2D;
-  constructor(position: Position, canvasWidth: number, ctx: CanvasRenderingContext2D) {
+  constructor(
+    position: Position,
+    canvasWidth: number,
+    ctx: CanvasRenderingContext2D,
+  ) {
     this.position = position;
     this.image = starImg;
     this.size = 0.015 * canvasWidth;
@@ -16,7 +20,13 @@ export class Star {
   }
 
   draw() {
-    this.ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
+    this.ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.size,
+      this.size,
+    );
   }
   getX() {
     return this.position.x;

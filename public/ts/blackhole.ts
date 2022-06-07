@@ -9,7 +9,11 @@ export class BlackholePair {
   private image: HTMLImageElement;
   public size: number;
   private ctx: CanvasRenderingContext2D;
-  constructor(blackholePair: BlackholePairType, canvasWidth: number, ctx: CanvasRenderingContext2D) {
+  constructor(
+    blackholePair: BlackholePairType,
+    canvasWidth: number,
+    ctx: CanvasRenderingContext2D,
+  ) {
     this.blackhole1 = blackholePair.blackhole1;
     this.blackhole2 = blackholePair.blackhole2;
     this.image = blackholeImg;
@@ -18,7 +22,19 @@ export class BlackholePair {
   }
 
   draw() {
-    this.ctx.drawImage(this.image, this.blackhole1.x, this.blackhole1.y, this.size, this.size);
-    this.ctx.drawImage(this.image, this.blackhole2.x, this.blackhole2.y, this.size, this.size);
+    this.ctx.drawImage(
+      this.image,
+      this.blackhole1.x,
+      this.blackhole1.y,
+      this.size,
+      this.size,
+    );
+    this.ctx.drawImage(
+      this.image,
+      this.blackhole2.x,
+      this.blackhole2.y,
+      this.size,
+      this.size,
+    );
   }
 }

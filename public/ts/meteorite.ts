@@ -8,7 +8,11 @@ export class Meteorite {
   private image: HTMLImageElement;
   public size: number;
   private ctx: CanvasRenderingContext2D;
-  constructor(position: Position, canvasWidth: number, ctx: CanvasRenderingContext2D) {
+  constructor(
+    position: Position,
+    canvasWidth: number,
+    ctx: CanvasRenderingContext2D,
+  ) {
     this.position = position;
     this.image = meteoriteImg;
     this.size = canvasWidth * 0.04;
@@ -16,6 +20,12 @@ export class Meteorite {
   }
 
   draw() {
-    this.ctx.drawImage(this.image, this.position.x, this.position.y, this.size, this.size);
+    this.ctx.drawImage(
+      this.image,
+      this.position.x,
+      this.position.y,
+      this.size,
+      this.size,
+    );
   }
 }

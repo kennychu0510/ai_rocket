@@ -3,9 +3,7 @@ import { StarMapService } from './starMap-services';
 import { StarMap } from './types';
 
 export class StarMapController {
-  constructor(
-    private starService: StarMapService,
-  ) {}
+  constructor(private starService: StarMapService) {}
 
   get = async (req: Request, res: Response) => {
     res.json(await this.starService.getStarMaps());
@@ -13,7 +11,7 @@ export class StarMapController {
 
   create = async (req: Request, res: Response) => {
     const starMap: StarMap = req.body.starMap;
-    if (starMap.count < 0 ) {
+    if (starMap.count < 0) {
       res.status(400).json({ msg: 'no stars are added' });
       return;
     }

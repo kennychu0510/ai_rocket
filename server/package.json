@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --fix migrations/* && eslint --fix ./*.ts",
-    "prettify": "prettier --write migrations/* && prettier --write ./",
+    "prettify": "yarn prettier --write migrations/* && yarn prettier --write ./",
     "format": "yarn run prettify && yarn run lint",
     "commit": "npm run format && npm run lint && git gui",
     "start": "ts-node-dev server.ts",

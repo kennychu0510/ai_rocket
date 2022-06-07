@@ -14,7 +14,6 @@ app.use(express.json());
 
 app.use('/', routes);
 
-
 /* PUT AT THE VERY BOTTOM */
 app.use((req, res) => {
   res.status(404).sendFile(path.resolve(path.join('../public', '404.html')));
