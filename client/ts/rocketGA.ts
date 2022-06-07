@@ -69,7 +69,9 @@ class RocketAI extends Rocket {
   }
   move(index: number) {
     /* CONVERT TIMESTAMP TO INDEX IN MOVES */
-    if (this.health <= 0) return;
+    if (this.health <= 0) {
+      return;
+    }
     const currentMove = this.moves[index];
     switch (currentMove) {
     case Move.none:
@@ -90,6 +92,13 @@ class RocketAI extends Rocket {
     case Move.right:
       this.angle += this.turn;
       break;
+    }
+  }
+
+  reduceHealth() {
+    super.reduceHealth();
+    if (this.health <= 0) {
+      this.survive = false;
     }
   }
 

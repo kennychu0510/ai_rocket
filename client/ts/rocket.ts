@@ -37,6 +37,7 @@ export class Rocket {
   public collectedStars: number;
   protected health: number;
   public teleportTimeout: number;
+  public flyingTimeout: number;
   public stars: Set<Star>;
   private initialPosition: Position;
   constructor(public game: Game) {
@@ -56,6 +57,7 @@ export class Rocket {
     this.collectedStars = 0;
     this.health = 3;
     this.teleportTimeout = 0;
+    this.flyingTimeout = 0;
     this.stars = new Set(game.stars);
   }
 
@@ -72,10 +74,10 @@ export class Rocket {
       -(this.position.y + this.height / 2),
     );
     let image;
-    if (this.velocity.x == 0 && this.velocity.y === 0) {
-      image = this.image_static;
-    } else {
+    if (this.flyingTimeout > 0) {
       image = this.image_flying;
+    } else {
+      image = this.image_static;
     }
 
     /* Resize boom image */
@@ -94,6 +96,7 @@ export class Rocket {
 
   changeDirection(key: string) {
     if (key === 'w') {
+      this.flyingTimeout = 10;
       const x_direction =
         this.acceleration * Math.sin(degreeToRadian(this.angle));
       const y_direction =
@@ -195,6 +198,7 @@ export class Rocket {
   }
 
   update() {
+    if (this.flyingTimeout > 0) this.flyingTimeout--;
     if (this.health <= 0) return;
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
