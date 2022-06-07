@@ -5,7 +5,7 @@ export class CanvasText {
   private font: string;
   private color: string;
   private position: Position;
-  private ctx: CanvasRenderingContext2D;
+  public ctx: CanvasRenderingContext2D;
   constructor(message: string, position: Position, canvasHeight: number, ctx: CanvasRenderingContext2D) {
     this.message = message;
     const fontSize = canvasHeight * 0.05;

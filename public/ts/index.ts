@@ -10,6 +10,8 @@ const canvas = _canvas;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
 const genStarBtn = getDOMElement('#gen-star');
+const genMeteoriteBtn = getDOMElement('#gen-meteor');
+const genBlackholeBtn = getDOMElement('#gen-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
@@ -30,6 +32,8 @@ canvas.height = window.innerHeight - 100;
 
 /* VARIABLES */
 const starSize = 20;
+const meteoriteSize = 50;
+const blackholeSize = 80;
 
 const boundaryOffset = 20;
 // const trackTopBound = boundaryOffset;
@@ -71,9 +75,9 @@ function animate() {
 
   game.draw();
 
-  for (const star of game.stars) {
-    star.draw();
-  }
+  // for (const star of game.stars) {
+  //   star.draw();
+  // }
 
   // userCar.slowDown()
   game.update();
@@ -128,6 +132,14 @@ canvas.addEventListener('click', (e) => {
 genStarBtn.addEventListener('click', () => {
   game.generateStars();
   totalScore.textContent = String(game.stars.length);
+});
+
+genMeteoriteBtn.addEventListener('click', () => {
+  game.generateMeteorite();
+});
+
+genBlackholeBtn.addEventListener('click', () => {
+  game.generateBlackholePair();
 });
 
 // UPDATE ROCKET SPEED DISPLAY VALUE

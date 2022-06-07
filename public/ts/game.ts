@@ -2,7 +2,9 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star } from './star.js';
-import { GameBoundary, Position } from './type.js';
+import { BlackholePairType, GameBoundary, Position } from './type.js';
+import { Meteorite } from './meteorite.js';
+import { BlackholePair } from './blackhole.js';
 
 export class Game {
   public statusMessage: CanvasText;
@@ -15,6 +17,8 @@ export class Game {
   private canvasHeight: number;
   public gameStarted: boolean;
   public stars: Star[];
+  public meteorites: Meteorite[];
+  public blackholes: BlackholePair[];
   public buttons: string[];
   public rocket: Rocket;
   public boundary: Boundary;
@@ -42,6 +46,8 @@ export class Game {
     this.startTime = new Date();
     this.starSize = 0;
     this.stars = [];
+    this.meteorites = [];
+    this.blackholes = [];
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
     this.gameBoundaries = gameBoundaries;
@@ -50,9 +56,19 @@ export class Game {
   addStar(position: Position) {
     const newStar = new Star(position, this.canvasWidth, this.ctx);
     this.stars.push(newStar);
-    // totalScore.textContent = String(this.stars.length);
     this.totalStars++;
   }
+
+  addMeteorite(position: Position) {
+    const newMeteorite = new Meteorite(position, this.canvasWidth, this.ctx);
+    this.meteorites.push(newMeteorite);
+  }
+
+  addBlackholePair(blackholePair: BlackholePairType) {
+    const newBlackholePair = new BlackholePair(blackholePair, this.canvasWidth, this.ctx);
+    this.blackholes.push(newBlackholePair);
+  }
+
   startGame() {
     this.gameStarted = true;
     this.startTime = new Date();
@@ -92,7 +108,7 @@ export class Game {
       const dy = (this.rocket.position.y + this.rocket.height / 2) - (star.getY() + this.starSize / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < Math.sqrt(this.rocket.width ** 2 + this.rocket.height ** 2) / 2 + this.starSize / 2) {
+      if (distance < this.rocket.getC() / 2 + this.starSize / 2) {
         this.stars.splice(i, 1);
         i--;
         this.rocket.collectedStars++;
@@ -101,10 +117,45 @@ export class Game {
     }
   }
 
+  checkBlackholeTeleportation() {
+    for (const blackholePair of this.blackholes) {
+      const dx1 = (this.rocket.position.x + this.rocket.width / 2) - (blackholePair.blackhole1.x + blackholePair.size / 2);
+      const dy1 = (this.rocket.position.y + this.rocket.height / 2) - (blackholePair.blackhole1.y + blackholePair.size / 2);
+      const dx2 = (this.rocket.position.x + this.rocket.width / 2) - (blackholePair.blackhole2.x + blackholePair.size / 2);
+      const dy2 = (this.rocket.position.y + this.rocket.height / 2) - (blackholePair.blackhole2.y + blackholePair.size / 2);
+      const distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+      const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      const range = this.rocket.getC() / 2 + blackholePair.size / 2;
+
+      if (distance1 <= range / 2) {
+        this.rocket.position.x = blackholePair.blackhole2.x - dx1 * 2;
+        this.rocket.position.y = blackholePair.blackhole2.y - dy1 * 2;
+      } else if (distance2 <= range / 2) {
+        this.rocket.position.x = blackholePair.blackhole1.x - dx2 * 2;
+        this.rocket.position.y = blackholePair.blackhole1.y - dy2 * 2;
+      }
+    }
+  }
+
+  checkMeoriteCollision() {
+    for (const meteorite of this.meteorites) {
+      const dx = (this.rocket.position.x + this.rocket.width / 2) - (meteorite.position.x + meteorite.size / 2);
+      const dy = (this.rocket.position.y + this.rocket.height / 2) - (meteorite.position.y + meteorite.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < this.rocket.getC() / 2 + meteorite.size / 2) {
+        this.rocket.velocity.x = -this.rocket.velocity.x;
+        this.rocket.velocity.y = -this.rocket.velocity.y;
+        this.rocket.reduceHealth();
+      }
+    }
+  }
+
   update() {
     this.rocket.draw();
     this.checkRocketAndBoundary();
     this.checkStarCollection();
+    this.checkMeoriteCollision();
+    this.checkBlackholeTeleportation();
     this.rocket.updateRocketPosition();
   }
 
@@ -121,11 +172,54 @@ export class Game {
     this.addStar(position);
   }
 
+  generateMeteorite() {
+    const offset = 100;
+    const maxY = this.gameBoundaries.bot - offset;
+    const minY = this.gameBoundaries.top + offset;
+    const maxX = this.gameBoundaries.right - offset;
+    const minX = this.gameBoundaries.left + offset;
+    const x = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+    const y = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+    const position = { x, y };
+    this.addMeteorite(position);
+  }
+
+  generateBlackholePair() {
+    const offset = 100;
+    const maxY = this.gameBoundaries.bot - offset;
+    const minY = this.gameBoundaries.top + offset;
+    const maxX = this.gameBoundaries.right - offset;
+    const minX = this.gameBoundaries.left + offset;
+    const x1 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+    const y1 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+    const x2 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+    const y2 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+    const position1 = { x: x1, y: y1 };
+    const position2 = { x: x2, y: y2 };
+    const blackholePair: BlackholePairType = {
+      blackhole1: position1,
+      blackhole2: position2,
+    };
+    this.addBlackholePair(blackholePair);
+  }
+
   draw() {
     this.statusMessage.draw();
     this.statusMessage.draw();
     this.gameInstructions.draw();
     this.boundary.draw();
+
+    for (const star of this.stars) {
+      star.draw();
+    }
+
+    for (const blackholePair of this.blackholes) {
+      blackholePair.draw();
+    }
+
+    for (const meteorite of this.meteorites) {
+      meteorite.draw();
+    }
   }
 
   reset() {

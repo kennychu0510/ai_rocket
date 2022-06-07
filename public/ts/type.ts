@@ -9,3 +9,8 @@ export type GameBoundary = {
   right: number,
   bot: number
 }
+
+export type BlackholePairType = {
+  blackhole1: Position,
+  blackhole2: Position,
+}

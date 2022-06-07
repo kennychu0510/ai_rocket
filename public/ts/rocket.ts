@@ -8,20 +8,29 @@ spaceshipImg.src = './media/rocket_1.png';
 const spaceshipFlyingImg = new Image();
 spaceshipFlyingImg.src = './media/rocket_2.png';
 
+const spaceshipDamagedImg = new Image();
+spaceshipDamagedImg.src = './media/spaceship_damaged.png';
+
+const spaceshipDecadeImg = new Image();
+spaceshipDecadeImg.src = './media/spaceship_decade.png';
+
+const boomImg = new Image();
+boomImg.src = './media/boom.png';
 export class Rocket {
   public position: Position;
-  private velocity: Position;
+  public velocity: Position;
   public width: number;
   public height: number;
   private acceleration: number;
-  private image_static: HTMLImageElement;
-  private image_flying: HTMLImageElement;
+  public image_static: HTMLImageElement;
+  public image_flying: HTMLImageElement;
   public alive: boolean;
   private angle: number;
   private turn: number;
   public collectedStars: number;
   private ctx: CanvasRenderingContext2D;
   private boundary: Boundary;
+  private health: number;
   constructor(position: Position, velocity: Position, canvasWidth: number, ctx: CanvasRenderingContext2D, boundary: Boundary) {
     this.position = position;
     this.velocity = velocity;
@@ -36,6 +45,7 @@ export class Rocket {
     this.collectedStars = 0;
     this.ctx = ctx;
     this.boundary = boundary;
+    this.health = 3;
   }
 
   draw() {
@@ -50,6 +60,11 @@ export class Rocket {
       image = this.image_flying;
     }
 
+    /* Resize boom image */
+    if (this.health === 0) {
+      this.height = this.height * 1.5;
+      this.width = this.height;
+    }
     this.ctx.drawImage(image, this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)), this.position.y + this.velocity.y, this.width, this.height);
     // c.fillRect(this.position.x, this.position.y, this.size, this.size)
     // c.fill()
@@ -123,5 +138,26 @@ export class Rocket {
   setPosition(position: Position) {
     this.position = position;
     this.velocity = { x: 0, y: 0 };
+  }
+
+  getC() {
+    return Math.sqrt(this.width ** 2 + this.height ** 2);
+  }
+
+  reduceHealth() {
+    this.health--;
+    if (this.health === 2) {
+      this.image_static = spaceshipDecadeImg;
+      this.image_flying = spaceshipDecadeImg;
+      this.changeAcceleration(this.acceleration * 0.75);
+    } else if (this.health === 1) {
+      this.image_static = spaceshipDamagedImg;
+      this.image_flying = spaceshipDamagedImg;
+      this.changeAcceleration(this.acceleration * 0.75);
+    } else if (this.health >= 0) {
+      this.image_static = boomImg;
+      this.image_flying = boomImg;
+      this.stop();
+    }
   }
 }
