@@ -1,5 +1,7 @@
 import { Boundary } from './boundary.js';
 import { degreeToRadian } from './functions.js';
+import { Game } from './game.js';
+import { Star } from './star.js';
 import { Position } from './type.js';
 
 const spaceshipImg = new Image();
@@ -28,17 +30,17 @@ export class Rocket {
   private angle: number;
   private turn: number;
   public collectedStars: number;
-  private ctx: CanvasRenderingContext2D;
-  private boundary: Boundary;
   private health: number;
   public teleportTimeout: number;
+  private stars: Set<Star>;
+  private initialPosition: Position;
   constructor(
-    canvasWidth: number,
-    canvasHeight: number,
-    ctx: CanvasRenderingContext2D,
-    boundary: Boundary,
+    private game: Game,
   ) {
+    const canvasWidth = game.canvasWidth;
+    const canvasHeight = game.canvasHeight;
     this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
+    this.initialPosition = { x: this.position.x, y: this.position.y };
     this.velocity = { x: 0, y: 0 };
     this.acceleration = 0.002 * canvasWidth;
     this.width = 0.02 * canvasWidth;
@@ -49,20 +51,20 @@ export class Rocket {
     this.alive = true;
     this.angle = 90;
     this.collectedStars = 0;
-    this.ctx = ctx;
-    this.boundary = boundary;
     this.health = 3;
     this.teleportTimeout = 0;
+    this.stars = new Set(game.stars);
   }
 
   draw() {
-    this.ctx.save();
-    this.ctx.translate(
+    const ctx = this.game.ctx;
+    ctx.save();
+    ctx.translate(
       this.position.x + this.width / 2,
       this.position.y + this.height / 2,
     );
-    this.ctx.rotate((this.angle * Math.PI) / 180);
-    this.ctx.translate(
+    ctx.rotate((this.angle * Math.PI) / 180);
+    ctx.translate(
       -(this.position.x + this.width / 2),
       -(this.position.y + this.height / 2),
     );
@@ -78,7 +80,7 @@ export class Rocket {
       this.height = this.height * 1.5;
       this.width = this.height;
     }
-    this.ctx.drawImage(
+    ctx.drawImage(
       image,
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
@@ -87,11 +89,8 @@ export class Rocket {
     );
     // c.fillRect(this.position.x, this.position.y, this.size, this.size)
     // c.fill()
-    this.ctx.restore();
+    ctx.restore();
     // c.rotate(10)
-    if (this.teleportTimeout > 0) {
-      this.teleportTimeout--;
-    }
   }
 
   changeDirection(key: string) {
@@ -148,6 +147,7 @@ export class Rocket {
     this.velocity.x = 0;
     this.alive = false;
   }
+
   changeAcceleration(acceleration: number) {
     this.acceleration = acceleration;
   }
@@ -159,6 +159,8 @@ export class Rocket {
     this.collectedStars = 0;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
+    this.position.x = this.initialPosition.x;
+    this.position.y = this.initialPosition.y;
   }
 
   setPosition(position: Position) {
@@ -192,5 +194,134 @@ export class Rocket {
     console.log(new Date().getTime());
   }
 
-  /* GENETIC ALGORITHM */
+  update() {
+    if (this.teleportTimeout > 0) {
+      this.teleportTimeout--;
+    }
+    this.checkRocketAndBoundary();
+    this.checkStarCollection();
+    this.checkMeoriteCollision();
+    this.checkBlackholeTeleportation();
+  }
+
+  checkRocketAndBoundary() {
+    const gameBoundaries = this.game.boundary;
+    if (this.game.boundary.getBoundaryMode()) {
+      if (
+        this.position.y < gameBoundaries.top ||
+        this.position.y + this.height > gameBoundaries.bot ||
+        this.position.x < gameBoundaries.left ||
+        this.position.x + this.width > gameBoundaries.right
+      ) {
+        this.stop();
+        this.game.reportRocketDead();
+
+        return;
+      }
+    } else {
+      if (this.position.y < gameBoundaries.top) {
+        this.position.y = gameBoundaries.bot - this.height;
+      }
+      if (
+        this.position.y + this.height >
+        gameBoundaries.bot
+      ) {
+        this.position.y = gameBoundaries.top;
+      }
+      if (this.position.x < gameBoundaries.left) {
+        this.position.x = gameBoundaries.right - this.width;
+      }
+      if (
+        this.position.x + this.width >
+        gameBoundaries.right
+      ) {
+        this.position.x = gameBoundaries.left;
+      }
+    }
+  }
+
+  checkStarCollection() {
+    for (const star of this.stars) {
+      const dx =
+        this.position.x +
+        this.width / 2 -
+        (star.getX() + star.size / 2);
+      const dy =
+        this.position.y +
+        this.height / 2 -
+        (star.getY() + star.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.getC() / 2 + star.size / 2) {
+        this.stars.delete(star);
+        this.collectedStars++;
+        // currentScore.textContent = String(this.collectedStars);
+      }
+    }
+  }
+
+  checkBlackholeTeleportation() {
+    for (const blackholePair of this.game.blackholes) {
+      const dx1 =
+        this.position.x +
+        this.width / 2 -
+        (blackholePair.blackhole1.x + blackholePair.size / 2);
+      const dy1 =
+        this.position.y +
+        this.height / 2 -
+        (blackholePair.blackhole1.y + blackholePair.size / 2);
+      const dx2 =
+        this.position.x +
+        this.width / 2 -
+        (blackholePair.blackhole2.x + blackholePair.size / 2);
+      const dy2 =
+        this.position.y +
+        this.height / 2 -
+        (blackholePair.blackhole2.y + blackholePair.size / 2);
+      const distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+      const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      const range = this.getC() / 2 + blackholePair.size / 2;
+
+      if (distance1 <= range / 2 && this.teleportTimeout === 0) {
+        this.position.x =
+          blackholePair.blackhole2.x +
+          blackholePair.size / 2 -
+          this.width / 2;
+        this.position.y =
+          blackholePair.blackhole2.y +
+          blackholePair.size / 2 -
+          this.height / 2;
+        this.setTeleportationTimeout();
+      } else if (distance2 <= range / 2 && this.teleportTimeout === 0) {
+        this.position.x =
+          blackholePair.blackhole1.x +
+          blackholePair.size / 2 -
+          this.width / 2;
+        this.position.y =
+          blackholePair.blackhole1.y +
+          blackholePair.size / 2 -
+          this.height / 2;
+        this.setTeleportationTimeout();
+      }
+    }
+  }
+
+  checkMeoriteCollision() {
+    for (const meteorite of this.game.meteorites) {
+      const dx =
+        this.position.x +
+        this.width / 2 -
+        (meteorite.position.x + meteorite.size / 2);
+      const dy =
+        this.position.y +
+        this.height / 2 -
+        (meteorite.position.y + meteorite.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < this.getC() / 2 + meteorite.size / 2) {
+        this.velocity.x = -this.velocity.x;
+        this.velocity.y = -this.velocity.y;
+        this.reduceHealth();
+      }
+    }
+  }
 }

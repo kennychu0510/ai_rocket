@@ -1,25 +1,15 @@
 export class Boundary {
-  private top: number;
-  private right: number;
-  private bot: number;
-  private left: number;
   private color: string;
   private boundaryModeOn: boolean;
-  private ctx: CanvasRenderingContext2D;
   constructor(
-    top: number,
-    right: number,
-    bot: number,
-    left: number,
-    ctx: CanvasRenderingContext2D,
+    public top: number,
+    public right: number,
+    public bot: number,
+    public left: number,
+    private ctx: CanvasRenderingContext2D,
   ) {
-    this.top = top;
-    this.right = right;
-    this.bot = bot;
-    this.left = left;
     this.color = 'green';
     this.boundaryModeOn = false;
-    this.ctx = ctx;
   }
   draw() {
     this.ctx.beginPath();

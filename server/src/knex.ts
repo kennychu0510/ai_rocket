@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import Knex, { Knex as KnexType } from 'knex';
 
-const configs = require('./knexfile');
+const configs = require('../knexfile');
 const mode = 'development';
 const config = configs[mode];
 

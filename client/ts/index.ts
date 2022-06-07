@@ -1,3 +1,4 @@
+import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { GameBoundary } from './type.js';
@@ -31,8 +32,6 @@ canvas.height = window.innerHeight - 100;
 
 /* VARIABLES */
 const starSize = 20;
-const meteoriteSize = 50;
-const blackholeSize = 80;
 
 const boundaryOffset = 20;
 // const trackTopBound = boundaryOffset;
@@ -75,12 +74,6 @@ function animate() {
   }
 
   game.draw();
-
-  // for (const star of game.stars) {
-  //   star.draw();
-  // }
-
-  // userCar.slowDown()
   game.update();
   currentScore.textContent = String(game.rocket.collectedStars);
   // console.log(userCar.stats())
@@ -171,7 +164,7 @@ saveStarsBtn.addEventListener('click', () => {
     count: game.stars.length,
     coordinates: JSON.stringify(listOfStarsPercentage),
   };
-  fetch('/star-map', {
+  fetch(APIOrigin + '/star-map', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
