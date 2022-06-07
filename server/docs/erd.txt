@@ -18,7 +18,13 @@ star_map
 -----
 id pk
 count 
-coordinates string
+coordinates text
+
+obstacles_map
+-----
+id pk
+count
+coordinates text
 
 
 scores
