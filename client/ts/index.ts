@@ -1,6 +1,7 @@
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
+import { RocketGA } from './rocketGA.js';
 import { GameBoundary } from './type.js';
 
 /* QUERY SELECTORS */
@@ -17,6 +18,7 @@ const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
+const seedBtn = getDOMElement('#seed');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -27,21 +29,18 @@ const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
+const canvasOffset = 120;
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 100;
+canvas.height = window.innerHeight - canvasOffset;
 
 /* VARIABLES */
 const starSize = 20;
-
 const boundaryOffset = 20;
-// const trackTopBound = boundaryOffset;
-// const trackBotBound = canvas.height - boundaryOffset;
-// const trackLeftBound = boundaryOffset;
-// const trackRightBound = canvas.width - boundaryOffset;
+
 
 const gameBoundaries: GameBoundary = {
   top: boundaryOffset,
-  bot: window.innerHeight - 100 - boundaryOffset,
+  bot: window.innerHeight - canvasOffset - boundaryOffset,
   left: boundaryOffset,
   right: window.innerWidth - boundaryOffset,
 };
@@ -55,7 +54,7 @@ function animate() {
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   /* CHECK IF ALL STARS COLLECTED */
-  if (game.totalStars === game.rocket.collectedStars && game.gameStarted) {
+  if (game.totalStars === game.rocket.collectedStars && game.gameStarted && !game.startAI) {
     game.statusMessage.updateMsg('Well Done!');
     game.rocket.stop();
     const endTime = new Date();
@@ -176,4 +175,9 @@ saveStarsBtn.addEventListener('click', () => {
     .then((json) => {
       console.log(json.id);
     });
+});
+
+seedBtn.addEventListener('click', () => {
+  game.seed();
+  game.startGame();
 });

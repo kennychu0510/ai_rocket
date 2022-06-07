@@ -5,6 +5,7 @@ import { Star } from './star.js';
 import { BlackholePairType, GameBoundary, Position } from './type.js';
 import { Meteorite } from './meteorite.js';
 import { BlackholePair } from './blackhole.js';
+import { RocketGA } from './rocketGA.js';
 
 export class Game {
   public statusMessage: CanvasText;
@@ -24,8 +25,10 @@ export class Game {
   public boundary: Boundary;
   private canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
+  private rocketGA: RocketGA;
   private initialPosition: Position;
   private aliveCount = 0;
+  public startAI: boolean;
   constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
@@ -66,6 +69,8 @@ export class Game {
     this.blackholes = [];
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
+    this.rocketGA = new RocketGA(this);
+    this.startAI = false;
   }
 
   addStar(position: Position) {
@@ -104,9 +109,8 @@ export class Game {
   }
 
   update() {
-    this.rocket.draw();
     this.rocket.update();
-    this.rocket.updateRocketPosition();
+    this.rocketGA.update();
   }
 
   generateStars() {
@@ -170,6 +174,8 @@ export class Game {
     for (const meteorite of this.meteorites) {
       meteorite.draw();
     }
+    this.rocketGA.draw();
+    this.rocket.draw();
   }
 
   reset() {
@@ -201,4 +207,9 @@ export class Game {
   //     star.draw();
   //   }
   // };
+  seed() {
+    this.rocketGA.seed();
+    this.startAI = true;
+    console.log('seed button');
+  }
 }

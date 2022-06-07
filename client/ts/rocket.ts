@@ -1,4 +1,3 @@
-import { Boundary } from './boundary.js';
 import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Star } from './star.js';
@@ -23,14 +22,14 @@ export class Rocket {
   public velocity: Position;
   public width: number;
   public height: number;
-  private acceleration: number;
+  protected acceleration: number;
   public image_static: HTMLImageElement;
   public image_flying: HTMLImageElement;
-  public alive: boolean;
-  private angle: number;
-  private turn: number;
+  // public alive: boolean;
+  protected angle: number;
+  protected turn: number;
   public collectedStars: number;
-  private health: number;
+  protected health: number;
   public teleportTimeout: number;
   public stars: Set<Star>;
   private initialPosition: Position;
@@ -46,7 +45,7 @@ export class Rocket {
     this.turn = 45;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
-    this.alive = true;
+    // this.alive = true;
     this.angle = 90;
     this.collectedStars = 0;
     this.health = 3;
@@ -74,10 +73,6 @@ export class Rocket {
     }
 
     /* Resize boom image */
-    if (this.health === 0) {
-      this.height = this.height * 1.5;
-      this.width = this.height;
-    }
     ctx.drawImage(
       image,
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
@@ -143,7 +138,6 @@ export class Rocket {
   stop() {
     this.velocity.y = 0;
     this.velocity.x = 0;
-    this.alive = false;
   }
 
   changeAcceleration(acceleration: number) {
@@ -152,7 +146,7 @@ export class Rocket {
 
   reset() {
     this.stop();
-    this.alive = true;
+    this.health = 3;
     this.angle = 90;
     this.collectedStars = 0;
     this.image_static = spaceshipImg;
@@ -181,6 +175,8 @@ export class Rocket {
       this.image_flying = spaceshipDamagedImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health >= 0) {
+      this.height = this.height * 1.5;
+      this.width = this.height;
       this.image_static = boomImg;
       this.image_flying = boomImg;
       this.stop();
@@ -193,6 +189,7 @@ export class Rocket {
   }
 
   update() {
+    if (this.health <= 0) return;
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
     }
@@ -200,6 +197,7 @@ export class Rocket {
     this.checkStarCollection();
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
+    this.updateRocketPosition();
   }
 
   checkRocketAndBoundary() {
