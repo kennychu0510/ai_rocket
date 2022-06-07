@@ -74,7 +74,6 @@ export class Rocket {
     // c.rotate(10)
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
-      console.log(new Date().getTime());
     }
   }
 
