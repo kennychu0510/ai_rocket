@@ -14,7 +14,7 @@ export class ObsMapService {
         count: count,
         coordinates: coordinates,
       })
-      .into ('obs_map')
+      .into ('obstacles_location')
       .returning ('id')
     return row[0].id
   }

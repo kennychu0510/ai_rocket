@@ -1,16 +1,16 @@
 import express from 'express';
 import path from 'path';
-import { StarMapService } from './starMap-services';
 import { knex } from './knex';
+import { StarMapService } from './starMap-services';
 import { StarMapController } from './starMap-controller';
-import { ObsMapService } from './obsMap-services';
-import { ObsMapController } from './obsMap-controller';
+import { MeteoriteService } from './meteorite-services';
+import { MeteoriteController } from './meteorite-controller';
 
 const starMapService = new StarMapService(knex);
 export const starMapController = new StarMapController(starMapService);
 
-const obsMapService = new ObsMapService(knex);
-export const obsMapController = new ObsMapController(obsMapService);
+const meteoriteService = new MeteoriteService(knex);
+export const meteoriteController = new MeteoriteController(meteoriteService);
 
 import { routes } from './routes';
 export const app = express();

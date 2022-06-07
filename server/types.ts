@@ -4,7 +4,7 @@ export type StarMap = {
   coordinates: string
 }
 
-export type ObsMap = {
+export type meteorite = {
   id?: number
   count: number
   coordinates: string

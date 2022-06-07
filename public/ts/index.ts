@@ -15,8 +15,9 @@ const genBlackholeBtn = getDOMElement('#gen-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
-const saveStarsBtn = getDOMElement('#save-stars');
+const saveObjBtn = getDOMElement('#save-obj');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
+const easyMode = getDOMElement('#easy-mode');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -160,7 +161,31 @@ boundaryModeBtn.addEventListener('click', () => {
   }
 });
 
-saveStarsBtn.addEventListener('click', () => {
+// saveStarsBtn.addEventListener('click', () => {
+//   const listOfStarsPercentage = game.stars.map((star) => {
+//     const newX = star.getX() / canvas.width;
+//     const newY = star.getY() / canvas.height;
+//     return { x: newX, y: newY };
+//   });
+//   const starMap = {
+//     count: game.stars.length,
+//     coordinates: JSON.stringify(listOfStarsPercentage),
+//   };
+//   fetch('/star-map', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({
+//       starMap,
+//     }),
+//   })
+//     .then((res) => res.json())
+//     .catch((err) => ({ error: String(err) }))
+//     .then((json) => {
+//       console.log(json.id);
+//     });
+// });
+
+saveObjBtn.addEventListener('click', () => {
   const listOfStarsPercentage = game.stars.map((star) => {
     const newX = star.getX() / canvas.width;
     const newY = star.getY() / canvas.height;
@@ -182,4 +207,18 @@ saveStarsBtn.addEventListener('click', () => {
     .then((json) => {
       console.log(json.id);
     });
+  
+  const listOfMeteoritePercentage = game.meteorites.map(()=>{
+    
+  })
 });
+
+
+
+
+easyMode.addEventListener('click', () => {
+  console.log("coordinates");
+  fetch('/easy-mode', {
+    method: 'GET',
+  })
+})

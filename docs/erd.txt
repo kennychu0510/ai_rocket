@@ -14,13 +14,19 @@
 ////////////////////////////////////
 
 
-star_map
+star_location
 -----
 id pk
 count 
 coordinates text
 
-obs_map
+meteorite_location
+-----
+id pk
+count
+coordinates text
+
+black_hole_location
 -----
 id pk
 count
@@ -30,7 +36,8 @@ coordinates text
 scores
 ---------
 id pk
-user string
-star_map_id fk - star_map.id
-time time
-
+user varchar(30)
+star_location_id fk >- star_location.id
+meteorite_location_id fk >- meteorite_location.id
+black_hole_location_id fk >- black_hole_location.id
+duration 
