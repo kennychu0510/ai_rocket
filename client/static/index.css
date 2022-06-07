@@ -6,9 +6,15 @@ body {
   color: white;
 }
 
-main {
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
 #scoreboard {
@@ -35,20 +41,28 @@ main {
   text-align: end;
 }
 
-#bottom-panel,
-#bottom-panel-2 {
-  margin: 5px 20px;
+#canvas-container {
+  flex-grow: 1;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
-#control-panel-left > * {
-  margin-right: 5px;
+#control-panel-1 {
+  display: flex;
+}
+
+#control-panel-1 > * {
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 input {
   width: 50px;
+}
+
+#footer {
+  margin: 20px;
 }
 
 

@@ -34,6 +34,7 @@ const timerSeconds = getDOMElement('#second');
 const canvasOffset = 120;
 canvas.height = window.innerHeight * 0.78;
 canvas.width = window.innerHeight * 1.8;
+console.log(canvas.width, canvas.height);
 console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
@@ -188,7 +189,7 @@ seedBtn.addEventListener('click', () => {
   game.startGame();
 });
 
-window.addEventListener('resize', () => {
-  canvas.height = window.innerHeight * 0.78;
-  canvas.width = window.innerHeight * 1.8;
-});
+// window.addEventListener('resize', () => {
+//   canvas.height = window.innerHeight * 0.78;
+//   canvas.width = window.innerHeight * 1.8;
+// });

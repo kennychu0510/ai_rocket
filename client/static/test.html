@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <style>
+        html, body, #app {
+            height: 100%;
+        }
+
+        body {
+            margin: 0
+        }
+
+        #app {
+            background-color: aqua;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            background-color: blue;
+            color: white;
+        }
+
+        #content {
+            background-color: yellow;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        #footer {
+            background-color: lightblue;
+        }
+
+        #header, #content, #footer {
+            padding: 0.5em;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="header">
+        Back button
+    </div>
+    <div id="content">
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <!-- <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p>
+        <p>chat history</p> -->
+    </div>
+    <div id="footer">
+        inputs
+    </div>
+</div>
+<script>
+    document.body.addEventListener('DOMNodeInserted', () => {
+        document.querySelectorAll('.TridactylStatusIndicator').forEach(e => e.remove())
+    })
+</script>
+</body>
+</html>

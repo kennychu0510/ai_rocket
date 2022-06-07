@@ -58,12 +58,14 @@ class RocketAI extends Rocket {
   survive: boolean;
   moves: Move[];
   rocketGA: RocketGA;
+  private color: string;
   constructor(game: Game, rocketGA: RocketGA) {
     super(game);
     this.rocketGA = rocketGA;
     this.fitness = 0;
     this.survive = true;
     this.moves = generateMoves(this.rocketGA.Tick_Step);
+    this.color = randomColor();
   }
   move(index: number) {
     /* CONVERT TIMESTAMP TO INDEX IN MOVES */
@@ -90,7 +92,17 @@ class RocketAI extends Rocket {
       break;
     }
   }
+
+  draw() {
+    this.game.ctx.beginPath();
+    this.game.ctx.arc(this.position.x + this.width/2, this.position.y + this.height/2, this.getC()/3, 0, 2*Math.PI);
+    this.game.ctx.fillStyle = this.color;
+    this.game.ctx.fill();
+    this.game.ctx.closePath();
+    super.draw();
+  }
 }
+
 
 export enum Move {
   none = 0,
@@ -111,4 +123,8 @@ function generateMoves(steps: number) {
 
 function getMove() {
   return Math.floor(Math.random() * 4); // The maximum is inclusive and the minimum is inclusive
+}
+
+function randomColor() {
+  return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }

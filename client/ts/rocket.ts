@@ -39,7 +39,7 @@ export class Rocket {
   public teleportTimeout: number;
   public stars: Set<Star>;
   private initialPosition: Position;
-  constructor(private game: Game) {
+  constructor(public game: Game) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
     this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
