@@ -11,7 +11,7 @@
     "start": "ts-node-dev server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "erd": "npx erd-to-knex < ./docs/erd.txt > migrations/001-create-tables.ts",
-    "automigrate": "npx auto-migrate pg << ./docs/erd.txt",
+    "automigrate": "npx auto-migrate pg < ./docs/erd.txt",
     "migrate": "yarn knex migrate:latest",
     "rollback": "yarn knex migrate:rollback"
   },
