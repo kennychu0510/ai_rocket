@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint --fix migrations/* && eslint --fix ./*.ts",
-    "prettify": "yarn prettier --write migrations/* && yarn prettier --write ./",
+    "lint": "eslint --fix \"./{src,migration}/**/*.ts\"",
+    "prettify": "yarn prettier --write \"./{src,migration}/**/*.ts\"",
     "format": "yarn run prettify && yarn run lint",
     "commit": "npm run format && npm run lint && git gui",
     "start": "ts-node-dev server.ts",

@@ -38,7 +38,7 @@ export class Rocket {
     ctx: CanvasRenderingContext2D,
     boundary: Boundary,
   ) {
-    this.position = { x: canvasHeight/4, y: canvasWidth / 10 };
+    this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
     this.velocity = { x: 0, y: 0 };
     this.acceleration = 0.002 * canvasWidth;
     this.width = 0.02 * canvasWidth;

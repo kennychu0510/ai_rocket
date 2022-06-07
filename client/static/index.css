@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-image: url("./media/space_background.png");
+  background-image: url("/media/space_background.png");
   background-repeat: no-repeat;
   background-size: cover;
   color: white;
