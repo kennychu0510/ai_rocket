@@ -22,7 +22,7 @@ export class StarMapService {
     const results = await this.knex
       .select('id', 'count', 'coordinates')
       .from('star_map')
-      .where('count', '4');
+      .where('count', '2');
     return results;
   }
 }

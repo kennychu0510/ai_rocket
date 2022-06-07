@@ -431,9 +431,11 @@ saveStarsBtn.addEventListener('click', () => {
 });
 
 easyMode.addEventListener('click', () => {
+  console.log("coordinates");
   fetch('/easy-mode', {
     method: 'GET',
   })
+  
   
 })
 
