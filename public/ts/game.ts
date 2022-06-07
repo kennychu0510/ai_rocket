@@ -42,9 +42,8 @@ export class Game {
       this.ctx,
     )),
     (this.rocket = new Rocket(
-      this.initialPosition,
-      { x: 0, y: 0 },
       this.canvasWidth,
+      this.canvasHeight,
       this.ctx,
       this.boundary,
     )),

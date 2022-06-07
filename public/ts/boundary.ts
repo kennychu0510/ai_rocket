@@ -17,8 +17,8 @@ export class Boundary {
     this.right = right;
     this.bot = bot;
     this.left = left;
-    this.color = 'red';
-    this.boundaryModeOn = true;
+    this.color = 'green';
+    this.boundaryModeOn = false;
     this.ctx = ctx;
   }
   draw() {

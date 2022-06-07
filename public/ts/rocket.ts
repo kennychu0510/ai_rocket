@@ -33,14 +33,13 @@ export class Rocket {
   private health: number;
   public teleportTimeout: number;
   constructor(
-    position: Position,
-    velocity: Position,
     canvasWidth: number,
+    canvasHeight: number,
     ctx: CanvasRenderingContext2D,
     boundary: Boundary,
   ) {
-    this.position = position;
-    this.velocity = velocity;
+    this.position = { x: canvasHeight/4, y: canvasWidth / 10 };
+    this.velocity = { x: 0, y: 0 };
     this.acceleration = 0.002 * canvasWidth;
     this.width = 0.02 * canvasWidth;
     this.height = this.width * 2;
@@ -192,4 +191,6 @@ export class Rocket {
     this.teleportTimeout = 60;
     console.log(new Date().getTime());
   }
+
+  /* GENETIC ALGORITHM */
 }
