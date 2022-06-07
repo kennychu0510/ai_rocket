@@ -4,16 +4,22 @@ import { Star } from './star.js';
 import { Position } from './type.js';
 
 const spaceshipImg = new Image();
-spaceshipImg.src = './media/rocket_1.png';
+spaceshipImg.src = './media/rocket_1_static.png';
 
 const spaceshipFlyingImg = new Image();
-spaceshipFlyingImg.src = './media/rocket_2.png';
+spaceshipFlyingImg.src = './media/rocket_1_flying.png';
 
 const spaceshipDamagedImg = new Image();
-spaceshipDamagedImg.src = './media/spaceship_damaged.png';
+spaceshipDamagedImg.src = './media/rocket_2_static.png';
 
-const spaceshipDecadeImg = new Image();
-spaceshipDecadeImg.src = './media/spaceship_decade.png';
+const spaceshipDamagedFylingImg = new Image();
+spaceshipDamagedFylingImg.src = './media/rocket_2_flying.png';
+
+const spaceshipBrokenImg = new Image();
+spaceshipBrokenImg.src = './media/rocket_3_static.png';
+
+const spaceshipBrokenFlyingImg = new Image();
+spaceshipBrokenFlyingImg.src = './media/rocket_3_flying.png';
 
 const boomImg = new Image();
 boomImg.src = './media/boom.png';
@@ -167,12 +173,12 @@ export class Rocket {
   reduceHealth() {
     this.health--;
     if (this.health === 2) {
-      this.image_static = spaceshipDecadeImg;
-      this.image_flying = spaceshipDecadeImg;
+      this.image_static = spaceshipDamagedImg;
+      this.image_flying = spaceshipDamagedFylingImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health === 1) {
-      this.image_static = spaceshipDamagedImg;
-      this.image_flying = spaceshipDamagedImg;
+      this.image_static = spaceshipBrokenImg;
+      this.image_flying = spaceshipBrokenFlyingImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health >= 0) {
       this.height = this.height * 1.5;
