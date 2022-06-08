@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable('scores', table => {
       table.increments('id')
       table.string('user', 30).notNullable()
-      table.integer('time').notNullable()
+      table.string('time', 255).notNullable()
       table.integer('map_id').unsigned().notNullable().references('map.id')
       table.timestamps(false, true)
     })
