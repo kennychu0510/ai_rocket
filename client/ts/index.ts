@@ -1,3 +1,5 @@
+
+import Swal from 'sweetalert2'
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
@@ -16,6 +18,7 @@ const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
+const rankingsBtn = getDOMElement('#rankings');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
 
 const _scoreboard = document.querySelector('#scoreboard');
@@ -49,6 +52,8 @@ const gameBoundaries: GameBoundary = {
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries);
 
+// Generate the grid
+
 /* RENDER CANVAS */
 function animate() {
   requestAnimationFrame(animate);
@@ -61,6 +66,39 @@ function animate() {
     const endTime = new Date();
     console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
     game.gameStarted = false;
+    Swal.fire({
+      title: 'Submit your Name!',
+      input: 'text',
+      text: 'Your Time: ' + `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`,
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      showLoaderOnConfirm: true,
+      preConfirm: (login) => {
+        return fetch(`//api.github.com/users/${login}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(response.statusText)
+            }
+            return response.json()
+          })
+          .catch(error => {
+            Swal.showValidationMessage(
+              `Request failed: ${error}`
+            )
+          })
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `${result.value.login}'s avatar`,
+          imageUrl: result.value.avatar_url
+        })
+      }
+    })
   }
 
   /* UPDATE TIMER */
@@ -76,6 +114,7 @@ function animate() {
   game.draw();
   game.update();
   currentScore.textContent = String(game.rocket.collectedStars);
+
   // console.log(userCar.stats())
 }
 
@@ -177,3 +216,34 @@ saveStarsBtn.addEventListener('click', () => {
       console.log(json.id);
     });
 });
+
+rankingsBtn.addEventListener('click', () => {
+  
+  Swal.fire(`<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>Column 2</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Row 1 Data 1</td>
+          <td>Row 1 Data 2</td>
+      </tr>
+      <tr>
+          <td>Row 2 Data 1</td>
+          <td>Row 2 Data 2</td>
+      </tr>
+  </tbody>
+  </table>
+  `)
+
+});
+     
+// })
+
+
+
+
+
