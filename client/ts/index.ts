@@ -1,6 +1,4 @@
-
-
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
@@ -40,7 +38,7 @@ canvas.height = window.innerHeight - 100;
 
 /* VARIABLES */
 const starSize = 20;
-
+let mapid = 1;
 const boundaryOffset = 20;
 // const trackTopBound = boundaryOffset;
 // const trackBotBound = canvas.height - boundaryOffset;
@@ -71,13 +69,14 @@ function animate() {
     const endTime = new Date();
     console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
     game.gameStarted = false;
-    const timeTaken = `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`
+    const timeTaken =
+      `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`;
     Swal.fire({
       title: 'Submit your Name!',
       input: 'text',
       text: 'Your Time: ' + timeTaken,
       inputAttributes: {
-        autocapitalize: 'off'
+        autocapitalize: 'off',
       },
       showCancelButton: true,
       confirmButtonText: 'Submit',
@@ -87,32 +86,30 @@ function animate() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            id: mapid,
             user: login,
             timeTaken,
-            level:1
-        }),
-      })
-          .then(response => {
+          }),
+        })
+          .then((response) => {
             if (!response.ok) {
-              throw new Error(response.statusText)
+              throw new Error(response.statusText);
             }
-            return response.json()
+            return response.json();
           })
-          .catch(error => {
-            Swal.showValidationMessage(
-              `Request failed: ${error}`
-            )
-          })
+          .catch((error) => {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          });
       },
-      allowOutsideClick: () => !Swal.isLoading()
+      allowOutsideClick: () => !Swal.isLoading(),
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
-          title: `${result.value.login}'s avatar`,
-          imageUrl: result.value.avatar_url
-        })
+          title: 'Your record has been saved!',
+          imageUrl: './media/champion.png',
+        });
       }
-    })
+    });
   }
 
   /* UPDATE TIMER */
@@ -268,44 +265,12 @@ saveObjBtn.addEventListener('click', () => {
     });
 });
 
-rankingsBtn.addEventListener('click', () => {
+// rankingsBtn.addEventListener('click', () => {
   
-  Swal.fire({
-    title: 'Player Rankings',
-    width: 500,
-    padding: '3em',
-    html:`<table id="table" border=1>
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Time</th>
-                <th>Level</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Dakota Rice</td>
-                <td>$36,738</td>
-                <td>Easy</td>
-                
-            </tr>
-            <tr>
-                <td></td>
-                <td>Minerva Hooper</td>
-                <td></td>
-                <td>Hard</td>
-                
-                `})
-});
-     
+//   });
+
+
 // })
-
-
-
-
 
 function genGameMap(
   starsArr: any[],
@@ -345,6 +310,9 @@ easyMode.addEventListener('click', () => {
     .then((json) => {
       console.log(json[0].stars.length);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+      mapid = json[0].id;
+      console.log(mapid);
+      console.log(typeof mapid);
     });
 });
 
@@ -357,6 +325,7 @@ normalMode.addEventListener('click', () => {
     .then((json) => {
       console.log(json);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+      mapid = json[0].id;
     });
 });
 
@@ -369,5 +338,6 @@ hardMode.addEventListener('click', () => {
     .then((json) => {
       console.log(json);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+      mapid = json[0].id;
     });
 });
