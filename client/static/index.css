@@ -46,6 +46,14 @@ body,
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+#canvas-background {
+  background: red;
+  height: 100%;
+  aspect-ratio: 2.4/1;
+  position: absolute;
 }
 
 #control-panel-1 {
@@ -76,4 +84,9 @@ input {
 
 .active {
   display: inline;
+}
+
+#star-img,
+#clock-img {
+  height: 16px;
 }

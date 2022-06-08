@@ -3,7 +3,7 @@ import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
 import { RocketImg } from './rocketImg.js';
-import { RocketColor } from './type.js';
+import { Move, RocketColor } from './type.js';
 
 export class RocketGA {
   public populationSize = 20;
@@ -28,6 +28,10 @@ export class RocketGA {
     this.game.domElements.aiStats.querySelector('#total-moves')!.textContent = String(this.tickStep);
   }
 
+  simulate() {
+    this.game.startAI = true;
+  }
+
   addSeed(n: number) {
     for (let i = 0; i < n; i++) {
       this.population.push(new RocketAI(this.game, this));
@@ -36,7 +40,7 @@ export class RocketGA {
   }
 
   update() {
-    if (!this.game.gameStarted) return;
+    if (!this.game.gameStarted || !this.game.gameMode) return;
     let aliveRockets = 0;
     const index = this.time / this.timeBetweenMove;
     if (index === this.tickStep) {
@@ -205,16 +209,6 @@ class RocketAI extends Rocket {
   }
 }
 
-export enum Move {
-  // eslint-disable-next-line no-unused-vars
-  none = 0,
-  // eslint-disable-next-line no-unused-vars
-  up = 1,
-  // eslint-disable-next-line no-unused-vars
-  left = 2,
-  // eslint-disable-next-line no-unused-vars
-  right = 3,
-}
 
 // type Move = number // 0 = none, 1 = up, 2 = left, 3 = right
 

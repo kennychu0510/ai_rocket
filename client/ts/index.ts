@@ -112,13 +112,13 @@ addStarBtn.addEventListener('click', () => {
 });
 
 resetBtn.addEventListener('click', () => {
-  // location.reload();
-  game.reset();
+  location.reload();
+  // game.reset();
   // totalScore.textContent = '0';
   // currentScore.textContent = '0';
   // timerMilliseconds.textContent = '000';
   // timerSeconds.textContent = '00';
-  rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+  // rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 });
 
 canvas.addEventListener('click', (e) => {
@@ -193,7 +193,7 @@ seedBtn.addEventListener('click', () => {
   // aiStats.classList.add('active');
 });
 
-// window.addEventListener('resize', () => {
-//   canvas.height = window.innerHeight * 0.78;
-//   canvas.width = window.innerHeight * 1.8;
-// });
+window.addEventListener('resize', () => {
+  canvas.height = window.innerHeight * 0.78;
+  canvas.width = window.innerHeight * 1.8;
+});

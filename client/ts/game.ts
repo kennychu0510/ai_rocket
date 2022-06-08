@@ -30,9 +30,11 @@ export class Game {
   private aliveCount = 0;
   public startAI: boolean;
   public domElements: gameDOMelements;
+  public gameMode: boolean;
   constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary, domElements: gameDOMelements) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
+    this.gameMode = true;
     this.ctx = this.canvas.getContext('2d')!;
     this.initialPosition = {
       x: this.canvasWidth / 10,
@@ -216,6 +218,7 @@ export class Game {
 
   seed() {
     this.rocketGA.seed();
-    this.startAI = true;
+    // this.startAI = true;
+    this.gameMode = false;
   }
 }

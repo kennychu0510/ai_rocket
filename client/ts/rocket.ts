@@ -215,7 +215,7 @@ export class Rocket {
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
-    if (this.game.gameStarted && this.collectedStars === this.game.totalStars && !this.game.startAI) {
+    if (this.game.gameStarted && this.collectedStars === this.game.totalStars && !this.game.startAI && this.game.gameMode) {
       this.game.stopGame();
       this.stop();
       this.game.statusMessage.updateMsg('Well Done!');
