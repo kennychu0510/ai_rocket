@@ -84,6 +84,7 @@ class RocketAI extends Rocket {
             -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
         this.velocity.x = x_direction;
         this.velocity.y = y_direction;
+        this.flyingTimeout = 10;
       }
       break;
     case Move.left:
@@ -107,7 +108,7 @@ class RocketAI extends Rocket {
     this.game.ctx.arc(
       this.position.x + this.width / 2,
       this.position.y + this.height / 2,
-      this.getC() / 3,
+      this.getC() / 2.5,
       0,
       2 * Math.PI,
     );
