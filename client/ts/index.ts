@@ -22,7 +22,6 @@ const seedBtn = getDOMElement('#seed');
 const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
-console.log(canvasContainer);
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -36,8 +35,8 @@ const timerSeconds = getDOMElement('#second');
 const canvasOffset = 120;
 canvas.height = window.innerHeight * 0.78;
 canvas.width = window.innerHeight * 1.8;
-console.log(canvas.width, canvas.height);
-console.log('canvas ratio: ' + canvas.width / canvas.height);
+// console.log(canvas.width, canvas.height);
+// console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
 const starSize = 20;
@@ -67,32 +66,22 @@ function animate() {
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   /* CHECK IF ALL STARS COLLECTED */
-  if (
-    game.totalStars === game.rocket.collectedStars &&
-    game.gameStarted &&
-    !game.startAI
-  ) {
-    game.statusMessage.updateMsg('Well Done!');
-    game.rocket.stop();
-    const endTime = new Date();
-    console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-    game.gameStarted = false;
-  }
-
-  /* UPDATE TIMER */
-  if (game.gameStarted) {
-    const timeTaken = Number(new Date()) - +game.startTime;
-    timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-    timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(
-      2,
-      '0',
-    );
-  }
+  // if (
+  //   game.totalStars === game.rocket.collectedStars &&
+  //   game.gameStarted &&
+  //   !game.startAI
+  // ) {
+  //   game.statusMessage.updateMsg('Well Done!');
+  //   game.rocket.stop();
+  //   const endTime = new Date();
+  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
+  //   game.gameStarted = false;
+  // }
 
   game.draw();
   game.update();
   if (!game.startAI) {
-    currentScore.textContent = String(game.rocket.collectedStars);
+    currentScore.textContent = String(game.userRocket.collectedStars);
   }
   // console.log(userCar.stats())
 }
@@ -109,7 +98,7 @@ window.addEventListener('keydown', ({ key }) => {
     if (!game.gameStarted && game.stars.length > 0) {
       game.startGame();
     }
-    game.rocket.changeDirection(key);
+    game.userRocket.changeDirection(key);
   }
 });
 
@@ -129,7 +118,7 @@ resetBtn.addEventListener('click', () => {
   // currentScore.textContent = '0';
   // timerMilliseconds.textContent = '000';
   // timerSeconds.textContent = '00';
-  rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
+  rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 });
 
 canvas.addEventListener('click', (e) => {
@@ -155,11 +144,11 @@ genBlackholeBtn.addEventListener('click', () => {
 });
 
 // UPDATE ROCKET SPEED DISPLAY VALUE
-rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
+rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
-  game.rocket.changeAcceleration(Number(rocketSpeed.value));
+  game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 });
 
 boundaryModeBtn.addEventListener('click', () => {

@@ -21,7 +21,7 @@ export class Game {
   public meteorites: Meteorite[];
   public blackholes: BlackholePair[];
   public buttons: string[];
-  public rocket: Rocket;
+  public userRocket: Rocket;
   public boundary: Boundary;
   private canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
@@ -45,7 +45,7 @@ export class Game {
       gameBoundaries.left,
       this.ctx,
     )),
-    (this.rocket = new Rocket(this)),
+    (this.userRocket = new Rocket(this)),
     (this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
       {
@@ -79,7 +79,7 @@ export class Game {
     const newStar = new Star(position, this.canvasWidth, this.ctx);
     this.stars.push(newStar);
     this.totalStars++;
-    this.rocket.addStar(newStar);
+    this.userRocket.addStar(newStar);
   }
 
   addMeteorite(position: Position) {
@@ -104,15 +104,30 @@ export class Game {
     this.aliveCount = 1;
   }
 
+  stopGame() {
+    this.gameStarted = false;
+    this.rocketGA.report();
+    console.log('game stopped');
+  }
+
   reportRocketDead() {
     this.aliveCount--;
-    this.statusMessage.updateMsg(`0/1 rockets alive`);
+    // this.statusMessage.updateMsg(`0/1 rockets alive`);
     this.gameStarted = false;
   }
 
   update() {
-    this.rocket.update();
+    this.userRocket.update();
     this.rocketGA.update();
+    /* UPDATE TIMER */
+    if (this.gameStarted) {
+      const timeTaken = Number(new Date()) - +this.startTime;
+      this.domElements.timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
+      this.domElements.timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
+    }
+    if (!this.startAI) {
+      this.domElements.currentScore.textContent = String(this.userRocket.collectedStars);
+    }
   }
 
   generateStars() {
@@ -165,7 +180,7 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.rocket.stars) {
+    for (const star of this.userRocket.stars) {
       star.draw();
     }
 
@@ -177,19 +192,19 @@ export class Game {
       meteorite.draw();
     }
     this.rocketGA.draw();
-    this.rocket.draw();
+    this.userRocket.draw();
   }
 
   reset() {
     this.statusMessage.updateMsg('W to move, A + D to turn, S to stop');
     this.gameInstructions.updateMsg('Add stars to start the game');
-    this.rocket.reset();
+    this.userRocket.reset();
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];
     this.totalStars = 0;
     this.gameStarted = false;
-    this.rocket.changeAcceleration(0.002 * this.canvasWidth);
+    this.userRocket.changeAcceleration(0.002 * this.canvasWidth);
     this.rocketGA.reset();
     this.domElements.timerMilliseconds.textContent = '000';
     this.domElements.timerSeconds.textContent = '00';

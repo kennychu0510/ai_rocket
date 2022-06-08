@@ -61,7 +61,7 @@ export class Rocket {
     this.stars = new Set(game.stars);
   }
 
-  draw() {
+  drawRotated() {
     const ctx = this.game.ctx;
     ctx.save();
     ctx.translate(
@@ -73,25 +73,31 @@ export class Rocket {
       -(this.position.x + this.width / 2),
       -(this.position.y + this.height / 2),
     );
+  }
+
+  draw() {
+    this.drawRotated();
+    this.drawImage();
+    // c.fillRect(this.position.x, this.position.y, this.size, this.size)
+    // c.fill()
+    // c.rotate(10)
+  }
+
+  drawImage() {
     let image;
     if (this.flyingTimeout > 0) {
       image = this.image_flying;
     } else {
       image = this.image_static;
     }
-
-    /* Resize boom image */
-    ctx.drawImage(
+    this.game.ctx.drawImage(
       image,
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
       this.width,
       this.height,
     );
-    // c.fillRect(this.position.x, this.position.y, this.size, this.size)
-    // c.fill()
-    ctx.restore();
-    // c.rotate(10)
+    this.game.ctx.restore();
   }
 
   changeDirection(key: string) {
@@ -101,7 +107,7 @@ export class Rocket {
         this.acceleration * Math.sin(degreeToRadian(this.angle));
       const y_direction =
         -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
-      console.log({ x_direction, y_direction });
+      // console.log({ x_direction, y_direction });
       this.velocity.x = x_direction;
       this.velocity.y = y_direction;
     }
@@ -112,7 +118,7 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    console.log(this.stats());
+    // console.log(this.stats());
   }
 
   slowDown() {
@@ -195,7 +201,7 @@ export class Rocket {
 
   setTeleportationTimeout() {
     this.teleportTimeout = 60;
-    console.log(new Date().getTime());
+    // console.log(new Date().getTime());
   }
 
   update() {
@@ -209,6 +215,12 @@ export class Rocket {
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
+    if (this.game.gameStarted && this.collectedStars === this.game.totalStars && !this.game.startAI) {
+      this.game.stopGame();
+      this.stop();
+      this.game.statusMessage.updateMsg('Well Done!');
+      this.game.gameStarted = false;
+    }
   }
 
   checkRocketAndBoundary() {
@@ -252,7 +264,7 @@ export class Rocket {
       if (distance < this.getC() / 2 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
-        console.log('got star');
+        return 1;
         // currentScore.textContent = String(this.collectedStars);
       }
     }
@@ -317,6 +329,6 @@ export class Rocket {
 
   addStar(star: Star) {
     this.stars.add(star);
-    console.log(this.stars);
+    // console.log(this.stars);
   }
 }
