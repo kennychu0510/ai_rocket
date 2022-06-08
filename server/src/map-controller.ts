@@ -1,14 +1,22 @@
 import { Request, Response } from 'express';
 import { MapService } from './map-services';
-import { Map } from './types';
+// import { Map } from './types';
 
 export class MapController {
   constructor(private mapService: MapService) {}
   get = async (req: Request, res: Response) => {
-    // res.json(await this.mapService.getEasyMaps());
-    res.json(await this.mapService.getNormalMaps());
-    // res.json(await this.mapService.getHardMaps());
+    const level = req.query.diff;
+    if (level === 'easy') {
+      res.json(await this.mapService.getEasyMaps());
+    }
+    if (level === 'normal') {
+      res.json(await this.mapService.getNormalMaps());
+    }
+    if (level === 'hard') {
+      res.json(await this.mapService.getHardMaps());
+    }
   };
+
   create = async (req: Request, res: Response) => {
     const stars = req.body.stars;
     const meteorites = req.body.meteorites;

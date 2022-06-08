@@ -18,6 +18,8 @@ const resetBtn = getDOMElement('#reset');
 const saveObjBtn = getDOMElement('#save-obj');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
 const easyMode = getDOMElement('#easy-mode');
+const normalMode = getDOMElement('#normal-mode');
+const hardMode = getDOMElement('#hard-mode');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -217,8 +219,29 @@ saveObjBtn.addEventListener('click', () => {
 });
 
 easyMode.addEventListener('click', () => {
-  // console.log("1234");
-  fetch(APIOrigin + '/easy-mode', {
+  fetch(APIOrigin + '/mode?diff=easy', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+    });
+});
+
+normalMode.addEventListener('click', () => {
+  fetch(APIOrigin + '/mode?diff=normal', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+    });
+});
+
+hardMode.addEventListener('click', () => {
+  fetch(APIOrigin + '/mode?diff=hard', {
     method: 'GET',
   })
     .then((res) => res.json())
