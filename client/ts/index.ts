@@ -1,4 +1,5 @@
 
+
 import Swal from 'sweetalert2'
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
@@ -70,10 +71,11 @@ function animate() {
     const endTime = new Date();
     console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
     game.gameStarted = false;
+    const timeTaken = `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`
     Swal.fire({
       title: 'Submit your Name!',
       input: 'text',
-      text: 'Your Time: ' + `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`,
+      text: 'Your Time: ' + timeTaken,
       inputAttributes: {
         autocapitalize: 'off'
       },
@@ -81,7 +83,15 @@ function animate() {
       confirmButtonText: 'Submit',
       showLoaderOnConfirm: true,
       preConfirm: (login) => {
-        return fetch(`//api.github.com/users/${login}`)
+        return fetch(APIOrigin + '/scores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user: login,
+            timeTaken,
+            level:1
+        }),
+      })
           .then(response => {
             if (!response.ok) {
               throw new Error(response.statusText)
@@ -260,26 +270,35 @@ saveObjBtn.addEventListener('click', () => {
 
 rankingsBtn.addEventListener('click', () => {
   
-  Swal.fire(`<table>
-  <thead>
-      <tr>
-          <th></th>
-          <th>Column 2</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>Row 1 Data 1</td>
-          <td>Row 1 Data 2</td>
-      </tr>
-      <tr>
-          <td>Row 2 Data 1</td>
-          <td>Row 2 Data 2</td>
-      </tr>
-  </tbody>
-  </table>
-  `)
-
+  Swal.fire({
+    title: 'Player Rankings',
+    width: 500,
+    padding: '3em',
+    html:`<table id="table" border=1>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Level</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Dakota Rice</td>
+                <td>$36,738</td>
+                <td>Easy</td>
+                
+            </tr>
+            <tr>
+                <td></td>
+                <td>Minerva Hooper</td>
+                <td></td>
+                <td>Hard</td>
+                
+                `})
 });
      
 // })
