@@ -5,21 +5,17 @@ import { Map } from './types';
 export class MapController {
   constructor(private mapService: MapService) {}
   get = async (req: Request, res: Response) => {
-    res.json(await this.mapService.getEasyMaps());
+    // res.json(await this.mapService.getEasyMaps());
+    res.json(await this.mapService.getNormalMaps());
+    // res.json(await this.mapService.getHardMaps());
   };
   create = async (req: Request, res: Response) => {
     const stars = req.body.stars;
-    if (stars.length <= 0) {
-      res.status(400).json({ msg: 'no stars are added' });
-      return;
-    }
     const meteorites = req.body.meteorites;
-    if (meteorites.length <= 0) {
-      res.status(404).json({ msg: 'no meteorite are added' });
-    }
     const blackholes = req.body.blackholes;
-    if (blackholes.length <= 0) {
-      res.status(404).json({ msg: 'no blackhole are added' });
+    if (stars.length <= 0 && meteorites.length <= 0 && blackholes.length <= 0) {
+      res.status(404).json({ msg: 'nothing is added' });
+      return;
     }
     const addedMap = await this.mapService.createMap({
       stars,

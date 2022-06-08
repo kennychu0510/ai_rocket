@@ -18,7 +18,7 @@ export class MapService {
         stars: JSON.stringify(stars),
         meteorites: JSON.stringify(meteorites),
         black_holes: JSON.stringify(blackholes),
-        levels: 1,
+        levels: 0,
       })
       .into('map')
       .returning('id');
@@ -38,4 +38,34 @@ export class MapService {
     });
     return results;
   }
+
+  async getNormalMaps(): Promise<Map[]> {
+    const results = await this.knex
+      .select('id', 'stars', 'meteorites', 'black_holes')
+      .from('map')
+      .where('levels', 2);
+    results.forEach((row) => {
+      console.log(row);
+      row.stars = JSON.parse(row.stars);
+      row.meteorites = JSON.parse(row.meteorites);
+      row.black_holes = JSON.parse(row.black_holes);
+    });
+    return results;
+  }
+
+  async getHardMaps(): Promise<Map[]> {
+    const results = await this.knex
+      .select('id', 'stars', 'meteorites', 'black_holes')
+      .from('map')
+      .where('levels', 3);
+    results.forEach((row) => {
+      console.log(row);
+      row.stars = JSON.parse(row.stars);
+      row.meteorites = JSON.parse(row.meteorites);
+      row.black_holes = JSON.parse(row.black_holes);
+    });
+    return results;
+  }
 }
+
+
