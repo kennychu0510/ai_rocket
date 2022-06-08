@@ -72,7 +72,7 @@ function animate() {
     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(
       2,
-      '0'
+      '0',
     );
   }
 
