@@ -28,4 +28,10 @@ export class Meteorite {
       this.size,
     );
   }
+  getX() {
+    return this.position.x;
+  }
+  getY() {
+    return this.position.y;
+  }
 }

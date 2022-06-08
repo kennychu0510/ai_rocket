@@ -11,9 +11,9 @@ export class StarMapService {
     const row = await this.knex
       .insert({
         count: count,
-        coordinates: coordinates,
+        coordinates: JSON.stringify(coordinates),
       })
-      .into('star_map')
+      .into('star_location')
       .returning('id');
     return row[0].id;
   }
@@ -21,7 +21,12 @@ export class StarMapService {
   async getStarMaps(): Promise<StarMap[]> {
     const results = await this.knex
       .select('id', 'count', 'coordinates')
-      .from('star_map');
+      .from('star_location')
+      .where('count', '2');
+    results.forEach((row) => {
+      console.log(row);
+      row.coordinates = JSON.parse(row.coordinates);
+    });
     return results;
   }
 }

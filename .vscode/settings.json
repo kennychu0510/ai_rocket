@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "ai_rocket",
+      "database": "ai_rocket",
+      "username": "ai_rocket",
+      "password": "ai_rocket"
+    }
+  ]
+}

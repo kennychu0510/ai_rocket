@@ -14,23 +14,17 @@
 ////////////////////////////////////
 
 
-star_map
------
+map
+----
 id pk
-count 
-coordinates text
-
-obstacles_map
------
-id pk
-count
-coordinates text
-
+stars text
+meteorites text
+black_holes text
+levels integer
 
 scores
 ---------
 id pk
-user string
-star_map_id fk - star_map.id
-time time
-
+user varchar(30)
+map_id fk >- map.id
+duration

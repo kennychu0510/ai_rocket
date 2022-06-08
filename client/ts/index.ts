@@ -19,7 +19,11 @@ const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveStarsBtn = getDOMElement('#save-stars');
 const rankingsBtn = getDOMElement('#rankings');
+const saveObjBtn = getDOMElement('#save-obj');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
+const easyMode = getDOMElement('#easy-mode');
+const normalMode = getDOMElement('#normal-mode');
+const hardMode = getDOMElement('#hard-mode');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -193,21 +197,58 @@ boundaryModeBtn.addEventListener('click', () => {
   }
 });
 
-saveStarsBtn.addEventListener('click', () => {
-  const listOfStarsPercentage = game.stars.map((star) => {
+// saveStarsBtn.addEventListener('click', () => {
+//   const listOfStarsPercentage = game.stars.map((star) => {
+//     const newX = star.getX() / canvas.width;
+//     const newY = star.getY() / canvas.height;
+//     return { x: newX, y: newY };
+//   });
+//   const starMap = {
+//     count: game.stars.length,
+//     coordinates: JSON.stringify(listOfStarsPercentage),
+//   };
+//   fetch('/star-map', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({
+//       starMap,
+//     }),
+//   })
+//     .then((res) => res.json())
+//     .catch((err) => ({ error: String(err) }))
+//     .then((json) => {
+//       console.log(json.id);
+//     });
+// });
+
+saveObjBtn.addEventListener('click', () => {
+  const stars = game.stars.map((star) => {
     const newX = star.getX() / canvas.width;
     const newY = star.getY() / canvas.height;
     return { x: newX, y: newY };
   });
-  const starMap = {
-    count: game.stars.length,
-    coordinates: JSON.stringify(listOfStarsPercentage),
-  };
-  fetch(APIOrigin + '/star-map', {
+  const meteorites = game.meteorites.map((meteorite) => {
+    const newX = meteorite.getX() / canvas.width;
+    console.log(meteorite);
+    const newY = meteorite.getY() / canvas.height;
+    return { x: newX, y: newY };
+  });
+  const blackholes = game.blackholes.map((blackholes) => {
+    const newX1 = blackholes.getX().x1 / canvas.width;
+    const newX2 = blackholes.getX().x2 / canvas.width;
+    const newY1 = blackholes.getY().y1 / canvas.height;
+    const newY2 = blackholes.getY().y2 / canvas.height;
+    return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
+  });
+  console.log(blackholes);
+
+  fetch(APIOrigin + '/map', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      starMap,
+      stars,
+      meteorites,
+      blackholes,
     }),
   })
     .then((res) => res.json())
@@ -247,3 +288,66 @@ rankingsBtn.addEventListener('click', () => {
 
 
 
+function genGameMap(
+  starsArr: any[],
+  meteoritesArr: any[],
+  blackholesArr: any[],
+) {
+  game.reset();
+  for (const s of starsArr) {
+    const result = {
+      x: s.x * game.canvasWidth,
+      y: s.y * game.canvasHeight,
+    };
+    game.addStar(result);
+  }
+  for (const m of meteoritesArr) {
+    const result = {
+      x: m.x * game.canvasWidth,
+      y: m.y * game.canvasHeight,
+    };
+    game.addMeteorite(result);
+  }
+  for (const b of blackholesArr) {
+    const result = {
+      blackhole1: { x: b.x1 * game.canvasWidth, y: b.y1 * game.canvasHeight },
+      blackhole2: { x: b.x2 * game.canvasWidth, y: b.y2 * game.canvasHeight },
+    };
+    game.addBlackholePair(result);
+  }
+}
+
+easyMode.addEventListener('click', () => {
+  fetch(APIOrigin + '/mode?diff=easy', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+    });
+});
+
+normalMode.addEventListener('click', () => {
+  fetch(APIOrigin + '/mode?diff=normal', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+    });
+});
+
+hardMode.addEventListener('click', () => {
+  fetch(APIOrigin + '/mode?diff=hard', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+    });
+});
