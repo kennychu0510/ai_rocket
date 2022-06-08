@@ -78,7 +78,7 @@ export class RocketGA {
   // }
   report() {
     for (const [i, rocket] of this.population.entries()) {
-      console.log(`rocket-${i}`, rocket.collectedStars);
+      console.log(`rocket-${i}`, rocket.fitness);
     }
   }
 }
@@ -141,6 +141,18 @@ class RocketAI extends Rocket {
     super.reduceHealth();
     if (this.health <= 0) {
       this.survive = false;
+    }
+  }
+
+  update() {
+    const currentStars = this.collectedStars;
+    const currentHealth = this.health;
+    super.update();
+    if (this.collectedStars > currentStars) {
+      this.fitness += 100;
+    }
+    if (this.health < currentHealth) {
+      this.fitness -= 20;
     }
   }
 
