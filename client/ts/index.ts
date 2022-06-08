@@ -218,6 +218,30 @@ saveObjBtn.addEventListener('click', () => {
     });
 });
 
+function genGameMap(starsArr:any[], meteoritesArr:any[], blackholesArr:any[]) {
+  for (const s of starsArr) {
+    const result = {
+      x: s.x * game.canvasWidth,
+      y: s.y * game.canvasHeight,
+    };
+    game.addStar(result);
+  }
+  for (const m of meteoritesArr) {
+    const result = {
+      x: m.x * game.canvasWidth,
+      y: m.y * game.canvasHeight,
+    };
+    game.addMeteorite(result);
+  }
+  for (const b of blackholesArr) {
+    const result = {
+      blackhole1: { x: b.x1 * game.canvasWidth, y: b.y1 * game.canvasHeight },
+      blackhole2: { x: b.x2 * game.canvasWidth, y: b.y2 * game.canvasHeight },
+    };
+    game.addBlackholePair(result);
+  }
+}
+
 easyMode.addEventListener('click', () => {
   fetch(APIOrigin + '/mode?diff=easy', {
     method: 'GET',
@@ -225,7 +249,7 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
 
@@ -237,6 +261,7 @@ normalMode.addEventListener('click', () => {
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       console.log(json);
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
 
@@ -248,5 +273,6 @@ hardMode.addEventListener('click', () => {
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       console.log(json);
+      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
