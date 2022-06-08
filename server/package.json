@@ -13,7 +13,8 @@
     "erd": "npx erd-to-knex < ./docs/erd.txt > migrations/001-create-tables.ts",
     "automigrate": "npx auto-migrate pg < ./docs/erd.txt",
     "migrate": "yarn knex migrate:latest",
-    "rollback": "yarn knex migrate:rollback"
+    "rollback": "yarn knex migrate:rollback",
+    "seed": "yarn knex seed:run"
   },
   "keywords": [],
   "author": "",
