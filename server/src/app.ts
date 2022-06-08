@@ -3,10 +3,15 @@ import path from 'path';
 import { knex } from './knex';
 import { MapService } from './map-services';
 import { MapController } from './map-controller';
+import { UserService } from './result-services';
+import { UserController } from './result-controller';
 import cors from 'cors';
 
 const mapService = new MapService(knex);
 export const mapController = new MapController(mapService);
+
+const userService = new UserService(knex);
+export const userController = new UserController(userService);
 
 import { routes } from './routes';
 export const app = express();
