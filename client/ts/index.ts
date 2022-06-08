@@ -2,7 +2,7 @@ import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { RocketGA } from './rocketGA.js';
-import { GameBoundary } from './type.js';
+import { GameBoundary, gameDOMelements } from './type.js';
 
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
@@ -20,6 +20,8 @@ const saveStarsBtn = getDOMElement('#save-stars');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
 const seedBtn = getDOMElement('#seed');
 const canvasContainer = getDOMElement('#canvas-container');
+const scoreOrRockets = getDOMElement('#score-mode');
+const aiStats = getDOMElement('#ai-stats');
 console.log(canvasContainer);
 
 const _scoreboard = document.querySelector('#scoreboard');
@@ -41,6 +43,14 @@ console.log('canvas ratio: ' + canvas.width / canvas.height);
 const starSize = 20;
 const boundaryOffset = 20;
 
+const domElements: gameDOMelements = {
+  totalScore,
+  currentScore,
+  timerMilliseconds,
+  timerSeconds,
+  aiStats,
+};
+
 const gameBoundaries: GameBoundary = {
   top: boundaryOffset,
   bot: canvas.height - boundaryOffset,
@@ -49,7 +59,7 @@ const gameBoundaries: GameBoundary = {
 };
 
 /* SET UP NEW GAME */
-const game = new Game(canvas, gameBoundaries);
+const game = new Game(canvas, gameBoundaries, domElements);
 
 /* RENDER CANVAS */
 function animate() {
@@ -81,7 +91,9 @@ function animate() {
 
   game.draw();
   game.update();
-  currentScore.textContent = String(game.rocket.collectedStars);
+  if (!game.startAI) {
+    currentScore.textContent = String(game.rocket.collectedStars);
+  }
   // console.log(userCar.stats())
 }
 
@@ -113,10 +125,10 @@ addStarBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => {
   // location.reload();
   game.reset();
-  totalScore.textContent = '0';
-  currentScore.textContent = '0';
-  timerMilliseconds.textContent = '000';
-  timerSeconds.textContent = '00';
+  // totalScore.textContent = '0';
+  // currentScore.textContent = '0';
+  // timerMilliseconds.textContent = '000';
+  // timerSeconds.textContent = '00';
   rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
 });
 
@@ -187,6 +199,9 @@ saveStarsBtn.addEventListener('click', () => {
 seedBtn.addEventListener('click', () => {
   game.seed();
   game.startGame();
+  scoreOrRockets.textContent = 'Rockets:';
+  // aiStats.classList.remove('hidden');
+  // aiStats.classList.add('active');
 });
 
 // window.addEventListener('resize', () => {

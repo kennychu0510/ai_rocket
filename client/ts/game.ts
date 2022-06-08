@@ -2,7 +2,7 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star } from './star.js';
-import { BlackholePairType, GameBoundary, Position } from './type.js';
+import { BlackholePairType, GameBoundary, gameDOMelements, Position } from './type.js';
 import { Meteorite } from './meteorite.js';
 import { BlackholePair } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
@@ -29,7 +29,8 @@ export class Game {
   private initialPosition: Position;
   private aliveCount = 0;
   public startAI: boolean;
-  constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary) {
+  public domElements: gameDOMelements;
+  constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary, domElements: gameDOMelements) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
     this.ctx = this.canvas.getContext('2d')!;
@@ -71,6 +72,7 @@ export class Game {
     this.totalStars = 0;
     this.rocketGA = new RocketGA(this);
     this.startAI = false;
+    this.domElements = domElements;
   }
 
   addStar(position: Position) {
@@ -189,28 +191,16 @@ export class Game {
     this.gameStarted = false;
     this.rocket.changeAcceleration(0.002 * this.canvasWidth);
     this.rocketGA.reset();
+    this.domElements.timerMilliseconds.textContent = '000';
+    this.domElements.timerSeconds.textContent = '00';
+    this.domElements.totalScore.textContent = '0';
+    this.domElements.currentScore.textContent = '0';
     // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     // console.log(this.initialPosition);
   }
-  // animate = () => {
-  //   requestAnimationFrame( () => this.animate());
-  //   this.ctx.clearRect(0, 0, this.canvas.width, this.canvasHeight);
-  //   this.boundary.draw();
-  //   this.statusMessage.draw();
-  //   this.gameInstructions.draw();
-  //   if (this.gameStarted) {
-  //     const timeTaken = Number(new Date()) - +startTime;
-  //     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-  //     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
-  //   }
 
-  //   for (const star of this.stars) {
-  //     star.draw();
-  //   }
-  // };
   seed() {
     this.rocketGA.seed();
     this.startAI = true;
-    console.log('seed button');
   }
 }

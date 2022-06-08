@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { degreeToRadian } from './functions';
 import { Game } from './game';
 import { Rocket } from './rocket';
 
 export class RocketGA {
-  private Population_size = 20;
-  public Tick_Step = 500;
-  private Survival_Rate = 0.9;
-  private Mutation_Rate = 0.1;
-  private Mutation_Amount = 0.05;
+  public populationSize = 20;
+  public tickStep = 500;
+  private survivalRate = 0.9;
+  private mutationRate = 0.1;
+  private mutationAmount = 0.05;
   public timeBetweenMove = 10;
   private time = 0;
   private population: RocketAI[] = [];
@@ -18,8 +19,11 @@ export class RocketGA {
 
   seed() {
     this.population = [];
-    this.addSeed(this.Population_size);
+    this.addSeed(this.populationSize);
     this.time = 0;
+    this.game.domElements.currentScore.textContent = String(this.populationSize);
+    this.game.domElements.totalScore.textContent = String(this.populationSize);
+    this.game.domElements.aiStats.querySelector('#total-moves')!.textContent = String(this.tickStep);
   }
 
   addSeed(n: number) {
@@ -30,12 +34,17 @@ export class RocketGA {
   }
 
   update() {
+    let aliveRockets = 0;
     for (const rocket of this.population) {
       if (this.time % this.timeBetweenMove === 0) {
         rocket.move(this.time / this.timeBetweenMove);
       }
       rocket.update();
+      if (rocket.survive) {
+        aliveRockets++;
+      }
     }
+    this.game.domElements.currentScore.textContent = String(aliveRockets);
     this.time++;
   }
 
@@ -64,7 +73,7 @@ class RocketAI extends Rocket {
     this.rocketGA = rocketGA;
     this.fitness = 0;
     this.survive = true;
-    this.moves = generateMoves(this.rocketGA.Tick_Step);
+    this.moves = generateMoves(this.rocketGA.tickStep);
     this.color = randomColor();
   }
   move(index: number) {
@@ -94,6 +103,7 @@ class RocketAI extends Rocket {
       this.angle += this.turn;
       break;
     }
+    this.game.domElements.aiStats.querySelector('#ai-move')!.textContent = String(index);
   }
 
   reduceHealth() {
@@ -115,7 +125,11 @@ class RocketAI extends Rocket {
     this.game.ctx.fillStyle = this.color;
     this.game.ctx.fill();
     this.game.ctx.closePath();
+    // this.game.ctx.save();
+    // this.game.ctx.fillStyle = this.color;
+    // this.game.ctx.globalCompositeOperation = 'source-in';
     super.draw();
+    // this.game.ctx.restore();
   }
 }
 

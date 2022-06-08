@@ -14,3 +14,11 @@ export type BlackholePairType = {
   blackhole1: Position;
   blackhole2: Position;
 };
+
+export type gameDOMelements = {
+  totalScore: Element;
+  currentScore: Element;
+  timerMilliseconds: Element;
+  timerSeconds: Element;
+  aiStats: Element;
+};

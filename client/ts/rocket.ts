@@ -162,6 +162,7 @@ export class Rocket {
     this.image_flying = spaceshipFlyingImg;
     this.position.x = this.initialPosition.x;
     this.position.y = this.initialPosition.y;
+    this.stars = new Set();
   }
 
   setPosition(position: Position) {
@@ -220,7 +221,7 @@ export class Rocket {
         this.position.x + this.width > gameBoundaries.right
       ) {
         this.stop();
-        this.game.reportRocketDead();
+        // this.game.reportRocketDead();
 
         return;
       }
@@ -306,7 +307,7 @@ export class Rocket {
         this.height / 2 -
         (meteorite.position.y + meteorite.size / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < this.getC() / 2 + meteorite.size / 2) {
+      if (distance < this.getC() / 4 + meteorite.size / 2) {
         this.velocity.x = -this.velocity.x;
         this.velocity.y = -this.velocity.y;
         this.reduceHealth();
