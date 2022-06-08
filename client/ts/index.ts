@@ -189,7 +189,7 @@ seedBtn.addEventListener('click', () => {
   game.seed();
   game.startGame();
   scoreOrRockets.textContent = 'Rockets:';
-  // aiStats.classList.remove('hidden');
+  aiStats.classList.remove('hidden');
   // aiStats.classList.add('active');
 });
 
