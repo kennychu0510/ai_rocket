@@ -72,7 +72,7 @@ function animate() {
     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(
       2,
-      '0',
+      '0'
     );
   }
 
@@ -218,7 +218,12 @@ saveObjBtn.addEventListener('click', () => {
     });
 });
 
-function genGameMap(starsArr:any[], meteoritesArr:any[], blackholesArr:any[]) {
+function genGameMap(
+  starsArr: any[],
+  meteoritesArr: any[],
+  blackholesArr: any[],
+) {
+  game.reset();
   for (const s of starsArr) {
     const result = {
       x: s.x * game.canvasWidth,
