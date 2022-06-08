@@ -26,5 +26,5 @@ scores
 ---------
 id pk
 user varchar(30)
+time
 map_id fk >- map.id
-duration
