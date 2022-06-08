@@ -159,6 +159,7 @@ export class Rocket {
     this.image_flying = spaceshipFlyingImg;
     this.position.x = this.initialPosition.x;
     this.position.y = this.initialPosition.y;
+    this.stars = new Set();
   }
 
   setPosition(position: Position) {
