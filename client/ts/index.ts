@@ -343,6 +343,7 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
+      console.log(json[0].stars.length);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
