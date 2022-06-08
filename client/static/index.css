@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-image: url("/media/space_background.png");
+  background-image: url('/media/space_background.png');
   background-repeat: no-repeat;
   background-size: cover;
   color: white;
@@ -48,11 +48,13 @@ body,
   align-items: center;
 }
 
-#control-panel-1 {
+#control-panel-1,
+#control-panel-2 {
   display: flex;
 }
 
-#control-panel-1 > * {
+#control-panel-1 > *,
+#control-panel-2 > * {
   margin-right: 10px;
   margin-bottom: 10px;
 }
@@ -63,7 +65,7 @@ input {
 
 #footer {
   margin: 20px;
-  height: 100px;
+  min-height: 100px;
 }
 
 #ai-move-label {
