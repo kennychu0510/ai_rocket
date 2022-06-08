@@ -1,20 +1,25 @@
-import { Boundary } from './boundary.js';
 import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Star } from './star.js';
 import { Position } from './type.js';
 
 const spaceshipImg = new Image();
-spaceshipImg.src = './media/rocket_1.png';
+spaceshipImg.src = './media/rocket_1_static.png';
 
 const spaceshipFlyingImg = new Image();
-spaceshipFlyingImg.src = './media/rocket_2.png';
+spaceshipFlyingImg.src = './media/rocket_1_flying.png';
 
 const spaceshipDamagedImg = new Image();
-spaceshipDamagedImg.src = './media/spaceship_damaged.png';
+spaceshipDamagedImg.src = './media/rocket_2_static.png';
 
-const spaceshipDecadeImg = new Image();
-spaceshipDecadeImg.src = './media/spaceship_decade.png';
+const spaceshipDamagedFylingImg = new Image();
+spaceshipDamagedFylingImg.src = './media/rocket_2_flying.png';
+
+const spaceshipBrokenImg = new Image();
+spaceshipBrokenImg.src = './media/rocket_3_static.png';
+
+const spaceshipBrokenFlyingImg = new Image();
+spaceshipBrokenFlyingImg.src = './media/rocket_3_flying.png';
 
 const boomImg = new Image();
 boomImg.src = './media/boom.png';
@@ -23,18 +28,19 @@ export class Rocket {
   public velocity: Position;
   public width: number;
   public height: number;
-  private acceleration: number;
+  protected acceleration: number;
   public image_static: HTMLImageElement;
   public image_flying: HTMLImageElement;
-  public alive: boolean;
-  private angle: number;
-  private turn: number;
+  // public alive: boolean;
+  protected angle: number;
+  protected turn: number;
   public collectedStars: number;
-  private health: number;
+  protected health: number;
   public teleportTimeout: number;
+  public flyingTimeout: number;
   public stars: Set<Star>;
   private initialPosition: Position;
-  constructor(private game: Game) {
+  constructor(public game: Game) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
     this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
@@ -46,15 +52,16 @@ export class Rocket {
     this.turn = 45;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
-    this.alive = true;
+    // this.alive = true;
     this.angle = 90;
     this.collectedStars = 0;
     this.health = 3;
     this.teleportTimeout = 0;
+    this.flyingTimeout = 0;
     this.stars = new Set(game.stars);
   }
 
-  draw() {
+  drawRotated() {
     const ctx = this.game.ctx;
     ctx.save();
     ctx.translate(
@@ -66,38 +73,41 @@ export class Rocket {
       -(this.position.x + this.width / 2),
       -(this.position.y + this.height / 2),
     );
-    let image;
-    if (this.velocity.x == 0 && this.velocity.y === 0) {
-      image = this.image_static;
-    } else {
-      image = this.image_flying;
-    }
+  }
 
-    /* Resize boom image */
-    if (this.health === 0) {
-      this.height = this.height * 1.5;
-      this.width = this.height;
+  draw() {
+    this.drawRotated();
+    this.drawImage();
+    // c.fillRect(this.position.x, this.position.y, this.size, this.size)
+    // c.fill()
+    // c.rotate(10)
+  }
+
+  drawImage() {
+    let image;
+    if (this.flyingTimeout > 0) {
+      image = this.image_flying;
+    } else {
+      image = this.image_static;
     }
-    ctx.drawImage(
+    this.game.ctx.drawImage(
       image,
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
       this.width,
       this.height,
     );
-    // c.fillRect(this.position.x, this.position.y, this.size, this.size)
-    // c.fill()
-    ctx.restore();
-    // c.rotate(10)
+    this.game.ctx.restore();
   }
 
   changeDirection(key: string) {
     if (key === 'w') {
+      this.flyingTimeout = 10;
       const x_direction =
         this.acceleration * Math.sin(degreeToRadian(this.angle));
       const y_direction =
         -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
-      console.log({ x_direction, y_direction });
+      // console.log({ x_direction, y_direction });
       this.velocity.x = x_direction;
       this.velocity.y = y_direction;
     }
@@ -108,7 +118,7 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    console.log(this.stats());
+    // console.log(this.stats());
   }
 
   slowDown() {
@@ -143,7 +153,6 @@ export class Rocket {
   stop() {
     this.velocity.y = 0;
     this.velocity.x = 0;
-    this.alive = false;
   }
 
   changeAcceleration(acceleration: number) {
@@ -152,7 +161,7 @@ export class Rocket {
 
   reset() {
     this.stop();
-    this.alive = true;
+    this.health = 3;
     this.angle = 90;
     this.collectedStars = 0;
     this.image_static = spaceshipImg;
@@ -174,14 +183,16 @@ export class Rocket {
   reduceHealth() {
     this.health--;
     if (this.health === 2) {
-      this.image_static = spaceshipDecadeImg;
-      this.image_flying = spaceshipDecadeImg;
+      this.image_static = spaceshipDamagedImg;
+      this.image_flying = spaceshipDamagedFylingImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health === 1) {
-      this.image_static = spaceshipDamagedImg;
-      this.image_flying = spaceshipDamagedImg;
+      this.image_static = spaceshipBrokenImg;
+      this.image_flying = spaceshipBrokenFlyingImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health >= 0) {
+      this.height = this.height * 1.5;
+      this.width = this.height;
       this.image_static = boomImg;
       this.image_flying = boomImg;
       this.stop();
@@ -190,10 +201,12 @@ export class Rocket {
 
   setTeleportationTimeout() {
     this.teleportTimeout = 60;
-    console.log(new Date().getTime());
+    // console.log(new Date().getTime());
   }
 
   update() {
+    if (this.flyingTimeout > 0) this.flyingTimeout--;
+    if (this.health <= 0) return;
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
     }
@@ -201,6 +214,13 @@ export class Rocket {
     this.checkStarCollection();
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
+    this.updateRocketPosition();
+    if (this.game.gameStarted && this.collectedStars === this.game.totalStars && !this.game.startAI) {
+      this.game.stopGame();
+      this.stop();
+      this.game.statusMessage.updateMsg('Well Done!');
+      this.game.gameStarted = false;
+    }
   }
 
   checkRocketAndBoundary() {
@@ -213,7 +233,7 @@ export class Rocket {
         this.position.x + this.width > gameBoundaries.right
       ) {
         this.stop();
-        this.game.reportRocketDead();
+        // this.game.reportRocketDead();
 
         return;
       }
@@ -244,7 +264,7 @@ export class Rocket {
       if (distance < this.getC() / 2 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
-        console.log('got star');
+        return 1;
         // currentScore.textContent = String(this.collectedStars);
       }
     }
@@ -299,7 +319,7 @@ export class Rocket {
         this.height / 2 -
         (meteorite.position.y + meteorite.size / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < this.getC() / 2 + meteorite.size / 2) {
+      if (distance < this.getC() / 4 + meteorite.size / 2) {
         this.velocity.x = -this.velocity.x;
         this.velocity.y = -this.velocity.y;
         this.reduceHealth();
@@ -309,6 +329,6 @@ export class Rocket {
 
   addStar(star: Star) {
     this.stars.add(star);
-    console.log(this.stars);
+    // console.log(this.stars);
   }
 }

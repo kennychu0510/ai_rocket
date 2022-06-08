@@ -1,7 +1,8 @@
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
-import { GameBoundary } from './type.js';
+import { RocketGA } from './rocketGA.js';
+import { GameBoundary, gameDOMelements } from './type.js';
 
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
@@ -20,6 +21,10 @@ const boundaryModeBtn = getDOMElement('#boundary-mode');
 const easyMode = getDOMElement('#easy-mode');
 const normalMode = getDOMElement('#normal-mode');
 const hardMode = getDOMElement('#hard-mode');
+const seedBtn = getDOMElement('#seed');
+const canvasContainer = getDOMElement('#canvas-container');
+const scoreOrRockets = getDOMElement('#score-mode');
+const aiStats = getDOMElement('#ai-stats');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -30,27 +35,33 @@ const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 100;
+const canvasOffset = 120;
+canvas.height = window.innerHeight * 0.78;
+canvas.width = window.innerHeight * 1.8;
+// console.log(canvas.width, canvas.height);
+// console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
 const starSize = 20;
-
 const boundaryOffset = 20;
-// const trackTopBound = boundaryOffset;
-// const trackBotBound = canvas.height - boundaryOffset;
-// const trackLeftBound = boundaryOffset;
-// const trackRightBound = canvas.width - boundaryOffset;
+
+const domElements: gameDOMelements = {
+  totalScore,
+  currentScore,
+  timerMilliseconds,
+  timerSeconds,
+  aiStats,
+};
 
 const gameBoundaries: GameBoundary = {
   top: boundaryOffset,
-  bot: window.innerHeight - 100 - boundaryOffset,
+  bot: canvas.height - boundaryOffset,
   left: boundaryOffset,
-  right: window.innerWidth - boundaryOffset,
+  right: canvas.width - boundaryOffset,
 };
 
 /* SET UP NEW GAME */
-const game = new Game(canvas, gameBoundaries);
+const game = new Game(canvas, gameBoundaries, domElements);
 
 /* RENDER CANVAS */
 function animate() {
@@ -58,27 +69,23 @@ function animate() {
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   /* CHECK IF ALL STARS COLLECTED */
-  if (game.totalStars === game.rocket.collectedStars && game.gameStarted) {
-    game.statusMessage.updateMsg('Well Done!');
-    game.rocket.stop();
-    const endTime = new Date();
-    console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-    game.gameStarted = false;
-  }
-
-  /* UPDATE TIMER */
-  if (game.gameStarted) {
-    const timeTaken = Number(new Date()) - +game.startTime;
-    timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-    timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(
-      2,
-      '0',
-    );
-  }
+  // if (
+  //   game.totalStars === game.rocket.collectedStars &&
+  //   game.gameStarted &&
+  //   !game.startAI
+  // ) {
+  //   game.statusMessage.updateMsg('Well Done!');
+  //   game.rocket.stop();
+  //   const endTime = new Date();
+  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
+  //   game.gameStarted = false;
+  // }
 
   game.draw();
   game.update();
-  currentScore.textContent = String(game.rocket.collectedStars);
+  if (!game.startAI) {
+    currentScore.textContent = String(game.userRocket.collectedStars);
+  }
   // console.log(userCar.stats())
 }
 
@@ -94,7 +101,7 @@ window.addEventListener('keydown', ({ key }) => {
     if (!game.gameStarted && game.stars.length > 0) {
       game.startGame();
     }
-    game.rocket.changeDirection(key);
+    game.userRocket.changeDirection(key);
   }
 });
 
@@ -110,11 +117,11 @@ addStarBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => {
   // location.reload();
   game.reset();
-  totalScore.textContent = '0';
-  currentScore.textContent = '0';
-  timerMilliseconds.textContent = '000';
-  timerSeconds.textContent = '00';
-  rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
+  // totalScore.textContent = '0';
+  // currentScore.textContent = '0';
+  // timerMilliseconds.textContent = '000';
+  // timerSeconds.textContent = '00';
+  rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 });
 
 canvas.addEventListener('click', (e) => {
@@ -140,11 +147,11 @@ genBlackholeBtn.addEventListener('click', () => {
 });
 
 // UPDATE ROCKET SPEED DISPLAY VALUE
-rocketSpeed.value = String(Math.round(game.rocket.stats().acceleration));
+rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
-  game.rocket.changeAcceleration(Number(rocketSpeed.value));
+  game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 });
 
 boundaryModeBtn.addEventListener('click', () => {
@@ -282,3 +289,15 @@ hardMode.addEventListener('click', () => {
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
+seedBtn.addEventListener('click', () => {
+  game.seed();
+  game.startGame();
+  scoreOrRockets.textContent = 'Rockets:';
+  // aiStats.classList.remove('hidden');
+  // aiStats.classList.add('active');
+});
+
+// window.addEventListener('resize', () => {
+//   canvas.height = window.innerHeight * 0.78;
+//   canvas.width = window.innerHeight * 1.8;
+// });
