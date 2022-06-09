@@ -35,12 +35,12 @@ export class Rocket {
     g: Math.floor(Math.random() * 256),
     b: Math.floor(Math.random() * 256),
   };
-  public image_static = this.isUserControlled
-    ? new UserRocketImg()
-    : new RocketImg(this.color);
-  public image_flying = this.isUserControlled
-    ? new UserRocketImg()
-    : new RocketImg(this.color);
+  public image_static = this.isUserControlled ?
+    new UserRocketImg() :
+    new RocketImg(this.color);
+  public image_flying = this.isUserControlled ?
+    new UserRocketImg() :
+    new RocketImg(this.color);
   protected angle = 0;
   protected turn: number;
   public collectedStars = 0;
@@ -56,7 +56,7 @@ export class Rocket {
     const canvasHeight = game.canvasHeight;
     this.velocity = { x: 0, y: 0 };
     // this.acceleration === rocketGA.stepsBetweenMove / 10
-    
+
     this.turn = 45;
     this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
 
@@ -68,12 +68,12 @@ export class Rocket {
     ctx.save();
     ctx.translate(
       this.position.x + this.width / 2,
-      this.position.y + this.height / 2
+      this.position.y + this.height / 2,
     );
     ctx.rotate((this.angle * Math.PI) / 180);
     ctx.translate(
       -(this.position.x + this.width / 2),
-      -(this.position.y + this.height / 2)
+      -(this.position.y + this.height / 2),
     );
   }
 
@@ -97,7 +97,7 @@ export class Rocket {
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
       this.width,
-      this.height
+      this.height,
     );
     this.game.ctx.restore();
   }

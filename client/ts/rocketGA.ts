@@ -28,7 +28,7 @@ export class RocketGA {
     this.population = [];
     this.addSeed(this.populationSize);
     this.game.domElements.currentScore.textContent = String(
-      this.populationSize
+      this.populationSize,
     );
     this.game.domElements.totalScore.textContent = String(this.populationSize);
     this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
@@ -41,7 +41,7 @@ export class RocketGA {
     this.game.startAI = true;
     this.generation++;
     this.game.domElements.aiStats.querySelector(
-      '#current-generation'
+      '#current-generation',
     )!.textContent = String(this.generation);
     this.numArrived = 0;
     this.numAlive = this.populationSize;
@@ -103,8 +103,8 @@ export class RocketGA {
 
   evolve() {
     for (let i = 0; i < this.population.length; i++) {
-      let a = floor(random() * this.population.length);
-      let b = this.population[a];
+      const a = floor(random() * this.population.length);
+      const b = this.population[a];
       this.population[a] = this.population[i];
       this.population[i] = b;
     }
@@ -178,29 +178,29 @@ class RocketAI extends Rocket {
     }
     const currentMove = this.moves[index];
     switch (currentMove) {
-      case Move.none:
-        this.numOfForward++;
-        break;
-      case Move.up:
-        this.numOfForward++;
-        {
-          const x_direction =
+    case Move.none:
+      this.numOfForward++;
+      break;
+    case Move.up:
+      this.numOfForward++;
+      {
+        const x_direction =
             this.acceleration * Math.sin(degreeToRadian(this.angle));
-          const y_direction =
+        const y_direction =
             -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
-          this.velocity.x = x_direction;
-          this.velocity.y = y_direction;
-          this.flyingTimeout = 10;
-        }
-        break;
-      case Move.left:
-        this.angle -= this.turn;
-        this.numOfTurns++;
-        break;
-      case Move.right:
-        this.angle += this.turn;
-        this.numOfTurns++;
-        break;
+        this.velocity.x = x_direction;
+        this.velocity.y = y_direction;
+        this.flyingTimeout = 10;
+      }
+      break;
+    case Move.left:
+      this.angle -= this.turn;
+      this.numOfTurns++;
+      break;
+    case Move.right:
+      this.angle += this.turn;
+      this.numOfTurns++;
+      break;
     }
     this.game.domElements.aiStats.querySelector('#ai-move')!.textContent =
       String(index);
@@ -285,9 +285,7 @@ class RocketAI extends Rocket {
   }
 
   getFitnessFromSteps() {
-    return (
-      this.getStepsTaken()/this.rocketGA.moves * -1
-    );
+    return (this.getStepsTaken() / this.rocketGA.moves) * -1;
   }
 
   getFitnessFromAction() {
