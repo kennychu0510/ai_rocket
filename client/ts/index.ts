@@ -297,7 +297,7 @@ hardMode.addEventListener('click', () => {
 seedBtn.addEventListener('click', () => {
   game.seed();
   // game.startGame();
-  scoreOrRockets.textContent = 'Rockets:';
+  scoreOrRockets.innerHTML = 'Rockets:';
   aiStats.classList.remove('hidden');
   // aiStats.classList.add('active');
 });

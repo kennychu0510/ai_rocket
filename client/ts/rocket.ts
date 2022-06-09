@@ -143,6 +143,10 @@ export class Rocket {
     this.position.x += this.velocity.x;
   }
 
+  get alive() {
+    return this.health > 0;
+  }
+
   stats() {
     return {
       x: this.position.x,
@@ -184,7 +188,7 @@ export class Rocket {
     return Math.sqrt(this.width ** 2 + this.height ** 2);
   }
 
-  reduceHealth() {
+  reduceHealth(time: number) {
     this.health--;
     if (this.health === 2) {
       this.image_static = spaceshipDamagedImg;
@@ -196,27 +200,37 @@ export class Rocket {
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health >= 0) {
       this.height = this.height * 1;
-      this.width = this.height * 3/2;
+      this.width = (this.height * 3) / 2;
       this.image_static = boomImg;
       this.image_flying = boomImg;
       this.stop();
+      this.finishTime = time;
+      this.onDie();
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onDie() {}
 
   setTeleportationTimeout() {
     this.teleportTimeout = 60;
     // console.log(new Date().getTime());
   }
 
-  update() {
+  update(time: number) {
     if (this.flyingTimeout > 0) this.flyingTimeout--;
-    if (this.health <= 0) return;
+    if (
+      this.health <= 0 ||
+      (this.isCollectedAllStars() && this.game.gameOnGoing)
+    ) {
+      return 'skip';
+    }
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
     }
     this.checkRocketAndBoundary();
     this.checkStarCollection();
-    this.checkMeoriteCollision();
+    this.checkMeteoriteCollision(time);
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
     if (
@@ -229,6 +243,7 @@ export class Rocket {
       this.stop();
       this.game.statusMessage.updateMsg('Well Done!');
       this.game.gameOnGoing = false;
+      this.finishTime = time;
     }
   }
 
@@ -242,6 +257,8 @@ export class Rocket {
         this.position.x + this.width > gameBoundaries.right
       ) {
         this.stop();
+        this.game.stopGame();
+        this.game.statusMessage.updateMsg('Game Over');
         // this.game.reportRocketDead();
 
         return;
@@ -321,7 +338,7 @@ export class Rocket {
     }
   }
 
-  checkMeoriteCollision() {
+  checkMeteoriteCollision(time: number) {
     for (const meteorite of this.game.meteorites) {
       const dx =
         this.position.x +
@@ -335,9 +352,13 @@ export class Rocket {
       if (distance < this.getC() / 4 + meteorite.size / 2) {
         this.velocity.x = -this.velocity.x;
         this.velocity.y = -this.velocity.y;
-        this.reduceHealth();
+        this.reduceHealth(time);
       }
     }
+  }
+
+  isCollectedAllStars() {
+    return this.stars.size === 0;
   }
 
   addStar(star: Star) {
