@@ -3,7 +3,7 @@ import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
 import { RocketImg } from './rocketImg.js';
-import { Move, RocketColor } from './type.js';
+import { Move } from './type.js';
 
 export class RocketGA {
   public populationSize = 100;

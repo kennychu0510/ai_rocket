@@ -257,6 +257,7 @@ function genGameMap(
     };
     game.addBlackholePair(result);
   }
+  totalScore.textContent = String(starsArr.length);
 }
 
 easyMode.addEventListener('click', () => {
@@ -266,7 +267,7 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json[0].stars.length);
+      // console.log(json[0].stars.length);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
@@ -278,7 +279,7 @@ normalMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
@@ -290,7 +291,7 @@ hardMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
     });
 });
