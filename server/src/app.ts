@@ -1,12 +1,12 @@
 import express from 'express';
 import path from 'path';
-import { StarMapService } from './starMap-services';
 import { knex } from './knex';
-import { StarMapController } from './starMap-controller';
+import { MapService } from './map-services';
+import { MapController } from './map-controller';
 import cors from 'cors';
 
-const starMapService = new StarMapService(knex);
-export const starMapController = new StarMapController(starMapService);
+const mapService = new MapService(knex);
+export const mapController = new MapController(mapService);
 
 import { routes } from './routes';
 export const app = express();

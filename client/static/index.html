@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Rocket</title>
     <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/button.css">
     <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
 </head>
+
 <body>
     <div id="app">
         <div id="scoreboard">
@@ -42,20 +45,24 @@
                 <button id="gen-meteor">Generate Meteorite</button>
                 <button id="gen-blackhole">Generate Blackhole</button>
                 <button id="save-stars">Save Stars</button>
+                <button id="save-obj">Save Object</button>
                 <button id="seed">Seed</button>
                 <button id="train">Train</button>
             </div>
             <div id="control-panel-2" class="control-panel">
                 <label for="rocket-speed">Rocket Speed:</label>
                 <input id="rocket-speed" type="number" min="0.5" value="1.5" step="0.5"></input>
-                
-            </div>
-            <div id="bottom-panel-2">
+                <div id="mode">
+                    <button id="easy-mode">Easy Mode</button>
+                    <button id="normal-mode">Normal Mode</button>
+                    <button id="hard-mode">Hard Mode</button>
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <script type="module" src="/js/index.js"></script>
+
+        <script type="module" src="/js/index.js"></script>
 </body>
+
 </html>

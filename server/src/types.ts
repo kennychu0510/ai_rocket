@@ -1,5 +1,7 @@
-export type StarMap = {
+export type Map = {
   id?: number;
-  count: number;
-  coordinates: string;
+  stars: string;
+  meteorites: string;
+  black_holes: string;
+  levels: number;
 };

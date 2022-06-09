@@ -37,4 +37,10 @@ export class BlackholePair {
       this.size,
     );
   }
+  getX() {
+    return { x1: this.blackhole1.x, x2: this.blackhole2.x };
+  }
+  getY() {
+    return { y1: this.blackhole1.y, y2: this.blackhole2.y };
+  }
 }
