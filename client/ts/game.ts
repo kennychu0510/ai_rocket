@@ -52,14 +52,14 @@ export class Game {
       gameBoundaries.bot,
       gameBoundaries.left,
       this.ctx,
-    )
-    this.userRocket = new Rocket(this)
-    this.userRocket.onDie = ()=> {
+    );
+    this.userRocket = new Rocket(this);
+    this.userRocket.onDie = () => {
       this.statusMessage.updateMsg('Game Over');
-    }
-    this.userRocket.onFinish = ()=> {
+    };
+    this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
-    }
+    };
     this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
       {

@@ -57,12 +57,12 @@ export class Rocket {
     ctx.save();
     ctx.translate(
       this.position.x + this.width / 2,
-      this.position.y + this.height / 2
+      this.position.y + this.height / 2,
     );
     ctx.rotate((this.angle * Math.PI) / 180);
     ctx.translate(
       -(this.position.x + this.width / 2),
-      -(this.position.y + this.height / 2)
+      -(this.position.y + this.height / 2),
     );
   }
 
@@ -86,7 +86,7 @@ export class Rocket {
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
       this.width,
-      this.height
+      this.height,
     );
     this.game.ctx.restore();
   }
