@@ -312,7 +312,6 @@ class RocketAI extends Rocket {
   }
 }
 
-// type Move = number // 0 = none, 1 = up, 2 = left, 3 = right
 
 function generateMoves(steps: number) {
   const listOfMoves: Move[] = [];
