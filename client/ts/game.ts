@@ -17,7 +17,6 @@ export class Game {
   public gameInstructions: CanvasText;
   public addStarModeOn: boolean;
   public startTime: number;
-  private starSize: number;
   public totalStars: number;
   public canvasWidth: number;
   public canvasHeight: number;
@@ -34,6 +33,9 @@ export class Game {
   private initialPosition: Position;
   public startAI: boolean;
   public domElements: gameDOMelements;
+  public time = 0;
+  private frameRate = 60;
+  public gameEnd = false;
   constructor(
     canvas: HTMLCanvasElement,
     gameBoundaries: GameBoundary,
@@ -59,6 +61,7 @@ export class Game {
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
+      this.gameEnd = true;
     };
     this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
@@ -78,7 +81,6 @@ export class Game {
     this.addStarModeOn = false;
     this.gameOnGoing = false;
     this.startTime = Date.now();
-    this.starSize = 0;
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];
@@ -131,13 +133,22 @@ export class Game {
     this.rocketGA.update();
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
+      this.time++;
       const timeTaken = Date.now() - this.startTime;
       this.domElements.timerMilliseconds.textContent = String(
         timeTaken % 1000,
       ).padStart(3, '0');
+
+      // this.domElements.timerMilliseconds.textContent = String(
+      //   this.time % 1000
+      // ).padStart(3, '0');
+      
       this.domElements.timerSeconds.textContent = String(
         Math.floor(timeTaken / 1000),
       ).padStart(2, '0');
+      // this.domElements.timerSeconds.textContent = String(
+      //   Math.floor(this.time / 1000),
+      // ).padStart(2, '0');
     }
     if (!this.startAI) {
       this.domElements.currentScore.textContent = String(
@@ -226,6 +237,7 @@ export class Game {
     this.domElements.timerSeconds.textContent = '00';
     this.domElements.totalScore.textContent = '0';
     this.domElements.currentScore.textContent = '0';
+    this.time = 0;
     // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     // console.log(this.initialPosition);
   }

@@ -9,12 +9,11 @@ const { random, floor, round } = Math;
 export class RocketGA {
   public populationSize = 100;
   public moves = 500;
-  private survivalRate = 0.8;
+  public survivalRate = 0.8;
   public mutationRate = 0.05;
   private generation = 0;
-  // private mutationAmount = 0.05;
-  public stepsBetweenMove = 1;
-  public time = 0;
+  public tickBetweenMove = 1;
+  public tick = 0;
   private population: RocketAI[] = [];
   private game: Game;
   private calledStop = false;
@@ -28,11 +27,14 @@ export class RocketGA {
     this.population = [];
     this.addSeed(this.populationSize);
     this.game.domElements.currentScore.textContent = String(
-      this.populationSize,
+      this.populationSize
     );
     this.game.domElements.totalScore.textContent = String(this.populationSize);
     this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
       String(this.moves);
+    this.tick = 0;
+    this.game.startAI = false;
+    this.game.stopGame();
   }
 
   train() {
@@ -41,11 +43,11 @@ export class RocketGA {
     this.game.startAI = true;
     this.generation++;
     this.game.domElements.aiStats.querySelector(
-      '#current-generation',
+      '#current-generation'
     )!.textContent = String(this.generation);
     this.numArrived = 0;
     this.numAlive = this.populationSize;
-    this.time = 0;
+    this.tick = 0;
     this.game.domElements.currentScore.textContent = String(this.numAlive);
   }
 
@@ -66,18 +68,18 @@ export class RocketGA {
 
   update() {
     if (!this.game.startAI || !this.game.gameOnGoing) return;
-    const index = this.time / this.stepsBetweenMove;
+    const index = this.tick / this.tickBetweenMove;
     if (index === this.moves) {
       this.nextGen();
       return;
     }
     for (const rocket of this.population) {
-      if (this.time % this.stepsBetweenMove === 0) {
+      if (this.tick % this.tickBetweenMove === 0) {
         rocket.move(index);
       }
-      rocket.update(this.time);
+      rocket.update(this.tick);
     }
-    this.time++;
+    this.tick++;
   }
 
   onDie() {
@@ -149,7 +151,7 @@ export class RocketGA {
       stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
       stepsTaken: rocket.getStepsTaken(),
       alive: rocket.alive,
-      freeSteps: this.moves * this.stepsBetweenMove - rocket.getStepsTaken(),
+      freeSteps: this.moves * this.tickBetweenMove - rocket.getStepsTaken(),
     });
   }
 }
@@ -293,7 +295,7 @@ class RocketAI extends Rocket {
   }
 
   getStepsTaken() {
-    return this.finishTime || this.rocketGA.time;
+    return this.finishTime || this.rocketGA.tick;
   }
 
   draw() {

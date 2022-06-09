@@ -13,6 +13,10 @@ const genStarBtn = getDOMElement('#gen-star');
 const genMeteoriteBtn = getDOMElement('#gen-meteor');
 const genBlackholeBtn = getDOMElement('#gen-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
+const population = getDOMElement('#population') as HTMLInputElement;
+const moves = getDOMElement('#moves') as HTMLInputElement;
+const survivalRate = getDOMElement('#survival-rate') as HTMLInputElement;
+const mutationRate = getDOMElement('#mutation-rate') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveObjBtn = getDOMElement('#save-obj');
@@ -80,7 +84,7 @@ EVENT LISTENERS
 */
 window.addEventListener('keydown', ({ key }) => {
   if (game.buttons.includes(key)) {
-    if (!game.gameOnGoing && game.stars.length > 0) {
+    if (!game.gameOnGoing && game.stars.length > 0 && !game.gameEnd) {
       game.startGame();
     }
     game.userRocket.changeDirection(key);
@@ -132,13 +136,48 @@ genBlackholeBtn.addEventListener('click', () => {
   game.generateBlackholePair();
 });
 
-// UPDATE ROCKET SPEED DISPLAY VALUE
+
+/*
+----------------------------------------------------------------
+GAME SETTINGS
+----------------------------------------------------------------
+*/
 rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+population.value = String(game.rocketGA.populationSize);
+moves.value = String(game.rocketGA.moves);
+survivalRate.value = String(game.rocketGA.survivalRate);
+mutationRate.value = String(game.rocketGA.mutationRate);
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
   game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 });
+
+population.addEventListener('change', () => {
+  const n = Number(population.value);
+  if (n <= 0) return;
+  game.rocketGA.populationSize = n;
+})
+
+moves.addEventListener('change', () => {
+  const n = Number(moves.value);
+  if (n <= 0) return;
+  game.rocketGA.moves = n;
+});
+
+survivalRate.addEventListener('change', () => {
+  const n = Number(survivalRate.value);
+  if (n <= 0 || n > 1) return;
+  game.rocketGA.survivalRate = n;
+});
+
+mutationRate.addEventListener('change', () => {
+  const n = Number(mutationRate.value);
+  if (n <= 0 || n > 1) return;
+  game.rocketGA.mutationRate = n;
+});
+
+
 
 boundaryModeBtn.addEventListener('click', () => {
   if (game.boundary.getBoundaryMode()) {

@@ -52,6 +52,7 @@
                 <div class="panel-right">
                     <button id="seed">Seed</button>
                     <button id="train">Train</button>
+                    
                 </div> 
                 
             </div>
@@ -61,11 +62,19 @@
                         <button id="easy-mode">Easy Mode</button>
                         <button id="normal-mode">Normal Mode</button>
                         <button id="hard-mode">Hard Mode</button>
+                        <label for="rocket-speed">Rocket Speed:</label>
+                        <input id="rocket-speed" type="number" min="0.5" value="1.5" step="0.5"></input>
                     </div>
                 </div>
                 <div class="panel-right">
-                    <label for="rocket-speed">Rocket Speed:</label>
-                    <input id="rocket-speed" type="number" min="0.5" value="1.5" step="0.5"></input>
+                    <label for="population">Population:</label>
+                    <input id="population" type="number" min="0" value="100" step="50"></input>
+                    <label for="moves">Moves:</label>
+                    <input id="moves" type="number" min="0" value="500" step="10"></input>
+                    <label for="survival-rate">Survival Rate:</label>
+                    <input id="survival-rate" type="number" min="0" max="1" value="0.8" step="0.1"></input>
+                    <label for="mutation-rate">Mutation Rate:</label>
+                    <input id="mutation-rate" type="number" min="0" max ="1" value="0.05" step="0.01"></input>
                 </div>
             </div>
         </div>

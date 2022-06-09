@@ -76,8 +76,8 @@ input {
   margin: 20px;
 }
 
-.ai-move-label {
-  margin-left: 20px;
+label {
+  margin-left: 10px;
 }
 
 .hidden {

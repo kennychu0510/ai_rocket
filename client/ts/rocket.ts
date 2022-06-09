@@ -30,7 +30,11 @@ export class Rocket {
   public width = 0;
   public height = 0;
   protected acceleration = 0;
-  color: RocketColor = [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)];
+  color: RocketColor = [
+    Math.floor(Math.random() * 256),
+    Math.floor(Math.random() * 256),
+    Math.floor(Math.random() * 256),
+  ];
   public image_static = this.isUserControlled ?
     new UserRocketImg() :
     new RocketImg(this.color);
@@ -61,7 +65,7 @@ export class Rocket {
 
   drawRotated() {
     const ctx = this.game.ctx;
-    ctx.save();
+    
     ctx.translate(
       this.position.x + this.width / 2,
       this.position.y + this.height / 2,
@@ -74,11 +78,13 @@ export class Rocket {
   }
 
   draw() {
+    this.game.ctx.save();
     this.drawRotated();
     this.drawImage();
     // c.fillRect(this.position.x, this.position.y, this.size, this.size)
     // c.fill()
     // c.rotate(10)
+    this.game.ctx.restore();
   }
 
   drawImage() {
@@ -90,15 +96,16 @@ export class Rocket {
     }
     this.game.ctx.drawImage(
       image.image,
-      this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
+      this.position.x + this.velocity.x,
       this.position.y + this.velocity.y,
       this.width,
       this.height,
     );
-    this.game.ctx.restore();
+    
   }
 
   changeDirection(key: string) {
+    if (this.game.gameEnd) return;
     if (key === 'w') {
       this.flyingTimeout = 10;
       const x_direction =
@@ -116,7 +123,7 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    // console.log(this.stats());
+    console.log(this.stats());
   }
 
   slowDown() {
