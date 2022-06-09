@@ -13,6 +13,11 @@ export class RocketGA {
   public mutationRate = 0.05;
   private generation = 0;
   public tickBetweenMove = 1;
+  public starsReward = 500;
+  public healthReward = 1;
+  public stepsReward = -1;
+  public turnReward = -1;
+  public forwardReward = 1;
   public tick = 0;
   private population: RocketAI[] = [];
   private game: Game;
@@ -27,7 +32,7 @@ export class RocketGA {
     this.population = [];
     this.addSeed(this.populationSize);
     this.game.domElements.currentScore.textContent = String(
-      this.populationSize
+      this.populationSize,
     );
     this.game.domElements.totalScore.textContent = String(this.populationSize);
     this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
@@ -43,7 +48,7 @@ export class RocketGA {
     this.game.startAI = true;
     this.generation++;
     this.game.domElements.aiStats.querySelector(
-      '#current-generation'
+      '#current-generation',
     )!.textContent = String(this.generation);
     this.numArrived = 0;
     this.numAlive = this.populationSize;
@@ -279,19 +284,27 @@ class RocketAI extends Rocket {
   }
 
   getFitnessFromStars() {
-    return (this.game.stars.length - this.stars.size) * 500;
+    return (
+      (this.game.stars.length - this.stars.size) * this.rocketGA.starsReward
+    );
   }
 
   getFitnessFromHealth() {
-    return this.health * 1;
+    return this.health * this.rocketGA.healthReward;
   }
 
   getFitnessFromSteps() {
-    return round(this.getStepsTaken() / this.rocketGA.moves) * -1;
+    return (
+      round(this.getStepsTaken() / this.rocketGA.moves) *
+      this.rocketGA.stepsReward
+    );
   }
 
   getFitnessFromAction() {
-    return this.numOfTurns * -1 + this.numOfForward * 1;
+    return (
+      this.numOfTurns * this.rocketGA.turnReward +
+      this.numOfForward * this.rocketGA.forwardReward
+    );
   }
 
   getStepsTaken() {

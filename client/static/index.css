@@ -24,7 +24,7 @@ body,
   margin: 10px 20px;
 }
 
-#scoreboard > * {
+#scoreboard>* {
   width: 500px;
 }
 
@@ -62,8 +62,8 @@ body,
   justify-content: space-between;
 }
 
-#control-panel-1 > *,
-#control-panel-2 > * {
+#control-panel-1>*,
+#control-panel-2>* {
   margin-right: 10px;
   margin-bottom: 10px;
 }
@@ -76,23 +76,47 @@ input {
   margin: 20px;
 }
 
-label {
-  margin-left: 10px;
+button,
+input {
+  margin-right: 5px;
 }
 
-.hidden {
-  display: none;
-}
 
-.active {
-  display: inline;
-}
 
 #star-img,
 #clock-img {
   height: 16px;
 }
 
-#ai-stats {
-  font-size: smaller;
+#mode {
+  display: inline-block;
 }
+
+#score,
+#ai-stats,
+#score-mode {
+  display: flex;
+  align-items: center;
+}
+
+#score>* {
+  margin-right: 5px;
+
+}
+
+#ai-stats>* {
+  margin-left: 5px;
+}
+
+.ai-stats-label {
+  margin-left: 20px !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.active {
+  display: inline;
+}
+

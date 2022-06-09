@@ -17,6 +17,11 @@ const population = getDOMElement('#population') as HTMLInputElement;
 const moves = getDOMElement('#moves') as HTMLInputElement;
 const survivalRate = getDOMElement('#survival-rate') as HTMLInputElement;
 const mutationRate = getDOMElement('#mutation-rate') as HTMLInputElement;
+const starsReward = getDOMElement('#stars-reward') as HTMLInputElement;
+const healthReward = getDOMElement('#health-reward') as HTMLInputElement;
+const stepsReward = getDOMElement('#steps-reward') as HTMLInputElement;
+const turnReward = getDOMElement('#turn-reward') as HTMLInputElement;
+const forwardReward = getDOMElement('#forward-reward') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const saveObjBtn = getDOMElement('#save-obj');
@@ -39,8 +44,8 @@ const timerMilliseconds = getDOMElement('#millisecond');
 const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
-const canvasOffset = 120;
-canvas.height = window.innerHeight * 0.78;
+const canvasOffset = 10;
+canvas.height = window.innerHeight * 0.78 - canvasOffset;
 canvas.width = window.innerHeight * 1.8;
 // console.log(canvas.width, canvas.height);
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
@@ -136,7 +141,6 @@ genBlackholeBtn.addEventListener('click', () => {
   game.generateBlackholePair();
 });
 
-
 /*
 ----------------------------------------------------------------
 GAME SETTINGS
@@ -147,6 +151,11 @@ population.value = String(game.rocketGA.populationSize);
 moves.value = String(game.rocketGA.moves);
 survivalRate.value = String(game.rocketGA.survivalRate);
 mutationRate.value = String(game.rocketGA.mutationRate);
+starsReward.value = String(game.rocketGA.starsReward);
+healthReward.value = String(game.rocketGA.healthReward);
+stepsReward.value = String(game.rocketGA.stepsReward);
+turnReward.value = String(game.rocketGA.turnReward);
+forwardReward.value = String(game.rocketGA.forwardReward);
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
@@ -157,7 +166,7 @@ population.addEventListener('change', () => {
   const n = Number(population.value);
   if (n <= 0) return;
   game.rocketGA.populationSize = n;
-})
+});
 
 moves.addEventListener('change', () => {
   const n = Number(moves.value);
@@ -177,7 +186,30 @@ mutationRate.addEventListener('change', () => {
   game.rocketGA.mutationRate = n;
 });
 
+starsReward.addEventListener('change', () => {
+  const n = Number(starsReward.value);
+  game.rocketGA.starsReward = n;
+});
 
+healthReward.addEventListener('change', () => {
+  const n = Number(healthReward.value);
+  game.rocketGA.healthReward = n;
+});
+
+stepsReward.addEventListener('change', () => {
+  const n = Number(stepsReward.value);
+  game.rocketGA.stepsReward = n;
+});
+
+turnReward.addEventListener('change', () => {
+  const n = Number(turnReward.value);
+  game.rocketGA.turnReward = n;
+});
+
+forwardReward.addEventListener('change', () => {
+  const n = Number(forwardReward.value);
+  game.rocketGA.forwardReward = n;
+});
 
 boundaryModeBtn.addEventListener('click', () => {
   if (game.boundary.getBoundaryMode()) {
@@ -318,12 +350,16 @@ hardMode.addEventListener('click', () => {
 seedBtn.addEventListener('click', () => {
   game.seed();
   // game.startGame();
-  scoreOrRockets.innerHTML = 'Rockets:';
+  const rocketImg = new Image();
+  rocketImg.src = './media/rocket_1_static.png';
+  rocketImg.style.height = '24px';
+  scoreOrRockets.innerHTML = '';
+  scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
   // aiStats.classList.add('active');
 });
 
-window.addEventListener('resize', () => {
-  canvas.height = window.innerHeight * 0.78;
-  canvas.width = window.innerHeight * 1.8;
-});
+// window.addEventListener('resize', () => {
+//   canvas.height = window.innerHeight * 0.78;
+//   canvas.width = window.innerHeight * 1.8;
+// });

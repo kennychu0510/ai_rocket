@@ -65,7 +65,7 @@ export class Rocket {
 
   drawRotated() {
     const ctx = this.game.ctx;
-    
+
     ctx.translate(
       this.position.x + this.width / 2,
       this.position.y + this.height / 2,
@@ -101,7 +101,6 @@ export class Rocket {
       this.width,
       this.height,
     );
-    
   }
 
   changeDirection(key: string) {

@@ -142,7 +142,7 @@ export class Game {
       // this.domElements.timerMilliseconds.textContent = String(
       //   this.time % 1000
       // ).padStart(3, '0');
-      
+
       this.domElements.timerSeconds.textContent = String(
         Math.floor(timeTaken / 1000),
       ).padStart(2, '0');
