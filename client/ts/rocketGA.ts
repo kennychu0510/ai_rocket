@@ -4,7 +4,7 @@ import { Game } from './game.js';
 import { Rocket } from './rocket.js';
 import { RocketImg } from './rocketImg.js';
 import { Move } from './type.js';
-const { random, floor } = Math;
+const { random, floor, round } = Math;
 
 export class RocketGA {
   public populationSize = 100;
@@ -88,7 +88,7 @@ export class RocketGA {
 
   onFinish() {
     this.numArrived++;
-    if (this.numArrived === this.populationSize) this.nextGen();
+    if (this.numArrived === this.numAlive) this.nextGen();
   }
 
   draw() {
@@ -215,9 +215,9 @@ class RocketAI extends Rocket {
     const a = parentA.color;
     const b = parentB.color;
     const c = this.color;
-    c.r = randomBool(0.5) ? a.r : b.r;
-    c.g = randomBool(0.5) ? a.g : b.g;
-    c.b = randomBool(0.5) ? a.b : b.b;
+    c[0] = randomBool(0.5) ? a[0] : b[0];
+    c[1] = randomBool(0.5) ? a[1] : b[1];
+    c[2] = randomBool(0.5) ? a[2] : b[2];
     this.image_flying.updateImgData();
     this.image_static.updateImgData();
   }
@@ -237,15 +237,15 @@ class RocketAI extends Rocket {
     const c = this.color;
     const r = this.rocketGA.mutationRate;
     if (randomBool(r)) {
-      c.r = floor(random() * 256);
-      c.g = floor(random() * 256);
-      c.b = floor(random() * 256);
+      c[0] = floor(random() * 256);
+      c[1] = floor(random() * 256);
+      c[2] = floor(random() * 256);
       this.image_flying.updateImgData();
       this.image_static.updateImgData();
     } else {
-      c.r = p.r;
-      c.g = p.g;
-      c.b = p.b;
+      c[0] = p[0];
+      c[1] = p[1];
+      c[2] = p[2];
     }
 
     for (let i = 0; i < this.moves.length; i++) {
@@ -285,7 +285,7 @@ class RocketAI extends Rocket {
   }
 
   getFitnessFromSteps() {
-    return (this.getStepsTaken() / this.rocketGA.moves) * -1;
+    return round(this.getStepsTaken() / this.rocketGA.moves) * -1;
   }
 
   getFitnessFromAction() {

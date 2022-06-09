@@ -54,9 +54,9 @@ export class RocketImg extends UserRocketImg {
     for (let i = 0; i < this.imageData.data.length; i += 4) {
       const a = this.imageData.data[i + A];
       if (a != 0) {
-        this.imageData.data[i + R] = this.color.r;
-        this.imageData.data[i + G] = this.color.g;
-        this.imageData.data[i + B] = this.color.b;
+        this.imageData.data[i + R] = this.color[0];
+        this.imageData.data[i + G] = this.color[1];
+        this.imageData.data[i + B] = this.color[2];
         // imageData.data[i + A] = randomA;
       }
     }

@@ -2,7 +2,7 @@ import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { RocketImg, UserRocketImg } from './rocketImg.js';
 import { Star } from './star.js';
-import { Position } from './type.js';
+import { Position, RocketColor } from './type.js';
 
 const spaceshipImg = new Image();
 spaceshipImg.src = './media/rocket_1_static.png';
@@ -30,11 +30,7 @@ export class Rocket {
   public width = 0;
   public height = 0;
   protected acceleration = 0;
-  color = {
-    r: Math.floor(Math.random() * 256),
-    g: Math.floor(Math.random() * 256),
-    b: Math.floor(Math.random() * 256),
-  };
+  color: RocketColor = [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)];
   public image_static = this.isUserControlled ?
     new UserRocketImg() :
     new RocketImg(this.color);
