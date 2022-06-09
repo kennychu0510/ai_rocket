@@ -24,45 +24,32 @@ spaceshipBrokenFlyingImg.src = './media/rocket_3_flying.png';
 const boomImg = new Image();
 boomImg.src = './media/boom.png';
 export class Rocket {
-  public position: Position;
+  public position = { x: 0, y: 0 };
   public velocity: Position;
-  public width: number;
-  public height: number;
+  public width = 0;
+  public height = 0;
   protected acceleration: number;
-  public image_static: HTMLImageElement;
-  public image_flying: HTMLImageElement;
-  // public alive: boolean;
-  protected angle: number;
+  public image_static = spaceshipImg;
+  public image_flying = spaceshipFlyingImg;
+  protected angle = 0;
   protected turn: number;
-  public collectedStars: number;
-  protected health: number;
-  public teleportTimeout: number;
-  public flyingTimeout: number;
-  public stars: Set<Star>;
+  public collectedStars = 0;
+  protected health = 0;
+  public teleportTimeout = 0;
+  public flyingTimeout = 0;
+  public stars = new Set<Star>();
   private initialPosition: Position;
-  public collectedAllStars: boolean;
-  public finishTime: number;
+  public finishTime = 0;
+  public isUserControlled = true;
   constructor(public game: Game) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
-    this.position = { x: canvasHeight / 4, y: canvasWidth / 10 };
-    this.initialPosition = { x: this.position.x, y: this.position.y };
     this.velocity = { x: 0, y: 0 };
     this.acceleration = 0.002 * canvasWidth;
-    this.width = 0.02 * canvasWidth;
-    this.height = this.width * 2;
     this.turn = 45;
-    this.image_static = spaceshipImg;
-    this.image_flying = spaceshipFlyingImg;
-    // this.alive = true;
-    this.angle = 90;
-    this.collectedStars = 0;
-    this.health = 3;
-    this.teleportTimeout = 0;
-    this.flyingTimeout = 0;
-    this.stars = new Set(game.stars);
-    this.collectedAllStars = false;
-    this.finishTime = 0;
+    this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
+
+    this.reset();
   }
 
   drawRotated() {
@@ -70,12 +57,12 @@ export class Rocket {
     ctx.save();
     ctx.translate(
       this.position.x + this.width / 2,
-      this.position.y + this.height / 2,
+      this.position.y + this.height / 2
     );
     ctx.rotate((this.angle * Math.PI) / 180);
     ctx.translate(
       -(this.position.x + this.width / 2),
-      -(this.position.y + this.height / 2),
+      -(this.position.y + this.height / 2)
     );
   }
 
@@ -99,7 +86,7 @@ export class Rocket {
       this.position.x + this.velocity.x * Math.sin(degreeToRadian(this.angle)),
       this.position.y + this.velocity.y,
       this.width,
-      this.height,
+      this.height
     );
     this.game.ctx.restore();
   }
@@ -172,11 +159,16 @@ export class Rocket {
     this.health = 3;
     this.angle = 90;
     this.collectedStars = 0;
+    this.teleportTimeout = 0;
     this.image_static = spaceshipImg;
     this.image_flying = spaceshipFlyingImg;
     this.position.x = this.initialPosition.x;
     this.position.y = this.initialPosition.y;
-    this.stars = new Set();
+    this.stars = new Set(this.game.stars);
+    this.width = 0.02 * this.game.canvasWidth;
+    this.height = this.width * 2;
+    this.flyingTimeout = 0;
+    this.finishTime = 0;
   }
 
   setPosition(position: Position) {
@@ -203,14 +195,10 @@ export class Rocket {
       this.width = (this.height * 3) / 2;
       this.image_static = boomImg;
       this.image_flying = boomImg;
-      this.stop();
       this.finishTime = time;
       this.onDie();
     }
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onDie() {}
 
   setTeleportationTimeout() {
     this.teleportTimeout = 60;
@@ -229,7 +217,7 @@ export class Rocket {
       this.teleportTimeout--;
     }
     this.checkRocketAndBoundary();
-    this.checkStarCollection();
+    this.checkStarCollection(time);
     this.checkMeteoriteCollision(time);
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
@@ -237,11 +225,10 @@ export class Rocket {
       this.game.gameOnGoing &&
       this.collectedStars === this.game.totalStars &&
       !this.game.startAI &&
-      this.game.gameMode
+      this.isUserControlled
     ) {
       this.game.stopGame();
-      this.stop();
-      this.game.statusMessage.updateMsg('Well Done!');
+
       this.game.gameOnGoing = false;
       this.finishTime = time;
     }
@@ -257,8 +244,8 @@ export class Rocket {
         this.position.x + this.width > gameBoundaries.right
       ) {
         this.stop();
-        this.game.stopGame();
-        this.game.statusMessage.updateMsg('Game Over');
+        this.onDie();
+
         // this.game.reportRocketDead();
 
         return;
@@ -279,8 +266,7 @@ export class Rocket {
     }
   }
 
-  checkStarCollection() {
-    if (this.collectedAllStars) return;
+  checkStarCollection(time: number) {
     for (const star of this.stars) {
       const dx =
         this.position.x + this.width / 2 - (star.getX() + star.size / 2);
@@ -292,12 +278,21 @@ export class Rocket {
         this.stars.delete(star);
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
-          this.collectedAllStars = true;
-          this.finishTime = new Date().getTime();
+          this.finishTime = time;
+          this.stop();
+          this.onFinish();
         }
         // currentScore.textContent = String(this.collectedStars);
       }
     }
+  }
+
+  onFinish() {
+    // For event listener
+  }
+
+  onDie() {
+    // For event listener
   }
 
   checkBlackholeTeleportation() {

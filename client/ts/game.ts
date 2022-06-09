@@ -16,7 +16,7 @@ export class Game {
   public statusMessage: CanvasText;
   public gameInstructions: CanvasText;
   public addStarModeOn: boolean;
-  public startTime: Date;
+  public startTime: number;
   private starSize: number;
   public totalStars: number;
   public canvasWidth: number;
@@ -32,11 +32,8 @@ export class Game {
   public ctx: CanvasRenderingContext2D;
   public rocketGA: RocketGA;
   private initialPosition: Position;
-  private aliveCount = 0;
   public startAI: boolean;
   public domElements: gameDOMelements;
-  public gameMode: boolean;
-  public endTime: number;
   constructor(
     canvas: HTMLCanvasElement,
     gameBoundaries: GameBoundary,
@@ -44,21 +41,26 @@ export class Game {
   ) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
-    this.gameMode = false;
     this.ctx = this.canvas.getContext('2d')!;
     this.initialPosition = {
       x: this.canvasWidth / 10,
       y: this.canvasHeight / 4,
     };
-    (this.boundary = new Boundary(
+    this.boundary = new Boundary(
       gameBoundaries.top,
       gameBoundaries.right,
       gameBoundaries.bot,
       gameBoundaries.left,
       this.ctx,
-    )),
-    (this.userRocket = new Rocket(this)),
-    (this.statusMessage = new CanvasText(
+    )
+    this.userRocket = new Rocket(this)
+    this.userRocket.onDie = ()=> {
+      this.statusMessage.updateMsg('Game Over');
+    }
+    this.userRocket.onFinish = ()=> {
+      this.statusMessage.updateMsg('Well Done!');
+    }
+    this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
       {
         x: canvas.width / 2,
@@ -66,7 +68,7 @@ export class Game {
       },
       this.canvasHeight,
       this.ctx,
-    ));
+    );
     this.gameInstructions = new CanvasText(
       `Add stars to start the game`,
       { x: canvas.width / 2, y: (canvas.height * 2) / 3 },
@@ -75,7 +77,7 @@ export class Game {
     );
     this.addStarModeOn = false;
     this.gameOnGoing = false;
-    this.startTime = new Date();
+    this.startTime = Date.now();
     this.starSize = 0;
     this.stars = [];
     this.meteorites = [];
@@ -85,7 +87,6 @@ export class Game {
     this.rocketGA = new RocketGA(this);
     this.startAI = false;
     this.domElements = domElements;
-    this.endTime = 0;
   }
 
   addStar(position: Position) {
@@ -111,22 +112,16 @@ export class Game {
 
   startGame() {
     this.gameOnGoing = true;
-    this.startTime = new Date();
+    this.startTime = Date.now();
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
-    this.aliveCount = 1;
-    this.gameMode = true;
   }
 
   stopGame() {
     this.gameOnGoing = false;
-    this.endTime = new Date().getTime();
-    this.rocketGA.report();
-    console.log('game stopped');
   }
 
   reportRocketDead() {
-    this.aliveCount--;
     // this.statusMessage.updateMsg(`0/1 rockets alive`);
     this.gameOnGoing = false;
   }
@@ -136,7 +131,7 @@ export class Game {
     this.rocketGA.update();
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
-      const timeTaken = Number(new Date()) - +this.startTime;
+      const timeTaken = Date.now() - this.startTime;
       this.domElements.timerMilliseconds.textContent = String(
         timeTaken % 1000,
       ).padStart(3, '0');

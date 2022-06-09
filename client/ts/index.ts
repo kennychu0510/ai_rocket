@@ -1,7 +1,6 @@
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
-import { RocketGA } from './rocketGA.js';
 import { GameBoundary, gameDOMelements } from './type.js';
 
 /* QUERY SELECTORS */
@@ -68,28 +67,10 @@ const game = new Game(canvas, gameBoundaries, domElements);
 function animate() {
   requestAnimationFrame(animate);
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  /* CHECK IF ALL STARS COLLECTED */
-  // if (
-  //   game.totalStars === game.rocket.collectedStars &&
-  //   game.gameStarted &&
-  //   !game.startAI
-  // ) {
-  //   game.statusMessage.updateMsg('Well Done!');
-  //   game.rocket.stop();
-  //   const endTime = new Date();
-  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-  //   game.gameStarted = false;
-  // }
-
   game.draw();
   game.update();
-  if (!game.startAI) {
-    currentScore.textContent = String(game.userRocket.collectedStars);
-  }
   // console.log(userCar.stats())
 }
-
 animate();
 
 /*
