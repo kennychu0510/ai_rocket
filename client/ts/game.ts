@@ -2,7 +2,12 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star } from './star.js';
-import { BlackholePairType, GameBoundary, gameDOMelements, Position } from './type.js';
+import {
+  BlackholePairType,
+  GameBoundary,
+  gameDOMelements,
+  Position,
+} from './type.js';
 import { Meteorite } from './meteorite.js';
 import { BlackholePair } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
@@ -32,10 +37,14 @@ export class Game {
   public domElements: gameDOMelements;
   public gameMode: boolean;
   public endTime: number;
-  constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary, domElements: gameDOMelements) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    gameBoundaries: GameBoundary,
+    domElements: gameDOMelements,
+  ) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
-    this.gameMode = true;
+    this.gameMode = false;
     this.ctx = this.canvas.getContext('2d')!;
     this.initialPosition = {
       x: this.canvasWidth / 10,
@@ -106,11 +115,12 @@ export class Game {
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
     this.aliveCount = 1;
+    this.gameMode = true;
   }
 
   stopGame() {
     this.gameOnGoing = false;
-    this.endTime = new Date().getTime() - this.startTime.getTime();
+    this.endTime = new Date().getTime();
     this.rocketGA.report();
     console.log('game stopped');
   }
@@ -127,11 +137,17 @@ export class Game {
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
       const timeTaken = Number(new Date()) - +this.startTime;
-      this.domElements.timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-      this.domElements.timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
+      this.domElements.timerMilliseconds.textContent = String(
+        timeTaken % 1000,
+      ).padStart(3, '0');
+      this.domElements.timerSeconds.textContent = String(
+        Math.floor(timeTaken / 1000),
+      ).padStart(2, '0');
     }
     if (!this.startAI) {
-      this.domElements.currentScore.textContent = String(this.userRocket.collectedStars);
+      this.domElements.currentScore.textContent = String(
+        this.userRocket.collectedStars,
+      );
     }
   }
 
@@ -221,8 +237,7 @@ export class Game {
 
   seed() {
     this.rocketGA.seed();
-    // this.startAI = true;
-    this.gameMode = false;
+    this.startAI = true;
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
   }

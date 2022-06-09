@@ -6,15 +6,17 @@ import { RocketImg } from './rocketImg.js';
 import { Move, RocketColor } from './type.js';
 
 export class RocketGA {
-  public populationSize = 20;
-  public tickStep = 50;
+  public populationSize = 50;
+  public moves = 50;
   private survivalRate = 0.9;
   private mutationRate = 0.1;
-  private mutationAmount = 0.05;
+  private generation = 0;
+  // private mutationAmount = 0.05;
   public timeBetweenMove = 10;
   private time = 0;
   private population: RocketAI[] = [];
   private game: Game;
+  private calledStop = false;
   constructor(game: Game) {
     this.game = game;
   }
@@ -22,15 +24,21 @@ export class RocketGA {
   seed() {
     this.population = [];
     this.addSeed(this.populationSize);
-    this.game.domElements.currentScore.textContent = String(this.populationSize);
+    this.game.domElements.currentScore.textContent = String(
+      this.populationSize,
+    );
     this.game.domElements.totalScore.textContent = String(this.populationSize);
-    this.game.domElements.aiStats.querySelector('#total-moves')!.textContent = String(this.tickStep);
+    this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
+      String(this.moves);
   }
 
   train() {
     this.game.startAI = true;
     this.game.gameOnGoing = true;
     this.game.startTime = new Date();
+    this.generation++;
+    this.game.domElements.aiStats.querySelector('#current-generation')!.textContent =
+      String(this.generation);
   }
 
   addSeed(n: number) {
@@ -41,13 +49,19 @@ export class RocketGA {
   }
 
   update() {
-    if (!this.game.startAI && !this.game.gameMode) return;
+    if (!this.game.startAI || !this.game.gameOnGoing) return;
     let aliveRockets = 0;
     const index = this.time / this.timeBetweenMove;
-    if (index === this.tickStep) {
+    if (index === this.moves) {
       this.game.stopGame();
     }
-    if (index > this.tickStep) {
+    if (index > this.moves) {
+      return;
+    }
+    if (this.population.filter((rocket) => rocket.collectedAllStars).length === this.populationSize) {
+      if (this.calledStop) return;
+      this.game.stopGame();
+      this.calledStop = true;
       return;
     }
 
@@ -57,10 +71,15 @@ export class RocketGA {
         rocket.move(index);
       }
       rocket.update();
-      if (rocket.survive) {
+      if (rocket.alive) {
         aliveRockets++;
       }
     }
+    if (aliveRockets === 0 ) {
+      this.game.stopGame();
+      return;
+    }
+
     this.game.domElements.currentScore.textContent = String(aliveRockets);
     this.time++;
   }
@@ -74,30 +93,41 @@ export class RocketGA {
   reset() {
     this.population = [];
   }
-  // evaluate() {
 
-  // }
-
-  // select() {
-  //   const numberOfSurviving = this.population.length * this.survivalRate;
-
-  // }
+  select() {
+    const numberOfAlive = this.population.filter((rocket) => rocket.alive).length;
+    let numberOfSurviving = numberOfAlive;
+    if (numberOfAlive/this.population.length >= this.survivalRate) {
+      numberOfSurviving = this.population.length * this.survivalRate;
+    }
+    console.log(numberOfSurviving);
+  }
   report() {
+    this.population.sort((a, b) => {
+      return b.fitness - a.fitness;
+    });
     for (const [i, rocket] of this.population.entries()) {
+      let timeTaken;
+      if (rocket.finishTime === 0) {
+        timeTaken = this.game.endTime - this.game.startTime.getTime();
+      } else {
+        timeTaken = rocket.finishTime - this.game.startTime.getTime();
+      }
       console.log({
         rocket: i,
         fitness: rocket.fitness,
         stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
-        timeTaken: `${this.game.endTime - rocket.finishTime}`,
-        finishTime: rocket.finishTime,
+        timeTaken: timeTaken/1000,
+        alive: rocket.alive,
       });
     }
+    this.select();
   }
 }
 
 class RocketAI extends Rocket {
   fitness: number;
-  survive: boolean;
+  alive: boolean;
   moves: Move[];
   rocketGA: RocketGA;
   private backgroundColor: string;
@@ -108,8 +138,8 @@ class RocketAI extends Rocket {
     super(game);
     this.rocketGA = rocketGA;
     this.fitness = 0;
-    this.survive = true;
-    this.moves = generateMoves(this.rocketGA.tickStep);
+    this.alive = true;
+    this.moves = generateMoves(this.rocketGA.moves);
     this.backgroundColor = randomColor();
     // this.color = {
     //   r: Math.floor(Math.random() * 256),
@@ -146,13 +176,14 @@ class RocketAI extends Rocket {
       this.angle += this.turn;
       break;
     }
-    this.game.domElements.aiStats.querySelector('#ai-move')!.textContent = String(index);
+    this.game.domElements.aiStats.querySelector('#ai-move')!.textContent =
+      String(index);
   }
 
   reduceHealth() {
     super.reduceHealth();
     if (this.health <= 0) {
-      this.survive = false;
+      this.alive = false;
     }
   }
 
@@ -165,6 +196,9 @@ class RocketAI extends Rocket {
     }
     if (this.health < currentHealth) {
       this.fitness -= 20;
+      if (this.health === 0) {
+        this.fitness -= 1000;
+      }
     }
   }
 
@@ -216,7 +250,6 @@ class RocketAI extends Rocket {
     // this.game.ctx.restore();
   }
 }
-
 
 // type Move = number // 0 = none, 1 = up, 2 = left, 3 = right
 

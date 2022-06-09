@@ -131,7 +131,7 @@ trainBtn.addEventListener('click', () => {
 
 canvas.addEventListener('click', (e) => {
   if (!game.addStarModeOn) return;
-  const x = e.clientX - starSize / 2;
+  const x = e.clientX - (window.innerWidth - canvas.width) / 2 - starSize / 2;
   const y = e.clientY - scoreboard.getBoundingClientRect().bottom - starSize;
   const position = { x, y };
   game.addStar(position);

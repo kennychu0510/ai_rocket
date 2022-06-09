@@ -27,7 +27,7 @@ export type RocketColor = {
   r: number;
   g: number;
   b: number;
-}
+};
 
 export enum Move {
   // eslint-disable-next-line no-unused-vars

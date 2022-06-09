@@ -195,8 +195,8 @@ export class Rocket {
       this.image_flying = spaceshipBrokenFlyingImg;
       this.changeAcceleration(this.acceleration * 0.75);
     } else if (this.health >= 0) {
-      this.height = this.height * 1.5;
-      this.width = this.height;
+      this.height = this.height * 1;
+      this.width = this.height * 3/2;
       this.image_static = boomImg;
       this.image_flying = boomImg;
       this.stop();
@@ -219,7 +219,12 @@ export class Rocket {
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
-    if (this.game.gameOnGoing && this.collectedStars === this.game.totalStars && !this.game.startAI && this.game.gameMode) {
+    if (
+      this.game.gameOnGoing &&
+      this.collectedStars === this.game.totalStars &&
+      !this.game.startAI &&
+      this.game.gameMode
+    ) {
       this.game.stopGame();
       this.stop();
       this.game.statusMessage.updateMsg('Well Done!');
