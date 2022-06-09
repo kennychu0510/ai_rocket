@@ -146,16 +146,26 @@ genBlackholeBtn.addEventListener('click', () => {
 GAME SETTINGS
 ----------------------------------------------------------------
 */
-rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
-population.value = String(game.rocketGA.populationSize);
+// rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+game.userRocket.changeAcceleration(Number(rocketSpeed.value));
+// population.value = String(game.rocketGA.populationSize);
+game.rocketGA.populationSize = Number(population.value);
 moves.value = String(game.rocketGA.moves);
-survivalRate.value = String(game.rocketGA.survivalRate);
-mutationRate.value = String(game.rocketGA.mutationRate);
-starsReward.value = String(game.rocketGA.starsReward);
-healthReward.value = String(game.rocketGA.healthReward);
-stepsReward.value = String(game.rocketGA.stepsReward);
-turnReward.value = String(game.rocketGA.turnReward);
-forwardReward.value = String(game.rocketGA.forwardReward);
+game.rocketGA.moves = Number(moves.value);
+// survivalRate.value = String(game.rocketGA.survivalRate);
+game.rocketGA.survivalRate = Number(survivalRate.value);
+// mutationRate.value = String(game.rocketGA.mutationRate);
+game.rocketGA.mutationRate = Number(mutationRate.value);
+// starsReward.value = String(game.rocketGA.starsReward);
+game.rocketGA.starsReward = Number(starsReward.value);
+// healthReward.value = String(game.rocketGA.healthReward);
+game.rocketGA.healthReward = Number(healthReward.value);
+// stepsReward.value = String(game.rocketGA.stepsReward);
+game.rocketGA.stepsReward = Number(stepsReward.value);
+// turnReward.value = String(game.rocketGA.turnReward);
+game.rocketGA.turnReward = Number(turnReward.value);
+// forwardReward.value = String(game.rocketGA.forwardReward);
+game.rocketGA.forwardReward = Number(forwardReward.value);
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
