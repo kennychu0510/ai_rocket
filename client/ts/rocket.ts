@@ -29,7 +29,7 @@ export class Rocket {
   public velocity: Position;
   public width = 0;
   public height = 0;
-  protected acceleration: number;
+  protected acceleration = 0;
   color = {
     r: Math.floor(Math.random() * 256),
     g: Math.floor(Math.random() * 256),
@@ -50,11 +50,13 @@ export class Rocket {
   public stars = new Set<Star>();
   private initialPosition: Position;
   public finishTime = 0;
+  public time = 0;
   constructor(public game: Game, public isUserControlled = true) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
     this.velocity = { x: 0, y: 0 };
-    this.acceleration = 0.02 * canvasWidth;
+    // this.acceleration === rocketGA.stepsBetweenMove / 10
+    
     this.turn = 45;
     this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
 
@@ -179,6 +181,7 @@ export class Rocket {
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
+    this.acceleration = 0.02 * this.game.canvasWidth;
   }
 
   setPosition(position: Position) {
@@ -242,6 +245,7 @@ export class Rocket {
       this.game.gameOnGoing = false;
       this.finishTime = time;
     }
+    this.time++;
   }
 
   checkRocketAndBoundary() {

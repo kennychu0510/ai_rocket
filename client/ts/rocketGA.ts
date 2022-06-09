@@ -4,13 +4,13 @@ import { Game } from './game.js';
 import { Rocket } from './rocket.js';
 import { RocketImg } from './rocketImg.js';
 import { Move } from './type.js';
-let { random, floor } = Math;
+const { random, floor } = Math;
 
 export class RocketGA {
   public populationSize = 100;
-  public moves = 100;
-  private survivalRate = 0.9;
-  public mutationRate = 0.1;
+  public moves = 500;
+  private survivalRate = 0.8;
+  public mutationRate = 0.05;
   private generation = 0;
   // private mutationAmount = 0.05;
   public stepsBetweenMove = 1;
@@ -102,9 +102,13 @@ export class RocketGA {
   }
 
   evolve() {
-    const numberOfAlive = this.population.filter(
-      (rocket) => rocket.alive
-    ).length;
+    for (let i = 0; i < this.population.length; i++) {
+      let a = floor(random() * this.population.length);
+      let b = this.population[a];
+      this.population[a] = this.population[i];
+      this.population[i] = b;
+    }
+
     for (let i = 0; i < this.population.length; i += 2) {
       let rocketA = this.population[i];
       let rocketB = this.population[i + 1];
@@ -135,7 +139,11 @@ export class RocketGA {
     //     freeSteps: this.moves * this.stepsBetweenMove - rocket.getStepsTaken(),
     //   });
     // }
-    let rocket = this.population[0];
+    const bestRocket = this.population.reduce((a, b) => {
+      if (a.getFitness() < b.getFitness()) return b;
+      return a;
+    });
+    const rocket = bestRocket;
     console.log({
       fitness: rocket.getFitness(),
       stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
@@ -149,6 +157,8 @@ export class RocketGA {
 class RocketAI extends Rocket {
   moves: Move[];
   rocketGA: RocketGA;
+  numOfTurns = 0;
+  numOfForward = 0;
   // private color: RocketColor;
   constructor(game: Game, rocketGA: RocketGA) {
     super(game, false);
@@ -169,8 +179,10 @@ class RocketAI extends Rocket {
     const currentMove = this.moves[index];
     switch (currentMove) {
       case Move.none:
+        this.numOfForward++;
         break;
       case Move.up:
+        this.numOfForward++;
         {
           const x_direction =
             this.acceleration * Math.sin(degreeToRadian(this.angle));
@@ -183,9 +195,11 @@ class RocketAI extends Rocket {
         break;
       case Move.left:
         this.angle -= this.turn;
+        this.numOfTurns++;
         break;
       case Move.right:
         this.angle += this.turn;
+        this.numOfTurns++;
         break;
     }
     this.game.domElements.aiStats.querySelector('#ai-move')!.textContent =
@@ -198,9 +212,9 @@ class RocketAI extends Rocket {
   }
 
   crossOverColor(parentA: RocketAI, parentB: RocketAI) {
-    let a = parentA.color;
-    let b = parentB.color;
-    let c = this.color;
+    const a = parentA.color;
+    const b = parentB.color;
+    const c = this.color;
     c.r = randomBool(0.5) ? a.r : b.r;
     c.g = randomBool(0.5) ? a.g : b.g;
     c.b = randomBool(0.5) ? a.b : b.b;
@@ -209,31 +223,30 @@ class RocketAI extends Rocket {
   }
 
   crossOverMove(parentA: RocketAI, parentB: RocketAI) {
-    let a = parentA.moves;
-    let b = parentB.moves;
-    let n = a.length;
-    let c = this.moves;
+    const a = parentA.moves;
+    const b = parentB.moves;
+    const n = a.length;
+    const c = this.moves;
     for (let i = 0; i < n; i++) {
       c[i] = randomBool(0.5) ? a[i] : b[i];
     }
   }
 
   mutate(parent: RocketAI) {
-    let p = parent.color;
-    let c = this.color;
-    let r = this.rocketGA.mutationRate;
+    const p = parent.color;
+    const c = this.color;
+    const r = this.rocketGA.mutationRate;
     if (randomBool(r)) {
       c.r = floor(random() * 256);
       c.g = floor(random() * 256);
       c.b = floor(random() * 256);
-      this.image_flying.updateImgData()
-      this.image_static.updateImgData()
+      this.image_flying.updateImgData();
+      this.image_static.updateImgData();
     } else {
       c.r = p.r;
       c.g = p.g;
       c.b = p.b;
     }
-
 
     for (let i = 0; i < this.moves.length; i++) {
       this.moves[i] = randomBool(0.5) ? parent.moves[i] : getMove();
@@ -250,11 +263,35 @@ class RocketAI extends Rocket {
 
   getFitness() {
     return (
-      (this.game.stars.length - this.stars.size) * 1000 +
-      this.health * 20 +
-      (this.rocketGA.moves * this.rocketGA.stepsBetweenMove -
-        this.getStepsTaken())
+      this.getFitnessFromStars() +
+      this.getFitnessFromHealth() +
+      this.getFitnessFromSteps() +
+      this.getFitnessFromAction()
     );
+  }
+
+  reset() {
+    super.reset();
+    this.numOfTurns = 0;
+    this.numOfForward = 0;
+  }
+
+  getFitnessFromStars() {
+    return (this.game.stars.length - this.stars.size) * 500;
+  }
+
+  getFitnessFromHealth() {
+    return this.health * 1;
+  }
+
+  getFitnessFromSteps() {
+    return (
+      this.getStepsTaken()/this.rocketGA.moves * -1
+    );
+  }
+
+  getFitnessFromAction() {
+    return this.numOfTurns * -1 + this.numOfForward * 1;
   }
 
   getStepsTaken() {
@@ -319,3 +356,5 @@ function randomColor() {
 function randomBool(prob: number): boolean {
   return random() < prob;
 }
+
+const getMax = (a: number, b: number) => Math.max(a, b);

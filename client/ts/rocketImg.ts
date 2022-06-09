@@ -7,14 +7,17 @@ const A = 3;
 
 export class UserRocketImg {
   image = new Image();
-  constructor() {}
+  constructor() {
+    // Do Nothing
+  }
   setSrc(src: string, size: { width: number; height: number }) {
     this.image.src = src;
   }
   updateImgData() {
+    // Do Nothing
   }
 }
-export class RocketImg extends UserRocketImg{
+export class RocketImg extends UserRocketImg {
   imageData: ImageData;
   canvas = document.createElement('canvas');
   ctx = this.canvas.getContext('2d')!;
@@ -29,14 +32,13 @@ export class RocketImg extends UserRocketImg{
   setSrc(src: string, size: { width: number; height: number }) {
     this.canvas.width = size.width;
     this.canvas.height = size.height;
-    let image = new Image();
+    const image = new Image();
     image.onload = () => {
       this.onload(image);
     };
 
     image.src = src;
   }
-
 
   onload(image: HTMLImageElement) {
     const w = this.canvas.width;
@@ -59,7 +61,7 @@ export class RocketImg extends UserRocketImg{
       }
     }
     this.ctx.putImageData(this.imageData, 0, 0);
-    let src = this.canvas.toDataURL();
+    const src = this.canvas.toDataURL();
     this.image.src = src;
   }
 }

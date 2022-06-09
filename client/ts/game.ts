@@ -127,7 +127,7 @@ export class Game {
   }
 
   update() {
-    this.userRocket.update(0);
+    this.userRocket.update(this.userRocket.time);
     this.rocketGA.update();
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
