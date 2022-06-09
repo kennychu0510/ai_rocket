@@ -8,12 +8,12 @@ let { random, floor } = Math;
 
 export class RocketGA {
   public populationSize = 100;
-  public moves = 10;
+  public moves = 100;
   private survivalRate = 0.9;
-  private mutationRate = 0.1;
+  public mutationRate = 0.1;
   private generation = 0;
   // private mutationAmount = 0.05;
-  public stepsBetweenMove = 10;
+  public stepsBetweenMove = 1;
   public time = 0;
   private population: RocketAI[] = [];
   private game: Game;
@@ -149,25 +149,17 @@ export class RocketGA {
 class RocketAI extends Rocket {
   moves: Move[];
   rocketGA: RocketGA;
-  private liveNextRound: boolean;
-  public backgroundColor: string;
   // private color: RocketColor;
-  private staticImg: ImageData;
-  private flyingImg: ImageData;
   constructor(game: Game, rocketGA: RocketGA) {
-    super(game);
+    super(game, false);
     this.isUserControlled = false;
     this.rocketGA = rocketGA;
     this.moves = generateMoves(this.rocketGA.moves);
-    this.backgroundColor = randomColor();
     // this.color = {
     //   r: floor(random() * 256),
     //   g: floor(random() * 256),
     //   b: floor(random() * 256),
     // };
-    this.staticImg = new RocketImg('./media/rocket_1_static.png').imageData;
-    this.flyingImg = new RocketImg('./media/rocket_1_flying.png').imageData;
-    this.liveNextRound = true;
   }
   move(index: number) {
     /* CONVERT TIMESTAMP TO INDEX IN MOVES */
@@ -206,16 +198,14 @@ class RocketAI extends Rocket {
   }
 
   crossOverColor(parentA: RocketAI, parentB: RocketAI) {
-    let a = parentA.backgroundColor;
-    let b = parentB.backgroundColor;
-    let n = a.length;
-    let color = '#';
-    for (let i = 1; i < n; i++) {
-      color += randomBool(0.5)
-        ? a[i]
-        : b[i];
-    }
-    this.backgroundColor = color;
+    let a = parentA.color;
+    let b = parentB.color;
+    let c = this.color;
+    c.r = randomBool(0.5) ? a.r : b.r;
+    c.g = randomBool(0.5) ? a.g : b.g;
+    c.b = randomBool(0.5) ? a.b : b.b;
+    this.image_flying.updateImgData();
+    this.image_static.updateImgData();
   }
 
   crossOverMove(parentA: RocketAI, parentB: RocketAI) {
@@ -229,13 +219,21 @@ class RocketAI extends Rocket {
   }
 
   mutate(parent: RocketAI) {
-    let color = '#';
-    for (let i = 1; i < parent.backgroundColor.length; i++) {
-      color += randomBool(0.5)
-        ? parent.backgroundColor[i]
-        : floor(random() * 16).toString(16);
+    let p = parent.color;
+    let c = this.color;
+    let r = this.rocketGA.mutationRate;
+    if (randomBool(r)) {
+      c.r = floor(random() * 256);
+      c.g = floor(random() * 256);
+      c.b = floor(random() * 256);
+      this.image_flying.updateImgData()
+      this.image_static.updateImgData()
+    } else {
+      c.r = p.r;
+      c.g = p.g;
+      c.b = p.b;
     }
-    this.backgroundColor = color;
+
 
     for (let i = 0; i < this.moves.length; i++) {
       this.moves[i] = randomBool(0.5) ? parent.moves[i] : getMove();
@@ -263,19 +261,6 @@ class RocketAI extends Rocket {
     return this.finishTime || this.rocketGA.time;
   }
 
-  drawBackground() {
-    this.game.ctx.beginPath();
-    this.game.ctx.arc(
-      this.position.x + this.width / 2,
-      this.position.y + this.height / 2,
-      this.getC() / 2.5,
-      0,
-      2 * Math.PI
-    );
-    this.game.ctx.fillStyle = this.backgroundColor;
-    this.game.ctx.fill();
-    this.game.ctx.closePath();
-  }
   draw() {
     super.draw();
 
