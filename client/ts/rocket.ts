@@ -40,6 +40,8 @@ export class Rocket {
   public flyingTimeout: number;
   public stars: Set<Star>;
   private initialPosition: Position;
+  public collectedAllStars: boolean;
+  public finishTime: number;
   constructor(public game: Game) {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
@@ -59,6 +61,8 @@ export class Rocket {
     this.teleportTimeout = 0;
     this.flyingTimeout = 0;
     this.stars = new Set(game.stars);
+    this.collectedAllStars = false;
+    this.finishTime = 0;
   }
 
   drawRotated() {
@@ -215,11 +219,11 @@ export class Rocket {
     this.checkMeoriteCollision();
     this.checkBlackholeTeleportation();
     this.updateRocketPosition();
-    if (this.game.gameStarted && this.collectedStars === this.game.totalStars && !this.game.startAI && this.game.gameMode) {
+    if (this.game.gameOnGoing && this.collectedStars === this.game.totalStars && !this.game.startAI && this.game.gameMode) {
       this.game.stopGame();
       this.stop();
       this.game.statusMessage.updateMsg('Well Done!');
-      this.game.gameStarted = false;
+      this.game.gameOnGoing = false;
     }
   }
 
@@ -254,6 +258,7 @@ export class Rocket {
   }
 
   checkStarCollection() {
+    if (this.collectedAllStars) return;
     for (const star of this.stars) {
       const dx =
         this.position.x + this.width / 2 - (star.getX() + star.size / 2);
@@ -264,7 +269,10 @@ export class Rocket {
       if (distance < this.getC() / 2 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
-        return 1;
+        if (this.collectedStars === this.game.stars.length) {
+          this.collectedAllStars = true;
+          this.finishTime = new Date().getTime();
+        }
         // currentScore.textContent = String(this.collectedStars);
       }
     }

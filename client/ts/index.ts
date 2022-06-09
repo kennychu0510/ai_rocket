@@ -22,6 +22,7 @@ const seedBtn = getDOMElement('#seed');
 const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
+const trainBtn = getDOMElement('#train');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -95,7 +96,7 @@ EVENT LISTENERS
 */
 window.addEventListener('keydown', ({ key }) => {
   if (game.buttons.includes(key)) {
-    if (!game.gameStarted && game.stars.length > 0) {
+    if (!game.gameOnGoing && game.stars.length > 0) {
       game.startGame();
     }
     game.userRocket.changeDirection(key);
@@ -119,6 +120,10 @@ resetBtn.addEventListener('click', () => {
   // timerMilliseconds.textContent = '000';
   // timerSeconds.textContent = '00';
   // rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+});
+
+trainBtn.addEventListener('click', () => {
+  game.rocketGA.train();
 });
 
 canvas.addEventListener('click', (e) => {
@@ -187,7 +192,7 @@ saveStarsBtn.addEventListener('click', () => {
 
 seedBtn.addEventListener('click', () => {
   game.seed();
-  game.startGame();
+  // game.startGame();
   scoreOrRockets.textContent = 'Rockets:';
   aiStats.classList.remove('hidden');
   // aiStats.classList.add('active');

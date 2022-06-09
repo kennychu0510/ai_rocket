@@ -22,14 +22,15 @@ export class RocketGA {
   seed() {
     this.population = [];
     this.addSeed(this.populationSize);
-    this.time = 0;
     this.game.domElements.currentScore.textContent = String(this.populationSize);
     this.game.domElements.totalScore.textContent = String(this.populationSize);
     this.game.domElements.aiStats.querySelector('#total-moves')!.textContent = String(this.tickStep);
   }
 
-  simulate() {
+  train() {
     this.game.startAI = true;
+    this.game.gameOnGoing = true;
+    this.game.startTime = new Date();
   }
 
   addSeed(n: number) {
@@ -40,7 +41,7 @@ export class RocketGA {
   }
 
   update() {
-    if (!this.game.gameStarted || !this.game.gameMode) return;
+    if (!this.game.startAI && !this.game.gameMode) return;
     let aliveRockets = 0;
     const index = this.time / this.timeBetweenMove;
     if (index === this.tickStep) {
@@ -52,6 +53,7 @@ export class RocketGA {
 
     for (const rocket of this.population) {
       if (this.time % this.timeBetweenMove === 0) {
+        if (rocket.collectedAllStars) continue;
         rocket.move(index);
       }
       rocket.update();
@@ -82,7 +84,13 @@ export class RocketGA {
   // }
   report() {
     for (const [i, rocket] of this.population.entries()) {
-      console.log(`rocket-${i}`, rocket.fitness);
+      console.log({
+        rocket: i,
+        fitness: rocket.fitness,
+        stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
+        timeTaken: `${this.game.endTime - rocket.finishTime}`,
+        finishTime: rocket.finishTime,
+      });
     }
   }
 }
