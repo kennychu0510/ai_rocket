@@ -159,6 +159,7 @@ export class RocketGA {
       stepsTaken: rocket.getStepsTaken(),
       alive: rocket.alive,
       freeSteps: this.moves * this.tickBetweenMove - rocket.getStepsTaken(),
+      moves: rocket.moves,
     });
   }
 }

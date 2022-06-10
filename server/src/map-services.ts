@@ -20,7 +20,7 @@ export class MapService {
         stars: JSON.stringify(stars),
         meteorites: JSON.stringify(meteorites),
         black_holes: JSON.stringify(blackholes),
-        levels: 2,
+        levels: 3,
         black_hole_map: JSON.stringify(blackholeMap),
       })
       .into('map')
