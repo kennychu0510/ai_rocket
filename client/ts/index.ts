@@ -26,7 +26,6 @@ const turnReward = getDOMElement('#turn-reward') as HTMLInputElement;
 const forwardReward = getDOMElement('#forward-reward') as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
-const saveStarsBtn = getDOMElement('#save-stars');
 const rankingsBtn = getDOMElement('#rankings');
 const saveObjBtn = getDOMElement('#save-obj');
 const boundaryModeBtn = getDOMElement('#boundary-mode');
@@ -259,7 +258,7 @@ canvas.addEventListener('click', (e) => {
   const leftOffset = canvas.getBoundingClientRect().left;
   const botOffset = scoreboard.getBoundingClientRect().bottom;
   if (game.addStarModeOn) {
-    const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2; ;
+    const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - starSizeRatio * canvas.width;
     const position = { x, y };
     game.addStar(position);
@@ -300,7 +299,6 @@ canvas.addEventListener('click', (e) => {
     }
   }
 });
-
 
 /*
 ----------------------------------------------------------------
