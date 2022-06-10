@@ -45,17 +45,14 @@
           <button id="add-meteor" class="add-objects">Add Meteorite</button>
           <button id="add-blackhole" class="add-objects">Add Blackhole</button>
           <button id="save-obj" class="add-objects">Save Object</button>
-          
+        </div>
+        <div class="panel-right">
           <div id="mode">
             <button id="easy-mode">Easy Mode</button>
             <button id="normal-mode">Normal Mode</button>
             <button id="hard-mode">Hard Mode</button>
+            <a href="rankings.html"><button id="rankings">Rankings</button></a>
           </div>
-          <a href="rankings.html"><button id="rankings">Rankings</button></a>
-        </div>
-        <div class="panel-right">
-          <label for="rocket-speed">Rocket Speed:</label>
-          <input id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
 
       </div>
@@ -69,11 +66,15 @@
           <input id="survival-rate" type="number" min="0" max="1" value="0.8" step="0.1"></input>
           <label for="mutation-rate">Mutation Rate:</label>
           <input id="mutation-rate" type="number" min="0" max="1" value="0.05" step="0.01"></input>
+          <label for="rocket-speed">Rocket Speed:</label>
+          <input id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
         <div class="panel-right">
+          <input id="speed-up" type="checkbox">Speed up</input>
           <button id="reset">Refresh</button>
           <button id="seed">Seed</button>
           <button id="train">Train</button>
+          <button id="save-best">Save Best</button>
         </div>
       </div>
       <div id="control-panel-3">
@@ -93,6 +94,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> -->
+    <link rel="stylesheet" href="/sweetalert2.css">
     <script type="module" src="/js/index.js"></script>
 </body>
 

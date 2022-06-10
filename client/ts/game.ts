@@ -11,6 +11,7 @@ import {
 import { Meteorite } from './meteorite.js';
 import { Blackhole } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
+import { showRecordScoreForm } from './events.js';
 const { floor, random } = Math;
 export class Game {
   public statusMessage: CanvasText;
@@ -32,9 +33,9 @@ export class Game {
   public startAI: boolean;
   public domElements: gameDOMelements;
   public time = 0;
-  private frameRate = 60;
   public gameEnd = false;
   public teleportMap = [0];
+  public mapID = 0;
   constructor(
     canvas: HTMLCanvasElement,
     gameBoundaries: GameBoundary,
@@ -59,6 +60,7 @@ export class Game {
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
       this.gameEnd = true;
+      showRecordScoreForm(this, this.domElements);
     };
     this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
@@ -181,7 +183,7 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.stars) {
+    for (const star of this.userRocket.stars) {
       star.draw();
     }
 
@@ -200,6 +202,7 @@ export class Game {
     this.statusMessage.updateMsg('W to move, A + D to turn, S to stop');
     this.gameInstructions.updateMsg('Add stars to start the game');
     this.userRocket.reset();
+    this.userRocket.stars = new Set<Star>();
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];

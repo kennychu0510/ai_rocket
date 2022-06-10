@@ -7,7 +7,8 @@ module.exports = {
     /* ... */
     ts: '/js',
     static: '/',
-    media: '/media'
+    media: '/media',
+    'node_modules/sweetalert2/dist': '/'
   },
   plugins: [
     /* ... */

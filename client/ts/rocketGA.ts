@@ -23,6 +23,9 @@ export class RocketGA {
   private game: Game;
   public numArrived = 0;
   public numAlive = 0;
+  public bestMoves = '';
+  public bestFitness: number = Number.NEGATIVE_INFINITY;
+  public bestCollectedStars = 0;
   constructor(game: Game) {
     this.game = game;
   }
@@ -147,19 +150,30 @@ export class RocketGA {
     //     freeSteps: this.moves * this.stepsBetweenMove - rocket.getStepsTaken(),
     //   });
     // }
-    const bestRocket = this.population.reduce((a, b) => {
+    const bestRocketInGen = this.population.reduce((a, b) => {
       if (a.getFitness() < b.getFitness()) return b;
       return a;
     });
-    const rocket = bestRocket;
+
+    if (bestRocketInGen.getFitness() > this.bestFitness) {
+      this.bestFitness = bestRocketInGen.getFitness();
+      this.bestMoves = bestRocketInGen.moves.join('');
+      this.bestCollectedStars = bestRocketInGen.collectedStars;
+      console.log('new best rocket ', {
+        bestfitness: this.bestFitness,
+        starsCollected: this.bestCollectedStars,
+      });
+    }
+
     console.log({
       generation: this.generation,
-      fitness: rocket.getFitness(),
-      stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
-      stepsTaken: rocket.getStepsTaken(),
-      alive: rocket.alive,
-      freeSteps: this.moves * this.tickBetweenMove - rocket.getStepsTaken(),
-      moves: rocket.moves,
+      fitness: bestRocketInGen.getFitness(),
+      stars: `${bestRocketInGen.collectedStars} out of ${this.game.stars.length}`,
+      stepsTaken: bestRocketInGen.getStepsTaken(),
+      alive: bestRocketInGen.alive,
+      freeSteps:
+        this.moves * this.tickBetweenMove - bestRocketInGen.getStepsTaken(),
+      moves: bestRocketInGen.moves,
     });
   }
 }

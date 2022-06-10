@@ -39,6 +39,8 @@ const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
 const trainBtn = getDOMElement('#train');
+const saveBestBtn = getDOMElement('#save-best');
+const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -57,7 +59,7 @@ canvas.width = window.innerHeight * 1.8;
 
 /* VARIABLES */
 const blackholeSizeRatio = 0.03;
-let mapid = 1;
+const mapid = 1;
 let addStarModeOn = false;
 let addMeteoriteModeOn = false;
 let addBlackholeModeOn = false;
@@ -90,6 +92,12 @@ const game = new Game(canvas, gameBoundaries, domElements);
 function animate() {
   requestAnimationFrame(animate);
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (speedUp.checked && game.startAI) {
+    for (let i = 0; i < 100; i++) {
+      game.update();
+    }
+  }
 
   /* CHECK IF ALL STARS COLLECTED */
   // if (game.totalStars === game.userRocket.collectedStars ) {
@@ -157,6 +165,8 @@ window.addEventListener('keydown', ({ key }) => {
   if (game.buttons.includes(key)) {
     if (!game.gameOnGoing && game.stars.length > 0 && !game.gameEnd) {
       game.startGame();
+      resetAllButtons();
+      changeButtonModes();
     }
     game.userRocket.changeDirection(key);
   }
@@ -186,19 +196,6 @@ function changeButtonModes() {
   addBlackholeBtn.textContent = addBlackholeModeOn ? 'Done' : 'Add Blackhole';
 }
 
-function resetOtherBtnStates(mode: string) {
-  if (mode === 'stars') {
-    addMeteoriteModeOn = false;
-    addBlackholeModeOn = false;
-  } else if (mode === 'meteorite') {
-    addStarModeOn = false;
-    addBlackholeModeOn = false;
-  } else if (mode === 'blackhole') {
-    addMeteoriteModeOn = false;
-    addStarModeOn = false;
-  }
-}
-
 resetBtn.addEventListener('click', () => {
   location.reload();
   // game.reset();
@@ -211,9 +208,6 @@ resetBtn.addEventListener('click', () => {
 
 trainBtn.addEventListener('click', () => {
   game.rocketGA.train();
-  // for (let i = 0; i < 100000/2; i++) {
-  //   game.update();
-  // }
 });
 
 canvas.addEventListener('click', (e) => {
@@ -411,7 +405,7 @@ easyMode.addEventListener('click', () => {
         json[0].black_holes,
         json[0].black_hole_map,
       );
-      mapid = json[0].id;
+      game.mapID = json[0].id;
       // console.log(mapid);
       // console.log(typeof mapid);
     });
@@ -430,8 +424,8 @@ normalMode.addEventListener('click', () => {
         json[0].meteorites,
         json[0].black_holes,
         json[0].black_hole_map,
-      ),
-      (mapid = json[0].id);
+      );
+      game.mapID = json[0].id;
     });
 });
 
@@ -449,7 +443,7 @@ hardMode.addEventListener('click', () => {
         json[0].black_holes,
         json[0].black_hole_map,
       );
-      mapid = json[0].id;
+      game.mapID = json[0].id;
     });
 });
 seedBtn.addEventListener('click', () => {
@@ -469,7 +463,39 @@ seedBtn.addEventListener('click', () => {
 //   canvas.width = window.innerHeight * 1.8;
 // });
 
+saveBestBtn.addEventListener('click', () => {
+  const mapID = game.mapID;
+  const fitness = game.rocketGA.bestFitness;
+  const bestRocketAI = game.rocketGA.bestMoves;
+  const starsCollected = game.rocketGA.bestCollectedStars;
+});
+
+/*
+----------------------------------------------------------------
+FUNCTIONS
+----------------------------------------------------------------
+*/
+
 function disableAddButtons() {
   const buttons = document.querySelectorAll('button.add-objects');
   buttons.forEach((button) => button.setAttribute('disabled', ''));
+}
+
+function resetOtherBtnStates(mode: string) {
+  if (mode === 'stars') {
+    addMeteoriteModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'meteorite') {
+    addStarModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'blackhole') {
+    addMeteoriteModeOn = false;
+    addStarModeOn = false;
+  }
+}
+
+function resetAllButtons() {
+  addMeteoriteModeOn = false;
+  addBlackholeModeOn = false;
+  addStarModeOn = false;
 }

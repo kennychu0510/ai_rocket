@@ -117,7 +117,7 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    console.log(this.stats());
+    // console.log(this.stats());
   }
 
   slowDown() {
@@ -285,7 +285,7 @@ export class Rocket {
         this.position.y + this.height / 2 - (star.getY() + star.size / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < this.getC() / 2 + star.size / 2) {
+      if (distance < this.getC() / 4 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
