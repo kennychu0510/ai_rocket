@@ -10,6 +10,9 @@ export class Game {
   public statusMessage: CanvasText;
   public gameInstructions: CanvasText;
   public addStarModeOn: boolean;
+  public addMeteoriteModeOn: boolean;
+  public addBlackholeModeOn: boolean;
+
   public startTime: Date;
   private starSize: number;
   public totalStars: number;
@@ -58,6 +61,8 @@ export class Game {
       this.ctx,
     );
     this.addStarModeOn = false;
+    this.addMeteoriteModeOn = false;
+    this.addBlackholeModeOn = false;
     this.gameStarted = false;
     this.startTime = new Date();
     this.starSize = 0;

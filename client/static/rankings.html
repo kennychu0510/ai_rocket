@@ -9,37 +9,16 @@
 </head>
 
 <body>
-    <table id="table_id" class="display">
-        <thead>
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Row 1 Data 1</td>
-                <td>Row 1 Data 2</td>
-            </tr>
-            <tr>
-                <td>Row 2 Data 1</td>
-                <td>Row 2 Data 2</td>
-            </tr>
-        </tbody>
-    </table>
-    </main>
+    <div id="leaderboard">
+        <div class="user"></div>
+    
+</div>
+    
    
     <div id="bottom-panel"><a href="index.html"><button id="rankings">Return</button></a></div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="rankings.css">
-    <script>
-        $(document).ready( function () {
-$('#table_id').DataTable();
-} );
-    </script>
+    <script type="module" src="rankings.js"></script>
+   
 </body>
 
 </html>
