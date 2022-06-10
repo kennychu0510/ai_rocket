@@ -144,6 +144,8 @@ function animate() {
 }
 animate();
 
+
+
 /*
 ----------------------------------------------------------------
 EVENT LISTENERS
@@ -252,6 +254,9 @@ resetBtn.addEventListener('click', () => {
 
 trainBtn.addEventListener('click', () => {
   game.rocketGA.train();
+  // for (let i = 0; i < 100000/2; i++) {
+  //   game.update();
+  // }
 });
 
 canvas.addEventListener('click', (e) => {

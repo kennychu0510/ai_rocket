@@ -152,6 +152,7 @@ export class RocketGA {
     });
     const rocket = bestRocket;
     console.log({
+      generation: this.generation,
       fitness: rocket.getFitness(),
       stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
       stepsTaken: rocket.getStepsTaken(),
