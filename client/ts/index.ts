@@ -342,8 +342,10 @@ saveObjBtn.addEventListener('click', () => {
   const blackholes = game.blackholes.map((blackhole) => {
     const newX = blackhole.getX() / canvas.width;
     const newY = blackhole.getY() / canvas.height;
-    return { n: newX, y: newY };
+    return { x: newX, y: newY };
   });
+
+  const blackholeMap = game.teleportMap;
 
   fetch(APIOrigin + '/map', {
     method: 'POST',
@@ -352,42 +354,47 @@ saveObjBtn.addEventListener('click', () => {
       stars,
       meteorites,
       blackholes,
+      blackholeMap,
     }),
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json.id);
+      console.log(json.msg);
     });
 });
 
 function genGameMap(
-  starsArr: Star[],
-  meteoritesArr: Meteorite[],
-  blackholesArr: Blackhole[],
+  starsArr: any[],
+  meteoritesArr: any[],
+  blackholesArr: any[],
+  blackholeMap: number[],
 ) {
   game.reset();
   for (const s of starsArr) {
     const star = {
-      x: s.position.x * game.canvasWidth,
-      y: s.position.y * game.canvasHeight,
+      x: s.x * canvas.width,
+      y: s.y * canvas.height,
     };
     game.addStar(star);
   }
   for (const m of meteoritesArr) {
     const meteorite = {
-      x: m.position.x * game.canvasWidth,
-      y: m.position.y * game.canvasHeight,
+      x: m.x * canvas.width,
+      y: m.y * canvas.height,
     };
     game.addMeteorite(meteorite);
   }
   for (const b of blackholesArr) {
     const blackhole = {
-      x: b.position.x * game.canvasWidth,
-      y: b.position.y * game.canvasHeight,
+      x: b.x * canvas.width,
+      y: b.y * canvas.height,
     };
     game.addBlackhole(blackhole);
   }
+  // console.log(blackholeMap);
+  game.teleportMap = blackholeMap;
+  // window.prompt('d')
   totalScore.textContent = String(starsArr.length);
 }
 easyMode.addEventListener('click', () => {
@@ -397,11 +404,16 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      // console.log(json[0].stars.length);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+      console.log(json[0]);
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      );
       mapid = json[0].id;
-      console.log(mapid);
-      console.log(typeof mapid);
+      // console.log(mapid);
+      // console.log(typeof mapid);
     });
 });
 
@@ -413,8 +425,13 @@ normalMode.addEventListener('click', () => {
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       // console.log(json);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
-      mapid = json[0].id;
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      ),
+      (mapid = json[0].id);
     });
 });
 
@@ -426,7 +443,12 @@ hardMode.addEventListener('click', () => {
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       // console.log(json);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      );
       mapid = json[0].id;
     });
 });

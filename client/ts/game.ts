@@ -54,6 +54,7 @@ export class Game {
     this.userRocket = new Rocket(this);
     this.userRocket.onDie = () => {
       this.statusMessage.updateMsg('Game Over');
+      this.gameEnd = true;
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
@@ -180,7 +181,7 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.userRocket.stars) {
+    for (const star of this.stars) {
       star.draw();
     }
 

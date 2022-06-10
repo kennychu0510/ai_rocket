@@ -90,6 +90,7 @@ export class RocketGA {
     this.numAlive--;
     this.game.domElements.currentScore.textContent = String(this.numAlive);
     if (this.numAlive === 0) this.nextGen();
+    if (this.numArrived === this.numAlive) this.nextGen();
   }
 
   onFinish() {

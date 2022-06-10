@@ -31,9 +31,9 @@ export class Rocket {
   public height = 0;
   protected acceleration = 0;
   color: RocketColor = [
-    Math.floor(Math.random() * 256),
-    Math.floor(Math.random() * 256),
-    Math.floor(Math.random() * 256),
+    Math.floor(Math.random() * 128 + 128),
+    Math.floor(Math.random() * 128 + 128),
+    Math.floor(Math.random() * 128 + 128),
   ];
   public image_static = this.isUserControlled ?
     new UserRocketImg() :

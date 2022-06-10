@@ -21,6 +21,7 @@ export class MapController {
     const stars = req.body.stars;
     const meteorites = req.body.meteorites;
     const blackholes = req.body.blackholes;
+    const blackholeMap = req.body.blackholeMap;
     if (stars.length <= 0 && meteorites.length <= 0 && blackholes.length <= 0) {
       res.status(404).json({ msg: 'nothing is added' });
       return;
@@ -28,8 +29,9 @@ export class MapController {
     const addedMap = await this.mapService.createMap({
       stars,
       meteorites,
-      blackholes: blackholes,
+      blackholes,
+      blackholeMap,
     });
-    res.json({ id: addedMap });
+    res.json({ msg: `added map-${addedMap}` });
   };
 }

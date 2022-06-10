@@ -6,6 +6,7 @@ export type NewMap = {
   stars: Location[];
   meteorites: Location[];
   blackholes: Location[];
+  blackholeMap: number[];
 };
 export class MapService {
   constructor(private knex: KnexType) {}
@@ -13,12 +14,14 @@ export class MapService {
     const stars = map.stars;
     const meteorites = map.meteorites;
     const blackholes = map.blackholes;
+    const blackholeMap = map.blackholeMap;
     const row = await this.knex
       .insert({
         stars: JSON.stringify(stars),
         meteorites: JSON.stringify(meteorites),
         black_holes: JSON.stringify(blackholes),
-        levels: 0,
+        levels: 2,
+        black_hole_map: JSON.stringify(blackholeMap),
       })
       .into('map')
       .returning('id');
@@ -27,42 +30,45 @@ export class MapService {
 
   async getEasyMaps(): Promise<Map[]> {
     const results = await this.knex
-      .select('id', 'stars', 'meteorites', 'black_holes')
+      .select('id', 'stars', 'meteorites', 'black_holes', 'black_hole_map')
       .from('map')
       .where('levels', 1);
     results.forEach((row) => {
-      console.log(row);
+      // console.log(row);
       row.stars = JSON.parse(row.stars);
       row.meteorites = JSON.parse(row.meteorites);
       row.black_holes = JSON.parse(row.black_holes);
+      row.black_hole_map = JSON.parse(row.black_hole_map);
     });
     return results;
   }
 
   async getNormalMaps(): Promise<Map[]> {
     const results = await this.knex
-      .select('id', 'stars', 'meteorites', 'black_holes')
+      .select('id', 'stars', 'meteorites', 'black_holes', 'black_hole_map')
       .from('map')
       .where('levels', 2);
     results.forEach((row) => {
-      console.log(row);
+      // console.log(row);
       row.stars = JSON.parse(row.stars);
       row.meteorites = JSON.parse(row.meteorites);
       row.black_holes = JSON.parse(row.black_holes);
+      row.black_hole_map = JSON.parse(row.black_hole_map);
     });
     return results;
   }
 
   async getHardMaps(): Promise<Map[]> {
     const results = await this.knex
-      .select('id', 'stars', 'meteorites', 'black_holes')
+      .select('id', 'stars', 'meteorites', 'black_holes', 'black_hole_map')
       .from('map')
       .where('levels', 3);
     results.forEach((row) => {
-      console.log(row);
+      // console.log(row);
       row.stars = JSON.parse(row.stars);
       row.meteorites = JSON.parse(row.meteorites);
       row.black_holes = JSON.parse(row.black_holes);
+      row.black_hole_map = JSON.parse(row.black_hole_map);
     });
     return results;
   }
