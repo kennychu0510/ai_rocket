@@ -2,9 +2,15 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star } from './star.js';
-import { BlackholePairType, GameBoundary, Position } from './type.js';
+import {
+  BlackholePairType,
+  GameBoundary,
+  gameDOMelements,
+  Position,
+} from './type.js';
 import { Meteorite } from './meteorite.js';
 import { BlackholePair } from './blackhole.js';
+import { RocketGA } from './rocketGA.js';
 
 export class Game {
   public statusMessage: CanvasText;
@@ -13,39 +19,50 @@ export class Game {
   public addMeteoriteModeOn: boolean;
   public addBlackholeModeOn: boolean;
 
-  public startTime: Date;
-  private starSize: number;
+  public startTime: number;
   public totalStars: number;
   public canvasWidth: number;
   public canvasHeight: number;
-  public gameStarted: boolean;
+  public gameOnGoing: boolean;
   public stars: Star[];
   public meteorites: Meteorite[];
   public blackholes: BlackholePair[];
   public buttons: string[];
-  public rocket: Rocket;
+  public userRocket: Rocket;
   public boundary: Boundary;
   private canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
-  private initialPosition: Position;
-  private aliveCount = 0;
-  constructor(canvas: HTMLCanvasElement, gameBoundaries: GameBoundary) {
+  public rocketGA: RocketGA;
+  public startAI: boolean;
+  public domElements: gameDOMelements;
+  public time = 0;
+  private frameRate = 60;
+  public gameEnd = false;
+  constructor(
+    canvas: HTMLCanvasElement,
+    gameBoundaries: GameBoundary,
+    domElements: gameDOMelements,
+  ) {
     (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
     this.canvasHeight = window.innerHeight - 100;
     this.ctx = this.canvas.getContext('2d')!;
-    this.initialPosition = {
-      x: this.canvasWidth / 10,
-      y: this.canvasHeight / 4,
-    };
-    (this.boundary = new Boundary(
+
+    this.boundary = new Boundary(
       gameBoundaries.top,
       gameBoundaries.right,
       gameBoundaries.bot,
       gameBoundaries.left,
       this.ctx,
-    )),
-    (this.rocket = new Rocket(this)),
-    (this.statusMessage = new CanvasText(
+    );
+    this.userRocket = new Rocket(this);
+    this.userRocket.onDie = () => {
+      this.statusMessage.updateMsg('Game Over');
+    };
+    this.userRocket.onFinish = () => {
+      this.statusMessage.updateMsg('Well Done!');
+      this.gameEnd = true;
+    };
+    this.statusMessage = new CanvasText(
       `W to move, A + D to turn, S to stop`,
       {
         x: canvas.width / 2,
@@ -53,7 +70,7 @@ export class Game {
       },
       this.canvasHeight,
       this.ctx,
-    ));
+    );
     this.gameInstructions = new CanvasText(
       `Add stars to start the game`,
       { x: canvas.width / 2, y: (canvas.height * 2) / 3 },
@@ -63,21 +80,23 @@ export class Game {
     this.addStarModeOn = false;
     this.addMeteoriteModeOn = false;
     this.addBlackholeModeOn = false;
-    this.gameStarted = false;
-    this.startTime = new Date();
-    this.starSize = 0;
+    this.startTime = Date.now();
+    this.gameOnGoing = false;
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
+    this.rocketGA = new RocketGA(this);
+    this.startAI = false;
+    this.domElements = domElements;
   }
 
   addStar(position: Position) {
     const newStar = new Star(position, this.canvasWidth, this.ctx);
     this.stars.push(newStar);
     this.totalStars++;
-    this.rocket.addStar(newStar);
+    this.userRocket.addStar(newStar);
   }
 
   addMeteorite(position: Position) {
@@ -95,23 +114,48 @@ export class Game {
   }
 
   startGame() {
-    this.gameStarted = true;
-    this.startTime = new Date();
+    this.gameOnGoing = true;
+    this.startTime = Date.now();
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
-    this.aliveCount = 1;
+  }
+
+  stopGame() {
+    this.gameOnGoing = false;
   }
 
   reportRocketDead() {
-    this.aliveCount--;
-    this.statusMessage.updateMsg(`0/1 rockets alive`);
-    this.gameStarted = false;
+    // this.statusMessage.updateMsg(`0/1 rockets alive`);
+    this.gameOnGoing = false;
   }
 
   update() {
-    this.rocket.draw();
-    this.rocket.update();
-    this.rocket.updateRocketPosition();
+    this.userRocket.update(this.userRocket.time);
+    this.rocketGA.update();
+    /* UPDATE TIMER */
+    if (this.gameOnGoing) {
+      this.time++;
+      const timeTaken = Date.now() - this.startTime;
+      this.domElements.timerMilliseconds.textContent = String(
+        timeTaken % 1000,
+      ).padStart(3, '0');
+
+      // this.domElements.timerMilliseconds.textContent = String(
+      //   this.time % 1000
+      // ).padStart(3, '0');
+
+      this.domElements.timerSeconds.textContent = String(
+        Math.floor(timeTaken / 1000),
+      ).padStart(2, '0');
+      // this.domElements.timerSeconds.textContent = String(
+      //   Math.floor(this.time / 1000),
+      // ).padStart(2, '0');
+    }
+    if (!this.startAI) {
+      this.domElements.currentScore.textContent = String(
+        this.userRocket.collectedStars,
+      );
+    }
   }
 
   generateStars() {
@@ -164,7 +208,7 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.rocket.stars) {
+    for (const star of this.userRocket.stars) {
       star.draw();
     }
 
@@ -175,35 +219,34 @@ export class Game {
     for (const meteorite of this.meteorites) {
       meteorite.draw();
     }
+    this.rocketGA.draw();
+    this.userRocket.draw();
   }
 
   reset() {
     this.statusMessage.updateMsg('W to move, A + D to turn, S to stop');
     this.gameInstructions.updateMsg('Add stars to start the game');
-    this.rocket.reset();
+    this.userRocket.reset();
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];
     this.totalStars = 0;
-    this.gameStarted = false;
-    this.rocket.changeAcceleration(0.002 * this.canvasWidth);
+    this.gameOnGoing = false;
+    this.userRocket.changeAcceleration(0.002 * this.canvasWidth);
+    this.rocketGA.reset();
+    this.domElements.timerMilliseconds.textContent = '000';
+    this.domElements.timerSeconds.textContent = '00';
+    this.domElements.totalScore.textContent = '0';
+    this.domElements.currentScore.textContent = '0';
+    this.time = 0;
     // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     // console.log(this.initialPosition);
   }
-  // animate = () => {
-  //   requestAnimationFrame( () => this.animate());
-  //   this.ctx.clearRect(0, 0, this.canvas.width, this.canvasHeight);
-  //   this.boundary.draw();
-  //   this.statusMessage.draw();
-  //   this.gameInstructions.draw();
-  //   if (this.gameStarted) {
-  //     const timeTaken = Number(new Date()) - +startTime;
-  //     timerMilliseconds.textContent = String(timeTaken % 1000).padStart(3, '0');
-  //     timerSeconds.textContent = String(Math.floor(timeTaken / 1000)).padStart(2, '0');
-  //   }
 
-  //   for (const star of this.stars) {
-  //     star.draw();
-  //   }
-  // };
+  seed() {
+    this.rocketGA.seed();
+    this.startAI = true;
+    this.statusMessage.updateMsg('');
+    this.gameInstructions.updateMsg('');
+  }
 }

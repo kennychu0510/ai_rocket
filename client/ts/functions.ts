@@ -1,3 +1,5 @@
+import { Game } from './game.js';
+
 export function getDOMElement(element: string) {
   const _element = document.querySelector(element);
   if (!_element) throw new Error(`${_element} not found`);

@@ -1,55 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Rocket</title>
-    <link rel="stylesheet" href="/index.css">
-    <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Rocket</title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
 </head>
+
 <body>
+  <div id="app">
     <div id="scoreboard">
-        <div id="score">
-            <span>Score:</span>
-            <span id="current-score">0</span>
-            <span> / </span>
-            <span id="total-score">0</span>
+      <div id="score">
+        <div id="score-mode"><img id="star-img" src="/media/star.png" alt=""></div>
+        <div id="current-score">0</div>
+        <div> / </div>
+        <div id="total-score">0</div>
+        <div id="ai-stats" class="hidden">
+          <div class="ai-stats-label">Moves:</div>
+          <div id="ai-move">0</div>
+          <div> / </div>
+          <div id="total-moves">0</div>
+          <div class="ai-stats-label">Generation: </div>
+          <div id="current-generation">0</div>
         </div>
-        <div id="title">AI Rocket</div>
-        <div id="time">
-            <span>Time:</span>
-            <span id="second">00</span>:<span id="millisecond">000</span>
-        </div>
+      </div>
+      <div id="title">AI Rocket</div>
+      <div id="time">
+        <span><img id="clock-img" src="/media/timer.png" alt=""></span>
+        <span id="second">00</span>:<span id="millisecond">000</span>
+      </div>
     </div>
-    <main>
-            <canvas></canvas>
-    </main>
-    <div id="bottom-panel">
-        <div id="control-panel-left" class="control-panel">
-            <button id="boundary-mode">Turn Off Boundary</button>
-            <button id="add-star">Add Star</button>
-            <button id="reset">Reset</button>
-            
-            <button id="add-meteor">Add Meteorite</button>
-            <button id="add-blackhole">Add Blackhole</button>
-            <button id="save-stars">Save Stars</button>
-            <a href="rankings.html"><button id="rankings">Rankings</button></a>
-            
-            </button>
-            
-            <button id="save-obj">Save Object</button>
+    <div id="canvas-container">
+      <!-- <div id="canvas-background"></div> -->
+      <canvas></canvas>
+    </div>
+    <div id="footer">
+      <div id="control-panel-1" class="control-panel">
+        <div class="panel-left">
+          <button id="boundary-mode">Turn Off Boundary</button>
+          <button id="add-star">Add Star</button>
+          <button id="reset">Refresh</button>
+          <button id="save-obj">Save Object</button>
+          <button id="add-meteor">Add Meteorite</button>
+          <button id="add-blackhole">Add Blackhole</button>
+          <button id="save-stars">Save Stars</button>
+          <a href="rankings.html"><button id="rankings">Rankings</button></a>
+          
+          <div id="mode">
             <button id="easy-mode">Easy Mode</button>
             <button id="normal-mode">Normal Mode</button>
             <button id="hard-mode">Hard Mode</button>
+          </div>
         </div>
-        <div id="control-panel-right" class="control-panel">
-            <label for="rocket-speed">Rocket Speed:</label>
-            <input id="rocket-speed" type="number" min="0.5" value="1.5" step="0.5"></input> 
-            
-
-
+        <div class="panel-right">
+          <label for="rocket-speed">Rocket Speed:</label>
+          <input id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
+
+      </div>
+      <div id="control-panel-2" class="control-panel">
+        <div class="panel-left">
+          <label for="population">Population:</label>
+          <input id="population" type="number" min="0" value="100" step="50"></input>
+          <label for="moves">Moves:</label>
+          <input id="moves" type="number" min="0" value="500" step="10"></input>
+          <label for="survival-rate">Survival Rate:</label>
+          <input id="survival-rate" type="number" min="0" max="1" value="0.8" step="0.1"></input>
+          <label for="mutation-rate">Mutation Rate:</label>
+          <input id="mutation-rate" type="number" min="0" max="1" value="0.05" step="0.01"></input>
+        </div>
+        <div class="panel-right">
+          <button id="seed">Seed</button>
+          <button id="train">Train</button>
+        </div>
+      </div>
+      <div id="control-panel-3">
+        <label for="stars-reward">Stars Reward:</label>
+        <input id="stars-reward" type="number" value="500" step="1"></input>
+        <label for="health-reward">Health Reward:</label>
+        <input id="health-reward" type="number" value="1" step="1"></input>
+        <label for="steps-reward">Steps Reward:</label>
+        <input id="steps-reward" type="number" value="-1" step="1"></input>
+        <label for="turn-reward">Turn Reward:</label>
+        <input id="turn-reward" type="number" value="-1" step="1"></input>
+        <label for="forward-reward">Forward Reward:</label>
+        <input id="forward-reward" type="number" value="1" step="1"></input>
+      </div>
     </div>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
@@ -57,4 +96,5 @@
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script type="module" src="/js/index.js"></script>
 </body>
+
 </html>
