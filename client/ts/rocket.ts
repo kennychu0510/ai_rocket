@@ -35,12 +35,12 @@ export class Rocket {
     Math.floor(Math.random() * 256),
     Math.floor(Math.random() * 256),
   ];
-  public image_static = this.isUserControlled
-    ? new UserRocketImg()
-    : new RocketImg(this.color);
-  public image_flying = this.isUserControlled
-    ? new UserRocketImg()
-    : new RocketImg(this.color);
+  public image_static = this.isUserControlled ?
+    new UserRocketImg() :
+    new RocketImg(this.color);
+  public image_flying = this.isUserControlled ?
+    new UserRocketImg() :
+    new RocketImg(this.color);
   protected angle = 0;
   protected turn: number;
   public collectedStars = 0;
@@ -68,12 +68,12 @@ export class Rocket {
 
     ctx.translate(
       this.position.x + this.width / 2,
-      this.position.y + this.height / 2
+      this.position.y + this.height / 2,
     );
     ctx.rotate((this.angle * Math.PI) / 180);
     ctx.translate(
       -(this.position.x + this.width / 2),
-      -(this.position.y + this.height / 2)
+      -(this.position.y + this.height / 2),
     );
   }
 
@@ -94,7 +94,7 @@ export class Rocket {
       this.position.x,
       this.position.y,
       this.width,
-      this.height
+      this.height,
     );
   }
 
@@ -325,7 +325,7 @@ export class Rocket {
           blackhole.position.x + blackhole.size / 2 - this.width / 2;
         this.position.y =
           blackhole.position.y + blackhole.size / 2 - this.height / 2;
-          this.setTeleportationTimeout();
+        this.setTeleportationTimeout();
       }
     }
   }

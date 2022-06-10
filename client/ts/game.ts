@@ -99,11 +99,7 @@ export class Game {
   }
 
   addBlackhole(position: Position) {
-    const newBlackhole = new Blackhole(
-      position,
-      this.canvasWidth,
-      this.ctx
-    );
+    const newBlackhole = new Blackhole(position, this.canvasWidth, this.ctx);
     this.blackholes.push(newBlackhole);
   }
 

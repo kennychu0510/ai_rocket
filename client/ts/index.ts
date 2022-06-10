@@ -182,7 +182,6 @@ function changeButtonModes() {
   addStarBtn.textContent = addStarModeOn ? 'Done' : 'Add Star';
   addMeteoriteBtn.textContent = addMeteoriteModeOn ? 'Done' : 'Add Meteorite';
   addBlackholeBtn.textContent = addBlackholeModeOn ? 'Done' : 'Add Blackhole';
-
 }
 
 function resetOtherBtnStates(mode: string) {
@@ -394,7 +393,7 @@ saveObjBtn.addEventListener('click', () => {
 function genGameMap(
   starsArr: Star[],
   meteoritesArr: Meteorite[],
-  blackholesArr: Blackhole[]
+  blackholesArr: Blackhole[],
 ) {
   game.reset();
   for (const s of starsArr) {
