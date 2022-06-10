@@ -11,7 +11,7 @@ import {
 import { Meteorite } from './meteorite.js';
 import { Blackhole } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
-
+const { floor, random } = Math;
 export class Game {
   public statusMessage: CanvasText;
   public gameInstructions: CanvasText;
@@ -34,6 +34,7 @@ export class Game {
   public time = 0;
   private frameRate = 60;
   public gameEnd = false;
+  public teleportMap = [0];
   constructor(
     canvas: HTMLCanvasElement,
     gameBoundaries: GameBoundary,
@@ -148,7 +149,7 @@ export class Game {
     }
   }
 
-  generateStars() {
+  generateRandomStars() {
     // Offset to prevent star appearing at the boundaries
     const offset = 100;
     const maxY = this.boundary.bot - offset;
@@ -173,24 +174,6 @@ export class Game {
     this.addMeteorite(position);
   }
 
-  // generateBlackholePair() {
-  //   const offset = 100;
-  //   const maxY = this.boundary.bot - offset;
-  //   const minY = this.boundary.top + offset;
-  //   const maxX = this.boundary.right - offset;
-  //   const minX = this.boundary.left + offset;
-  //   const x1 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-  //   const y1 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-  //   const x2 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-  //   const y2 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-  //   const position1 = { x: x1, y: y1 };
-  //   const position2 = { x: x2, y: y2 };
-  //   const blackholePair: BlackholePairType = {
-  //     blackhole1: position1,
-  //     blackhole2: position2,
-  //   };
-  //   this.addBlackholePair(blackholePair);
-  // }
 
   draw() {
     this.statusMessage.draw();
@@ -239,4 +222,34 @@ export class Game {
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
   }
+
+  genTeleportMap(n: number) {
+    /* Only gen teleport map once */
+    if (n < 2) return [0];
+    const map: number[] = [];
+    // shuffle available mapping
+    const sources = new Array(n).fill(0).map((_, i) => i);
+
+    random: for (;;) {
+      for (let i = 0; i < n; i++) {
+        const a = floor(random() * n);
+        const b = floor(random() * n);
+        const t = sources[a];
+        sources[a] = sources[b];
+        sources[b] = t;
+      }
+      for (let i = 0; i < n; i++) {
+        if (sources[i] === i) {
+          continue random;
+        }
+      }
+      break random;
+    }
+
+    for (let i = 0; i < n; i++) {
+      map[i] = sources[i];
+    }
+    this.teleportMap = map;
+  }
+
 }
