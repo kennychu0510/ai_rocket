@@ -174,7 +174,6 @@ export class Game {
     this.addMeteorite(position);
   }
 
-
   draw() {
     this.statusMessage.draw();
     this.statusMessage.draw();
@@ -251,5 +250,4 @@ export class Game {
     }
     this.teleportMap = map;
   }
-
 }

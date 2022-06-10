@@ -61,7 +61,7 @@ let mapid = 1;
 let addStarModeOn = false;
 let addMeteoriteModeOn = false;
 let addBlackholeModeOn = false;
-let gameStarted = false;
+const gameStarted = false;
 // const trackTopBound = boundaryOffset;
 // const trackBotBound = canvas.height - boundaryOffset;
 // const trackLeftBound = boundaryOffset;
@@ -155,7 +155,6 @@ EVENT LISTENERS
 */
 window.addEventListener('keydown', ({ key }) => {
   if (game.buttons.includes(key)) {
-    
     if (!game.gameOnGoing && game.stars.length > 0 && !game.gameEnd) {
       game.startGame();
     }
@@ -362,8 +361,6 @@ saveObjBtn.addEventListener('click', () => {
     });
 });
 
-
-    
 function genGameMap(
   starsArr: Star[],
   meteoritesArr: Meteorite[],
@@ -451,6 +448,6 @@ seedBtn.addEventListener('click', () => {
 // });
 
 function disableAddButtons() {
-  const buttons = document.querySelectorAll('button.add-objects')
+  const buttons = document.querySelectorAll('button.add-objects');
   buttons.forEach((button) => button.setAttribute('disabled', ''));
 }
