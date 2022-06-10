@@ -2,6 +2,7 @@ import { Position } from './type.js';
 
 const meteoriteImg = new Image();
 meteoriteImg.src = './media/meteorite.png';
+export const meteoriteSizeRatio = 0.04;
 
 export class Meteorite {
   public position: Position;
@@ -15,7 +16,7 @@ export class Meteorite {
   ) {
     this.position = position;
     this.image = meteoriteImg;
-    this.size = canvasWidth * 0.04;
+    this.size = canvasWidth * meteoriteSizeRatio;
     this.ctx = ctx;
   }
 

@@ -2,6 +2,7 @@ import { Position } from './type.js';
 
 const starImg = new Image();
 starImg.src = './media/star.png';
+export const starSizeRatio = 0.015
 
 export class Star {
   private position: Position;
@@ -15,7 +16,7 @@ export class Star {
   ) {
     this.position = position;
     this.image = starImg;
-    this.size = 0.015 * canvasWidth;
+    this.size = starSizeRatio * canvasWidth;
     this.ctx = ctx;
   }
 

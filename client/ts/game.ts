@@ -97,6 +97,7 @@ export class Game {
     this.stars.push(newStar);
     this.totalStars++;
     this.userRocket.addStar(newStar);
+    this.domElements.totalScore.textContent = String(this.totalStars);
   }
 
   addMeteorite(position: Position) {

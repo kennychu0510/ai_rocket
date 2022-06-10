@@ -2,6 +2,8 @@ import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
 import { getDOMElement } from './functions.js';
 import { Game } from './game.js';
+import { meteoriteSizeRatio } from './meteorite.js';
+import { starSizeRatio } from './star.js';
 import { GameBoundary, gameDOMelements } from './type.js';
 
 /* QUERY SELECTORS */
@@ -53,8 +55,6 @@ canvas.width = window.innerHeight * 1.8;
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
-const starSizeRatio = 0.015;
-const meteoriteSizeRatio = 0.04;
 const blackholeSizeRatio = 0.03;
 let mapid = 1;
 
@@ -89,56 +89,56 @@ function animate() {
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   /* CHECK IF ALL STARS COLLECTED */
-  if (game.totalStars === game.userRocket.collectedStars) {
-    game.statusMessage.updateMsg('Well Done!');
-    game.userRocket.stop();
-    const endTime = new Date();
-    console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-    game.stopGame;
-    const timeTaken =
-      `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`;
-    Swal.fire({
-      title: 'Submit your Name!',
-      input: 'text',
-      text: 'Your Time: ' + timeTaken,
-      inputAttributes: {
-        autocapitalize: 'off',
-      },
-      showCancelButton: true,
-      confirmButtonText: 'Submit',
-      showLoaderOnConfirm: true,
-      preConfirm: (login) => {
-        return fetch(APIOrigin + '/scores', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: mapid,
-            user: login,
-            timeTaken,
-          }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json();
-          })
-          .catch((error) => {
-            Swal.showValidationMessage(`Request failed: ${error}`);
-          });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Your record has been saved!',
-          imageUrl: './media/champion.png',
-        });
-      }
-    });
-  }
+  // if (game.totalStars === game.userRocket.collectedStars ) {
+  //   game.statusMessage.updateMsg('Well Done!');
+  //   game.userRocket.stop();
+  //   const endTime = new Date();
+  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
+  //   game.stopGame;
+  //   const timeTaken =
+  //     `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`;
+  //   Swal.fire({
+  //     title: 'Submit your Name!',
+  //     input: 'text',
+  //     text: 'Your Time: ' + timeTaken,
+  //     inputAttributes: {
+  //       autocapitalize: 'off',
+  //     },
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Submit',
+  //     showLoaderOnConfirm: true,
+  //     preConfirm: (login) => {
+  //       return fetch(APIOrigin + '/scores', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({
+  //           id: mapid,
+  //           user: login,
+  //           timeTaken,
+  //         }),
+  //       })
+  //         .then((response) => {
+  //           if (!response.ok) {
+  //             throw new Error(response.statusText);
+  //           }
+  //           return response.json();
+  //         })
+  //         .catch((error) => {
+  //           Swal.showValidationMessage(`Request failed: ${error}`);
+  //         });
+  //     },
+  //     allowOutsideClick: () => !Swal.isLoading(),
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       Swal.fire({
+  //         title: 'Your record has been saved!',
+  //         imageUrl: './media/champion.png',
+  //       });
+  //     }
+  //   });
+  // }
 
-
+  game.update();
   game.draw();
 
   // console.log(userCar.stats())
@@ -256,27 +256,21 @@ trainBtn.addEventListener('click', () => {
 });
 
 canvas.addEventListener('click', (e) => {
+  const leftOffset = canvas.getBoundingClientRect().left;
+  const botOffset = scoreboard.getBoundingClientRect().bottom;
   if (game.addStarModeOn) {
-    const x = e.clientX - (starSizeRatio * canvas.width) / 2;
-    const y =
-      e.clientY -
-      scoreboard.getBoundingClientRect().bottom -
-      starSizeRatio * canvas.width;
+    const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2; ;
+    const y = e.clientY - botOffset - starSizeRatio * canvas.width;
     const position = { x, y };
     game.addStar(position);
-    totalScore.textContent = String(game.stars.length);
   }
 
   if (game.addMeteoriteModeOn) {
-    const x = e.clientX - (meteoriteSizeRatio * canvas.width) / 2;
-    const y =
-      e.clientY -
-      scoreboard.getBoundingClientRect().bottom -
-      (meteoriteSizeRatio * canvas.width) / 2;
+    const x = e.clientX - leftOffset - (meteoriteSizeRatio * canvas.width) / 2;
+    const y = e.clientY - botOffset - (meteoriteSizeRatio * canvas.width) / 1.5;
     const position = { x, y };
     game.addMeteorite(position);
   }
-  console.log(addBlackholeCounter);
 
   if (game.addBlackholeModeOn) {
     let x1 = 0;
