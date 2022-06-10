@@ -88,12 +88,13 @@ export class Rocket {
   }
 
   drawImage() {
-    let image;
-    if (this.flyingTimeout > 0) {
-      image = this.image_flying;
-    } else {
-      image = this.image_static;
-    }
+    // let image;
+    // if (this.flyingTimeout > 0) {
+    //   image = this.image_flying;
+    // } else {
+    //   image = this.image_static;
+    // }
+    const image = this.flyingTimeout ? this.image_flying : this.image_static;
     this.game.ctx.drawImage(
       image.image,
       this.position.x + this.velocity.x,
@@ -183,7 +184,7 @@ export class Rocket {
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
-    this.acceleration = 0.02 * this.game.canvasWidth;
+    this.acceleration = 0.04 * this.game.canvasWidth;
   }
 
   setPosition(position: Position) {

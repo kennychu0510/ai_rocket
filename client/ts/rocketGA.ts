@@ -21,7 +21,6 @@ export class RocketGA {
   public tick = 0;
   private population: RocketAI[] = [];
   private game: Game;
-  private calledStop = false;
   public numArrived = 0;
   public numAlive = 0;
   constructor(game: Game) {
@@ -109,6 +108,7 @@ export class RocketGA {
   }
 
   evolve() {
+    // Shuffle Array
     for (let i = 0; i < this.population.length; i++) {
       const a = floor(random() * this.population.length);
       const b = this.population[a];
