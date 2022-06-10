@@ -15,10 +15,6 @@ import { RocketGA } from './rocketGA.js';
 export class Game {
   public statusMessage: CanvasText;
   public gameInstructions: CanvasText;
-  public addStarModeOn: boolean;
-  public addMeteoriteModeOn: boolean;
-  public addBlackholeModeOn: boolean;
-
   public startTime: number;
   public totalStars: number;
   public canvasWidth: number;
@@ -77,9 +73,6 @@ export class Game {
       this.canvasHeight,
       this.ctx,
     );
-    this.addStarModeOn = false;
-    this.addMeteoriteModeOn = false;
-    this.addBlackholeModeOn = false;
     this.startTime = Date.now();
     this.gameOnGoing = false;
     this.stars = [];

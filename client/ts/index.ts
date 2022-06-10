@@ -57,8 +57,9 @@ canvas.width = window.innerHeight * 1.8;
 /* VARIABLES */
 const blackholeSizeRatio = 0.03;
 let mapid = 1;
-
-let addBlackholeCounter = 0;
+let addStarModeOn = false;
+let addMeteoriteModeOn = false;
+let addBlackholeModeOn = false;
 // const trackTopBound = boundaryOffset;
 // const trackBotBound = canvas.height - boundaryOffset;
 // const trackLeftBound = boundaryOffset;
@@ -160,86 +161,42 @@ window.addEventListener('keydown', ({ key }) => {
 });
 
 addStarBtn.addEventListener('click', () => {
-  game.addStarModeOn = !game.addStarModeOn;
-  if (game.addStarModeOn) {
-    addStarBtn.textContent = 'Done';
-
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor'
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.setAttribute('disabled', '');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole'
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.setAttribute('disabled', '');
-  } else {
-    addStarBtn.textContent = 'Add Star';
-
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor'
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.removeAttribute('disabled');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole'
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.removeAttribute('disabled');
-  }
+  addStarModeOn = !addStarModeOn;
+  resetOtherBtnStates('stars');
+  changeButtonModes();
 });
 
 addMeteoriteBtn.addEventListener('click', () => {
-  game.addMeteoriteModeOn = !game.addMeteoriteModeOn;
-
-  if (game.addMeteoriteModeOn) {
-    addMeteoriteBtn.textContent = 'Done';
-
-    const addStarBtn = document.getElementById(
-      'add-star'
-    ) as HTMLButtonElement | null;
-    addStarBtn?.setAttribute('disabled', '');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole'
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.setAttribute('disabled', '');
-  } else {
-    addMeteoriteBtn.textContent = 'Add Meteorite';
-
-    const addStarBtn = document.getElementById(
-      'add-star'
-    ) as HTMLButtonElement | null;
-    addStarBtn?.removeAttribute('disabled');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole'
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.removeAttribute('disabled');
-  }
+  addMeteoriteModeOn = !addMeteoriteModeOn;
+  resetOtherBtnStates('meteorite');
+  changeButtonModes();
 });
 
 addBlackholeBtn.addEventListener('click', () => {
-  game.addBlackholeModeOn = !game.addBlackholeModeOn;
-  if (game.addBlackholeModeOn) {
-    addBlackholeBtn.textContent = 'Done';
-
-    const addStarBtn = document.getElementById(
-      'add-star'
-    ) as HTMLButtonElement | null;
-    addStarBtn?.setAttribute('disabled', '');
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor'
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.setAttribute('disabled', '');
-  } else {
-    addBlackholeBtn.textContent = 'Add Blackhole';
-
-    const addStarBtn = document.getElementById(
-      'add-star'
-    ) as HTMLButtonElement | null;
-    addStarBtn?.removeAttribute('disabled');
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor'
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.removeAttribute('disabled');
-  }
+  addBlackholeModeOn = !addBlackholeModeOn;
+  resetOtherBtnStates('blackhole');
+  changeButtonModes();
 });
+
+function changeButtonModes() {
+  addStarBtn.textContent = addStarModeOn ? 'Done' : 'Add Star';
+  addMeteoriteBtn.textContent = addMeteoriteModeOn ? 'Done' : 'Add Meteorite';
+  addBlackholeBtn.textContent = addBlackholeModeOn ? 'Done' : 'Add Blackhole';
+
+}
+
+function resetOtherBtnStates(mode: string) {
+  if (mode === 'stars') {
+    addMeteoriteModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'meteorite') {
+    addStarModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'blackhole') {
+    addMeteoriteModeOn = false;
+    addStarModeOn = false;
+  }
+}
 
 resetBtn.addEventListener('click', () => {
   location.reload();
@@ -261,22 +218,21 @@ trainBtn.addEventListener('click', () => {
 canvas.addEventListener('click', (e) => {
   const leftOffset = canvas.getBoundingClientRect().left;
   const botOffset = scoreboard.getBoundingClientRect().bottom;
-  if (game.addStarModeOn) {
+  if (addStarModeOn) {
     const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - starSizeRatio * canvas.width;
     const position = { x, y };
     game.addStar(position);
-  } else if (game.addMeteoriteModeOn) {
+  } else if (addMeteoriteModeOn) {
     const x = e.clientX - leftOffset - (meteoriteSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - (meteoriteSizeRatio * canvas.width) / 1.5;
     const position = { x, y };
     game.addMeteorite(position);
-  } else if (game.addBlackholeModeOn) {
+  } else if (addBlackholeModeOn) {
     const x = e.clientX - leftOffset - (blackholeSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - (blackholeSizeRatio * canvas.width) / 1.4;
     const position = { x, y };
     game.addBlackhole(position);
-    addBlackholeCounter = 0;
   }
 });
 
