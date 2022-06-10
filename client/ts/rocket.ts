@@ -35,12 +35,12 @@ export class Rocket {
     Math.floor(Math.random() * 256),
     Math.floor(Math.random() * 256),
   ];
-  public image_static = this.isUserControlled ?
-    new UserRocketImg() :
-    new RocketImg(this.color);
-  public image_flying = this.isUserControlled ?
-    new UserRocketImg() :
-    new RocketImg(this.color);
+  public image_static = this.isUserControlled
+    ? new UserRocketImg()
+    : new RocketImg(this.color);
+  public image_flying = this.isUserControlled
+    ? new UserRocketImg()
+    : new RocketImg(this.color);
   protected angle = 0;
   protected turn: number;
   public collectedStars = 0;
@@ -68,12 +68,12 @@ export class Rocket {
 
     ctx.translate(
       this.position.x + this.width / 2,
-      this.position.y + this.height / 2,
+      this.position.y + this.height / 2
     );
     ctx.rotate((this.angle * Math.PI) / 180);
     ctx.translate(
       -(this.position.x + this.width / 2),
-      -(this.position.y + this.height / 2),
+      -(this.position.y + this.height / 2)
     );
   }
 
@@ -94,7 +94,7 @@ export class Rocket {
       this.position.x,
       this.position.y,
       this.width,
-      this.height,
+      this.height
     );
   }
 
@@ -307,39 +307,25 @@ export class Rocket {
   }
 
   checkBlackholeTeleportation() {
-    for (const blackholePair of this.game.blackholes) {
-      const dx1 =
+    for (const blackhole of this.game.blackholes) {
+      const dx =
         this.position.x +
         this.width / 2 -
-        (blackholePair.blackhole1.x + blackholePair.size / 2);
-      const dy1 =
+        (blackhole.getX() + blackhole.size / 2);
+      const dy =
         this.position.y +
         this.height / 2 -
-        (blackholePair.blackhole1.y + blackholePair.size / 2);
-      const dx2 =
-        this.position.x +
-        this.width / 2 -
-        (blackholePair.blackhole2.x + blackholePair.size / 2);
-      const dy2 =
-        this.position.y +
-        this.height / 2 -
-        (blackholePair.blackhole2.y + blackholePair.size / 2);
-      const distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-      const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-      const range = this.getC() / 2 + blackholePair.size / 2;
+        (blackhole.getY() + blackhole.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance1 <= range / 2 && this.teleportTimeout === 0) {
+      const range = this.getC() / 2 + blackhole.size / 2;
+
+      if (distance <= range / 2 && this.teleportTimeout === 0) {
         this.position.x =
-          blackholePair.blackhole2.x + blackholePair.size / 2 - this.width / 2;
+          blackhole.position.x + blackhole.size / 2 - this.width / 2;
         this.position.y =
-          blackholePair.blackhole2.y + blackholePair.size / 2 - this.height / 2;
-        this.setTeleportationTimeout();
-      } else if (distance2 <= range / 2 && this.teleportTimeout === 0) {
-        this.position.x =
-          blackholePair.blackhole1.x + blackholePair.size / 2 - this.width / 2;
-        this.position.y =
-          blackholePair.blackhole1.y + blackholePair.size / 2 - this.height / 2;
-        this.setTeleportationTimeout();
+          blackhole.position.y + blackhole.size / 2 - this.height / 2;
+          this.setTeleportationTimeout();
       }
     }
   }

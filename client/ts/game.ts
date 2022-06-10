@@ -9,7 +9,7 @@ import {
   Position,
 } from './type.js';
 import { Meteorite } from './meteorite.js';
-import { BlackholePair } from './blackhole.js';
+import { Blackhole } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
 
 export class Game {
@@ -26,7 +26,7 @@ export class Game {
   public gameOnGoing: boolean;
   public stars: Star[];
   public meteorites: Meteorite[];
-  public blackholes: BlackholePair[];
+  public blackholes: Blackhole[];
   public buttons: string[];
   public userRocket: Rocket;
   public boundary: Boundary;
@@ -105,13 +105,13 @@ export class Game {
     this.meteorites.push(newMeteorite);
   }
 
-  addBlackholePair(blackholePair: BlackholePairType) {
-    const newBlackholePair = new BlackholePair(
-      blackholePair,
+  addBlackhole(position: Position) {
+    const newBlackhole = new Blackhole(
+      position,
       this.canvasWidth,
-      this.ctx,
+      this.ctx
     );
-    this.blackholes.push(newBlackholePair);
+    this.blackholes.push(newBlackhole);
   }
 
   startGame() {
@@ -184,24 +184,24 @@ export class Game {
     this.addMeteorite(position);
   }
 
-  generateBlackholePair() {
-    const offset = 100;
-    const maxY = this.boundary.bot - offset;
-    const minY = this.boundary.top + offset;
-    const maxX = this.boundary.right - offset;
-    const minX = this.boundary.left + offset;
-    const x1 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-    const y1 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-    const x2 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-    const y2 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
-    const position1 = { x: x1, y: y1 };
-    const position2 = { x: x2, y: y2 };
-    const blackholePair: BlackholePairType = {
-      blackhole1: position1,
-      blackhole2: position2,
-    };
-    this.addBlackholePair(blackholePair);
-  }
+  // generateBlackholePair() {
+  //   const offset = 100;
+  //   const maxY = this.boundary.bot - offset;
+  //   const minY = this.boundary.top + offset;
+  //   const maxX = this.boundary.right - offset;
+  //   const minX = this.boundary.left + offset;
+  //   const x1 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+  //   const y1 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+  //   const x2 = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+  //   const y2 = Math.floor(Math.random() * (maxY - minY + 1) + minY);
+  //   const position1 = { x: x1, y: y1 };
+  //   const position2 = { x: x2, y: y2 };
+  //   const blackholePair: BlackholePairType = {
+  //     blackhole1: position1,
+  //     blackhole2: position2,
+  //   };
+  //   this.addBlackholePair(blackholePair);
+  // }
 
   draw() {
     this.statusMessage.draw();

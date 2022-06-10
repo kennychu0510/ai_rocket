@@ -5,7 +5,7 @@ starImg.src = './media/star.png';
 export const starSizeRatio = 0.015;
 
 export class Star {
-  private position: Position;
+  public position: Position;
   private image: HTMLImageElement;
   public size: number;
   private ctx: CanvasRenderingContext2D;
