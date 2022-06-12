@@ -20,4 +20,7 @@ export class RocketAIController {
     });
     res.json({ id: addedResult });
   };
+  get = async (req: Request, res: Response) => {
+    res.json(await this.rocketAIServices.getRocket());
+  };
 }

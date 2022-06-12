@@ -8,3 +8,4 @@ routes.get('/mode', mapController.get);
 routes.post('/map', mapController.create);
 routes.post('/scores', userController.create);
 routes.post('/rocketAI', rocketAIController.create);
+routes.get('/rocketAI', rocketAIController.get);

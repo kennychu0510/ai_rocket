@@ -40,7 +40,8 @@ const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
 const trainBtn = getDOMElement('#train');
-const saveBestBtn = getDOMElement('#save-best');
+const loadRocketBtn = getDOMElement('#load-rocket');
+const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
@@ -419,11 +420,15 @@ seedBtn.addEventListener('click', () => {
 //   canvas.width = window.innerHeight * 1.8;
 // });
 
-saveBestBtn.addEventListener('click', () => {
-  const mapID = game.mapID;
-  const fitness = game.rocketGA.bestFitness;
-  const bestRocketAI = game.rocketGA.bestMovesSet;
-  const starsCollected = game.rocketGA.bestStarsCollected;
+loadRocketBtn.addEventListener('click', () => {
+  fetch(APIOrigin + '/rocketAI', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+    });
 });
 
 /*

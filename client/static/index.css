@@ -57,13 +57,15 @@ body,
 }
 
 #control-panel-1,
-#control-panel-2 {
+#control-panel-2,
+#control-panel-3 {
   display: flex;
   justify-content: space-between;
 }
 
 #control-panel-1>*,
-#control-panel-2>* {
+#control-panel-2>*,
+#control-panel-3>* {
   margin-right: 10px;
   margin-bottom: 10px;
 }
