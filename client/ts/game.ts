@@ -223,7 +223,6 @@ export class Game {
 
   seed() {
     this.rocketGA.seed();
-    this.startAI = true;
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
   }

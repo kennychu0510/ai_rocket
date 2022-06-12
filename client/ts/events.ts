@@ -54,3 +54,49 @@ export function showRecordScoreForm(game: Game, domElements: gameDOMelements) {
     });
   }
 }
+
+export function saveRocketAI(game: Game, domElements: gameDOMelements) {
+  Swal.fire({
+    title: `Save your best rocket?`,
+    input: 'text',
+    text: `Fitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}`,
+    inputAttributes: {
+      autocapitalize: 'off',
+    },
+    inputPlaceholder: 'Name your rocket AI',
+    showCancelButton: true,
+    confirmButtonText: 'Save',
+    showLoaderOnConfirm: true,
+    preConfirm: (name) => {
+      return fetch(APIOrigin + `/rocketAI`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapID: game.mapID,
+          name,
+          fitness: game.rocketGA.bestFitness,
+          starsCollected: game.rocketGA.bestStarsCollected,
+          moves: game.rocketGA.bestMoves,
+          totalMoves: game.rocketGA.moves,
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(response.statusText);
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        });
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: `${result.value.login}'s avatar`,
+        imageUrl: result.value.avatar_url,
+      });
+    }
+  });
+}

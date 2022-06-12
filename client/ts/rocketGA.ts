@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import Swal from 'sweetalert2';
 import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
@@ -25,7 +26,7 @@ export class RocketGA {
   public numAlive = 0;
   public bestMoves = '';
   public bestFitness: number = Number.NEGATIVE_INFINITY;
-  public bestCollectedStars = 0;
+  public bestStarsCollected = 0;
   constructor(game: Game) {
     this.game = game;
   }
@@ -158,10 +159,10 @@ export class RocketGA {
     if (bestRocketInGen.getFitness() > this.bestFitness) {
       this.bestFitness = bestRocketInGen.getFitness();
       this.bestMoves = bestRocketInGen.moves.join('');
-      this.bestCollectedStars = bestRocketInGen.collectedStars;
+      this.bestStarsCollected = bestRocketInGen.collectedStars;
       console.log('new best rocket ', {
         bestfitness: this.bestFitness,
-        starsCollected: this.bestCollectedStars,
+        starsCollected: this.bestStarsCollected,
       });
     }
 
@@ -325,8 +326,8 @@ class RocketAI extends Rocket {
 
   getStepsTaken() {
     return (
-      this.finishTime / this.rocketGA.ticksBetweenMove ||
-      this.rocketGA.tick / this.rocketGA.ticksBetweenMove
+      round(this.finishTime / this.rocketGA.ticksBetweenMove) ||
+      round(this.rocketGA.tick / this.rocketGA.ticksBetweenMove)
     );
   }
 }

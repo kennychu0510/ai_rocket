@@ -26,9 +26,10 @@ export async function up(knex: Knex): Promise<void> {
   if (!(await knex.schema.hasTable('ai_rocket'))) {
     await knex.schema.createTable('ai_rocket', table => {
       table.increments('id')
+      table.string('name', 255).notNullable()
       table.integer('map_id').unsigned().notNullable().references('map.id')
       table.integer('fitness').notNullable()
-      table.integer('moves').notNullable()
+      table.text('moves').notNullable()
       table.integer('stars').notNullable()
       table.integer('total_moves').notNullable()
       table.timestamps(false, true)

@@ -33,8 +33,9 @@ map_id fk >- map.id
 ai_rocket
 ---------
 id pk
+name varchar(255)
 map_id fk >- map.id
 fitness
-moves
+moves text
 stars
 total_moves

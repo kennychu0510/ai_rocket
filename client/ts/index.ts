@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
 import { Blackhole } from './blackhole.js';
+import { saveRocketAI } from './events.js';
 import { genTeleportMap, getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
@@ -92,14 +93,20 @@ const game = new Game(canvas, gameBoundaries, domElements);
 function animate() {
   requestAnimationFrame(animate);
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (speedUp.checked && game.startAI) {
+
+  if (speedUp.checked) {
+    if (!game.startAI) return;
     for (let i = 0; i < 500 * 100; i++) {
       game.update();
     }
+    game.startAI = false;
+    saveRocketAI(game, domElements);
   }
 
-  game.update();
-  if (!speedUp.checked) game.draw();
+  if (!speedUp.checked) {
+    game.update();
+    game.draw();
+  }
 
   // console.log(userCar.stats())
 }
@@ -416,7 +423,7 @@ saveBestBtn.addEventListener('click', () => {
   const mapID = game.mapID;
   const fitness = game.rocketGA.bestFitness;
   const bestRocketAI = game.rocketGA.bestMoves;
-  const starsCollected = game.rocketGA.bestCollectedStars;
+  const starsCollected = game.rocketGA.bestStarsCollected;
 });
 
 /*
