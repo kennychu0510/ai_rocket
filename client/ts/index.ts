@@ -422,7 +422,7 @@ seedBtn.addEventListener('click', () => {
 saveBestBtn.addEventListener('click', () => {
   const mapID = game.mapID;
   const fitness = game.rocketGA.bestFitness;
-  const bestRocketAI = game.rocketGA.bestMoves;
+  const bestRocketAI = game.rocketGA.bestMovesSet;
   const starsCollected = game.rocketGA.bestStarsCollected;
 });
 

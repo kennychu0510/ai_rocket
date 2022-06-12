@@ -24,9 +24,10 @@ export class RocketGA {
   private game: Game;
   public numArrived = 0;
   public numAlive = 0;
-  public bestMoves = '';
+  public bestMovesSet = '';
   public bestFitness: number = Number.NEGATIVE_INFINITY;
   public bestStarsCollected = 0;
+  public bestMovesUsed = 0;
   constructor(game: Game) {
     this.game = game;
   }
@@ -158,8 +159,9 @@ export class RocketGA {
 
     if (bestRocketInGen.getFitness() > this.bestFitness) {
       this.bestFitness = bestRocketInGen.getFitness();
-      this.bestMoves = bestRocketInGen.moves.join('');
+      this.bestMovesSet = bestRocketInGen.moves.join('');
       this.bestStarsCollected = bestRocketInGen.collectedStars;
+      this.bestMovesUsed = bestRocketInGen.getStepsTaken();
       console.log('new best rocket ', {
         bestfitness: this.bestFitness,
         starsCollected: this.bestStarsCollected,

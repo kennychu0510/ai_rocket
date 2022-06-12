@@ -59,7 +59,7 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
   Swal.fire({
     title: `Save your best rocket?`,
     input: 'text',
-    text: `Fitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}`,
+    html: `<pre>Fitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}\nMoves: ${game.rocketGA.bestMovesUsed}</pre>`,
     inputAttributes: {
       autocapitalize: 'off',
     },
@@ -76,7 +76,7 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
           name,
           fitness: game.rocketGA.bestFitness,
           starsCollected: game.rocketGA.bestStarsCollected,
-          moves: game.rocketGA.bestMoves,
+          moves: game.rocketGA.bestMovesSet,
           totalMoves: game.rocketGA.moves,
         }),
       })
@@ -94,8 +94,8 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
-        title: `${result.value.login}'s avatar`,
-        imageUrl: result.value.avatar_url,
+        title: `Your rocket is saved and ready to launch`,
+        imageUrl: './media/rocket_launch.gif',
       });
     }
   });
