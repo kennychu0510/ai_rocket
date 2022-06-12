@@ -42,7 +42,7 @@ export class RocketAIServices {
         'total_moves',
       )
       .from('ai_rocket')
-      .where('id', 1);
+      .where('id', 3);
     return results[0];
   }
 }

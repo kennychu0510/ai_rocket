@@ -149,7 +149,12 @@ export class Game {
     }
     if (!this.startAI) {
       this.domElements.currentScore.textContent = String(
-        this.userRocket.collectedStars,
+        this.userRocket.collectedStars
+      );
+    }
+    if (this.rocketGA.launchRocketAIMode) {
+      this.domElements.currentScore.textContent = String(
+        this.rocketGA.population[0].collectedStars
       );
     }
   }
@@ -185,8 +190,14 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    for (const star of this.userRocket.stars) {
-      star.draw();
+    if (!this.rocketGA.launchRocketAIMode) {
+      for (const star of this.userRocket.stars) {
+        star.draw();
+      }
+    } else {
+      for (const star of this.rocketGA.population[0].stars) {
+        star.draw();
+      }
     }
 
     for (const blackholePair of this.blackholes) {

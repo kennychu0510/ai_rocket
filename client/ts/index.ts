@@ -43,6 +43,7 @@ const trainBtn = getDOMElement('#train');
 const loadRocketBtn = getDOMElement('#load-rocket');
 const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
+const score = getDOMElement('#score');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -55,7 +56,7 @@ const timerSeconds = getDOMElement('#second');
 /* CANVAS */
 const canvasOffset = 10;
 canvas.height = window.innerHeight * 0.78 - canvasOffset;
-canvas.width = window.innerHeight * 1.8;
+canvas.width = canvas.height * 2.2;
 // console.log(canvas.width, canvas.height);
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
 
@@ -97,7 +98,7 @@ function animate() {
 
   if (speedUp.checked) {
     if (!game.startAI) return;
-    for (let i = 0; i < 500 * 100; i++) {
+    for (let i = 0; i < 50 * 100 * 30; i++) {
       game.update();
     }
     game.startAI = false;
@@ -428,8 +429,23 @@ loadRocketBtn.addEventListener('click', () => {
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       console.log(json);
+      const moves = json.moves.split('').map(Number)
+      game.rocketGA.loadRocketAI(moves);
     });
 });
+
+launchRocketBtn.addEventListener('click', () => {
+  game.rocketGA.launchRocketAI();
+})
+
+speedUp.addEventListener('change', function() {
+  if (this.checked) {
+    score.classList.add('invisible')
+  } else {
+    score.classList.remove('invisible')
+  }
+})
+
 
 /*
 ----------------------------------------------------------------
