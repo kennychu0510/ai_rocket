@@ -8,11 +8,11 @@ const { random, floor, round } = Math;
 
 export class RocketGA {
   public populationSize = 100;
-  public moves = 500;
+  public moves = 50;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
   private generation = 0;
-  public tickBetweenMove = 1;
+  public ticksBetweenMove = 30;
   public starsReward = 500;
   public healthReward = 1;
   public stepsReward = -1;
@@ -75,13 +75,13 @@ export class RocketGA {
 
   update() {
     if (!this.game.startAI || !this.game.gameOnGoing) return;
-    const index = this.tick / this.tickBetweenMove;
+    const index = this.tick / this.ticksBetweenMove;
     if (index === this.moves) {
       this.nextGen();
       return;
     }
     for (const rocket of this.population) {
-      if (this.tick % this.tickBetweenMove === 0) {
+      if (this.tick % this.ticksBetweenMove === 0) {
         rocket.move(index);
       }
       rocket.update(this.tick);
@@ -171,8 +171,7 @@ export class RocketGA {
       stars: `${bestRocketInGen.collectedStars} out of ${this.game.stars.length}`,
       stepsTaken: bestRocketInGen.getStepsTaken(),
       alive: bestRocketInGen.alive,
-      freeSteps:
-        this.moves * this.tickBetweenMove - bestRocketInGen.getStepsTaken(),
+      freeSteps: this.moves - bestRocketInGen.getStepsTaken(),
       moves: bestRocketInGen.moves,
     });
   }
@@ -325,42 +324,10 @@ class RocketAI extends Rocket {
   }
 
   getStepsTaken() {
-    return this.finishTime || this.rocketGA.tick;
-  }
-
-  draw() {
-    super.draw();
-
-    // let image;
-    // if (this.flyingTimeout > 0) {
-    //   image = this.flyingImg;
-    // } else {
-    //   image = this.staticImg;
-    // }
-    // this.game.ctx.putImageData(image, this.position.x, this.position.y);
-    // this.game.ctx.restore();
-
-    // this.game.ctx.save();
-    // const imageData = this.game.ctx.getImageData(0, 0, this.game.canvasWidth, this.game.canvasHeight);
-    // let i = 0;
-    // const R = 0;
-    // const G = 1;
-    // const B = 2;
-    // const A = 3;
-    // for (let y = 0; y < this.game.canvasHeight; y++) {
-    //   for (let x = 0; x < this.game.canvasWidth; x++) {
-    //     const a = imageData.data[i + A];
-    //     if (a != 0) {
-    //       imageData.data[i + R] = this.color.r;
-    //       imageData.data[i + G] = this.color.g;
-    //       imageData.data[i + B] = this.color.b;
-    //       // imageData.data[i + A] = randomA;
-    //     }
-    //     i += 4;
-    //   }
-    // }
-    // this.game.ctx.putImageData(imageData, 0, 0);
-    // this.game.ctx.restore();
+    return (
+      this.finishTime / this.rocketGA.ticksBetweenMove ||
+      this.rocketGA.tick / this.rocketGA.ticksBetweenMove
+    );
   }
 }
 

@@ -55,7 +55,7 @@ export class Rocket {
     const canvasWidth = game.canvasWidth;
     const canvasHeight = game.canvasHeight;
     this.velocity = { x: 0, y: 0 };
-    // this.acceleration === rocketGA.stepsBetweenMove / 10
+    // this.acceleration === this.game.rocketGA.ticksBetweenMove / 10
 
     this.turn = 45;
     this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
@@ -178,7 +178,7 @@ export class Rocket {
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
-    this.acceleration = 0.04 * this.game.canvasWidth;
+    this.acceleration = 0.002 * this.game.canvasWidth;
   }
 
   setPosition(position: Position) {

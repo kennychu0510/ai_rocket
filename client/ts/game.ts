@@ -56,10 +56,12 @@ export class Game {
     this.userRocket.onDie = () => {
       this.statusMessage.updateMsg('Game Over');
       this.gameEnd = true;
+      this.stopGame();
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
       this.gameEnd = true;
+      this.stopGame();
       showRecordScoreForm(this, this.domElements);
     };
     this.statusMessage = new CanvasText(
@@ -208,7 +210,7 @@ export class Game {
     this.blackholes = [];
     this.totalStars = 0;
     this.gameOnGoing = false;
-    this.userRocket.changeAcceleration(0.002 * this.canvasWidth);
+    // this.userRocket.changeAcceleration(1 * this.canvasWidth);
     this.rocketGA.reset();
     this.domElements.timerMilliseconds.textContent = '000';
     this.domElements.timerSeconds.textContent = '00';

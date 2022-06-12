@@ -92,65 +92,14 @@ const game = new Game(canvas, gameBoundaries, domElements);
 function animate() {
   requestAnimationFrame(animate);
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   if (speedUp.checked && game.startAI) {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 500 * 100; i++) {
       game.update();
     }
   }
 
-  /* CHECK IF ALL STARS COLLECTED */
-  // if (game.totalStars === game.userRocket.collectedStars ) {
-  //   game.statusMessage.updateMsg('Well Done!');
-  //   game.userRocket.stop();
-  //   const endTime = new Date();
-  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-  //   game.stopGame;
-  //   const timeTaken =
-  //     `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`;
-  //   Swal.fire({
-  //     title: 'Submit your Name!',
-  //     input: 'text',
-  //     text: 'Your Time: ' + timeTaken,
-  //     inputAttributes: {
-  //       autocapitalize: 'off',
-  //     },
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Submit',
-  //     showLoaderOnConfirm: true,
-  //     preConfirm: (login) => {
-  //       return fetch(APIOrigin + '/scores', {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({
-  //           id: mapid,
-  //           user: login,
-  //           timeTaken,
-  //         }),
-  //       })
-  //         .then((response) => {
-  //           if (!response.ok) {
-  //             throw new Error(response.statusText);
-  //           }
-  //           return response.json();
-  //         })
-  //         .catch((error) => {
-  //           Swal.showValidationMessage(`Request failed: ${error}`);
-  //         });
-  //     },
-  //     allowOutsideClick: () => !Swal.isLoading(),
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       Swal.fire({
-  //         title: 'Your record has been saved!',
-  //         imageUrl: './media/champion.png',
-  //       });
-  //     }
-  //   });
-  // }
-
   game.update();
-  game.draw();
+  if (!speedUp.checked) game.draw();
 
   // console.log(userCar.stats())
 }
@@ -225,7 +174,7 @@ canvas.addEventListener('click', (e) => {
     game.addMeteorite(position);
   } else if (addBlackholeModeOn) {
     const x = e.clientX - leftOffset - (blackholeSizeRatio * canvas.width) / 2;
-    const y = e.clientY - botOffset - (blackholeSizeRatio * canvas.width) / 1.4;
+    const y = e.clientY - botOffset - (blackholeSizeRatio * canvas.width) / 2;
     const position = { x, y };
     game.addBlackhole(position);
     game.genTeleportMap(game.blackholes.length);
@@ -237,8 +186,8 @@ canvas.addEventListener('click', (e) => {
 GAME SETTINGS
 ----------------------------------------------------------------
 */
-// rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
-game.userRocket.changeAcceleration(Number(rocketSpeed.value));
+rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+// game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 // population.value = String(game.rocketGA.populationSize);
 game.rocketGA.populationSize = Number(population.value);
 moves.value = String(game.rocketGA.moves);
@@ -354,7 +303,7 @@ saveObjBtn.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json.msg);
+      // console.log(json.msg);
     });
 });
 
