@@ -7,8 +7,8 @@ export async function up(knex: Knex): Promise<void> {
       table.text('stars').notNullable()
       table.text('meteorites').notNullable()
       table.text('black_holes').notNullable()
-      table.integer('levels').notNullable()
       table.text('black_hole_map').notNullable()
+      table.string('name', 30).notNullable()
       table.timestamps(false, true)
     })
   }

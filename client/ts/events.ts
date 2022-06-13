@@ -100,3 +100,67 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
     }
   });
 }
+
+
+export function saveMap(game: Game){
+  const stars = game.stars.map((star) => {
+    const newX = star.getX() / game.canvasWidth;
+    const newY = star.getY() / game.canvasHeight;
+    return { x: newX, y: newY };
+  });
+  const meteorites = game.meteorites.map((meteorite) => {
+    const newX = meteorite.getX() / game.canvasWidth;
+    const newY = meteorite.getY() / game.canvasHeight;
+    return { x: newX, y: newY };
+  });
+  const blackholes = game.blackholes.map((blackhole) => {
+    const newX = blackhole.getX() / game.canvasWidth;
+    const newY = blackhole.getY() / game.canvasHeight;
+    return { x: newX, y: newY };
+  });
+
+  const blackholeMap = game.teleportMap;
+
+  Swal.fire({
+    title: 'Submit your map name',
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+    showCancelButton: true,
+    confirmButtonText: 'Save',
+    showLoaderOnConfirm: true,
+    preConfirm: (name: string) => {
+      return fetch(APIOrigin + '/map', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stars,
+          meteorites,
+          blackholes,
+          blackholeMap,
+          name,
+    }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(response.statusText)
+          }
+          return response.json()
+        })
+        .catch(error => {
+          Swal.showValidationMessage(
+            `Request failed: ${error}`
+          )
+        })
+    },
+    allowOutsideClick: () => !Swal.isLoading()
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: `Your map saved successfully`,
+        imageUrl: './media/save-map.gif'
+      })
+    }
+  })
+}

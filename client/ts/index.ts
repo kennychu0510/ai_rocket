@@ -1,6 +1,6 @@
 import { APIOrigin } from './api.js';
 import { Blackhole } from './blackhole.js';
-import { saveRocketAI } from './events.js';
+import { saveMap, saveRocketAI } from './events.js';
 import { genTeleportMap, getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
@@ -283,39 +283,7 @@ boundaryModeBtn.addEventListener('click', () => {
 });
 
 saveObjBtn.addEventListener('click', () => {
-  const stars = game.stars.map((star) => {
-    const newX = star.getX() / canvas.width;
-    const newY = star.getY() / canvas.height;
-    return { x: newX, y: newY };
-  });
-  const meteorites = game.meteorites.map((meteorite) => {
-    const newX = meteorite.getX() / canvas.width;
-    const newY = meteorite.getY() / canvas.height;
-    return { x: newX, y: newY };
-  });
-  const blackholes = game.blackholes.map((blackhole) => {
-    const newX = blackhole.getX() / canvas.width;
-    const newY = blackhole.getY() / canvas.height;
-    return { x: newX, y: newY };
-  });
-
-  const blackholeMap = game.teleportMap;
-
-  fetch(APIOrigin + '/map', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      stars,
-      meteorites,
-      blackholes,
-      blackholeMap,
-    }),
-  })
-    .then((res) => res.json())
-    .catch((err) => ({ error: String(err) }))
-    .then((json) => {
-      // console.log(json.msg);
-    });
+  saveMap(game)
 });
 
 function genGameMap(

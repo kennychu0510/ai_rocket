@@ -22,6 +22,7 @@ export class MapController {
     const meteorites = req.body.meteorites;
     const blackholes = req.body.blackholes;
     const blackholeMap = req.body.blackholeMap;
+    const name = req.body.name;
     if (stars.length <= 0 && meteorites.length <= 0 && blackholes.length <= 0) {
       res.status(404).json({ msg: 'nothing is added' });
       return;
@@ -31,6 +32,7 @@ export class MapController {
       meteorites,
       blackholes,
       blackholeMap,
+      name,
     });
     res.json({ msg: `added map-${addedMap}` });
   };

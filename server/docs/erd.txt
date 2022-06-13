@@ -20,8 +20,8 @@ id pk
 stars text
 meteorites text
 black_holes text
-levels integer
 black_hole_map text
+name varchar(30)
 
 scores
 ---------
