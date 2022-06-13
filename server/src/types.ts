@@ -5,3 +5,10 @@ export type Map = {
   black_holes: string;
   levels: number;
 };
+
+export type UserRanking = {
+  
+  name: string;
+  time: string;
+  level: number;
+};
