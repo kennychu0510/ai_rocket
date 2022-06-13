@@ -1,4 +1,3 @@
-import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
 import { Blackhole } from './blackhole.js';
 import { saveRocketAI } from './events.js';
@@ -89,6 +88,7 @@ const gameBoundaries: GameBoundary = {
   right: canvas.width - boundaryOffset,
 };
 
+speedUp.checked = false;
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries, domElements);
 
@@ -166,6 +166,8 @@ resetBtn.addEventListener('click', () => {
 });
 
 trainBtn.addEventListener('click', () => {
+  population.setAttribute('disabled', 'disabled');
+  moves.setAttribute('disabled', 'disabled');
   game.rocketGA.train();
 });
 
@@ -414,6 +416,22 @@ normalMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
+
+  fetch(APIOrigin + '/rocketAI/mapID/2', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
+    });
 });
 
 hardMode.addEventListener('click', () => {
@@ -432,6 +450,21 @@ hardMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
+  fetch(APIOrigin + '/rocketAI/mapID/3', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
+    });
 });
 
 seedBtn.addEventListener('click', () => {
@@ -443,6 +476,7 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.innerHTML = '';
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
+
   // aiStats.classList.add('active');
 });
 

@@ -12,7 +12,7 @@ export class RocketGA {
   public moves = 50;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
-  private generation = 0;
+  public generation = 0;
   public ticksBetweenMove = 30;
   public starsReward = 500;
   public healthReward = 1;
@@ -98,6 +98,10 @@ export class RocketGA {
   }
 
   onDie() {
+    if (this.launchRocketAIMode) {
+      this.game.gameEnd = true;
+      this.game.stopGame();
+    }
     this.numAlive--;
     this.game.domElements.currentScore.textContent = String(this.numAlive);
     if (this.numAlive === 0) this.nextGen();

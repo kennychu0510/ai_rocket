@@ -59,7 +59,7 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
   Swal.fire({
     title: `Save your best rocket?`,
     input: 'text',
-    html: `<pre>Fitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}\nMoves: ${game.rocketGA.bestMovesUsed}</pre>`,
+    html: `<pre>After ${game.rocketGA.generation} generations...\nFitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}\nMoves: ${game.rocketGA.bestMovesUsed}</pre>`,
     inputAttributes: {
       autocapitalize: 'off',
     },

@@ -121,7 +121,7 @@ input {
 }
 
 .active {
-  display: inline;
+  display: inline !important;
 }
 
 .invisible {
