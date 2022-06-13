@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Swal from 'sweetalert2';
-import { degreeToRadian } from './functions.js';
+import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
+import { NeuralNetwork } from './neuralNetwork.js';
+import { NeuralRocket } from './neuralRocket.js';
 import { Rocket } from './rocket.js';
 import { UserRocketImg } from './rocketImg.js';
 import { Move } from './type.js';
@@ -20,7 +22,8 @@ export class RocketGA {
   public turnReward = -1;
   public forwardReward = 1;
   public tick = 0;
-  public population: RocketAI[] = [];
+  public populationGA: RocketAI[] = [];
+  public populationNN: NeuralRocket[] = [];
   private game: Game;
   public numArrived = 0;
   public numAlive = 0;
@@ -29,13 +32,20 @@ export class RocketGA {
   public bestStarsCollected = 0;
   public bestMovesUsed = 0;
   public launchRocketAIMode = false;
+  public neuralNetworkMode = false;
+  public sensors = 4;
+  public neutralNetwork = new NeuralNetwork();
   constructor(game: Game) {
     this.game = game;
   }
 
   seed() {
-    this.population = [];
-    this.addSeed(this.populationSize);
+    this.populationGA = [];
+    if (this.neuralNetworkMode) {
+      // this.addSeedNN(this.populationSize)
+    } else {
+      this.addSeedGA(this.populationSize);
+    }
     if (!this.launchRocketAIMode) {
       this.game.domElements.currentScore.textContent = String(
         this.populationSize,
@@ -52,7 +62,7 @@ export class RocketGA {
   }
 
   train() {
-    this.population.forEach((rocket) => rocket.reset());
+    this.populationGA.forEach((rocket) => rocket.reset());
     this.game.startGame();
     this.game.startAI = true;
     this.generation++;
@@ -65,18 +75,27 @@ export class RocketGA {
     this.game.domElements.currentScore.textContent = String(this.numAlive);
   }
 
-  addSeed(n: number) {
+  addSeedGA(n: number) {
     for (let i = 0; i < n; i++) {
       const rocket = new RocketAI(this.game, this);
-      this.population.push(rocket);
+      this.populationGA.push(rocket);
     }
     // console.log(this.population);
   }
 
+  addSeedNN(n: number) {
+    for (let i = 0; i < n; i++) {
+      const rocket = new NeuralRocket(this.game, this);
+      this.populationNN.push(rocket);
+    }
+  }
+
   nextGen() {
     this.game.stopGame();
-    this.report();
-    this.evolve();
+    if (!this.neuralNetworkMode) {
+      this.report();
+      this.evolve();
+    }
     this.train();
   }
 
@@ -90,7 +109,7 @@ export class RocketGA {
       this.nextGen();
       return;
     }
-    for (const rocket of this.population) {
+    for (const rocket of this.populationGA) {
       if (this.tick % this.ticksBetweenMove === 0) {
         rocket.move(index);
       }
@@ -120,27 +139,28 @@ export class RocketGA {
   }
 
   draw() {
-    for (const rocket of this.population) {
+    for (const rocket of this.populationGA) {
       rocket.draw();
     }
   }
 
   reset() {
-    this.population = [];
+    this.populationGA = [];
   }
 
+  /* GENETIC ALGORITHM ONLY */
   evolve() {
     // Shuffle Array
-    for (let i = 0; i < this.population.length; i++) {
-      const a = floor(random() * this.population.length);
-      const b = this.population[a];
-      this.population[a] = this.population[i];
-      this.population[i] = b;
+    for (let i = 0; i < this.populationGA.length; i++) {
+      const a = floor(random() * this.populationGA.length);
+      const b = this.populationGA[a];
+      this.populationGA[a] = this.populationGA[i];
+      this.populationGA[i] = b;
     }
 
-    for (let i = 0; i < this.population.length; i += 2) {
-      let rocketA = this.population[i];
-      let rocketB = this.population[i + 1];
+    for (let i = 0; i < this.populationGA.length; i += 2) {
+      let rocketA = this.populationGA[i];
+      let rocketB = this.populationGA[i + 1];
 
       if (rocketA.getFitness() > rocketB.getFitness()) {
         [rocketA, rocketB] = [rocketB, rocketA];
@@ -154,15 +174,22 @@ export class RocketGA {
     }
   }
 
+  /* NEURAL NETWORK */
+  learn() {
+    for (let i = 0; i < this.populationGA.length; i++) {
+      // TODO:
+    }
+  }
+
   loadRocketAI(moves: Move[]) {
-    this.population = [];
+    this.populationGA = [];
     this.tick = 0;
     this.game.startAI = false;
     this.game.stopGame();
 
     const rocketAI = new RocketAI(this.game, this);
     rocketAI.moves = moves;
-    this.population.push(rocketAI);
+    this.populationGA.push(rocketAI);
   }
 
   launchRocketAI() {
@@ -188,7 +215,7 @@ export class RocketGA {
     //     freeSteps: this.moves * this.stepsBetweenMove - rocket.getStepsTaken(),
     //   });
     // }
-    const bestRocketInGen = this.population.reduce((a, b) => {
+    const bestRocketInGen = this.populationGA.reduce((a, b) => {
       if (a.getFitness() < b.getFitness()) return b;
       return a;
     });
@@ -216,22 +243,18 @@ export class RocketGA {
   }
 }
 
-class RocketAI extends Rocket {
+export class RocketAI extends Rocket {
   moves: Move[];
   rocketGA: RocketGA;
   numOfTurns = 0;
   numOfForward = 0;
+
   // private color: RocketColor;
   constructor(game: Game, rocketGA: RocketGA) {
     super(game, false);
     this.isUserControlled = false;
     this.rocketGA = rocketGA;
     this.moves = generateMoves(this.rocketGA.moves);
-    // this.color = {
-    //   r: floor(random() * 256),
-    //   g: floor(random() * 256),
-    //   b: floor(random() * 256),
-    // };
   }
   move(index: number) {
     /* CONVERT TIMESTAMP TO INDEX IN MOVES */
@@ -386,11 +409,6 @@ function getMove() {
 
 function randomColor() {
   return '#' + floor(random() * 16777215).toString(16);
-}
-
-// If prob is greater, chance of true is greater
-function randomBool(prob: number): boolean {
-  return random() < prob;
 }
 
 const getMax = (a: number, b: number) => Math.max(a, b);

@@ -38,3 +38,8 @@ export function genTeleportMap(n: number): Array<number> {
   }
   return map;
 }
+
+// If prob is greater, chance of true is greater
+export function randomBool(prob: number): boolean {
+  return random() < prob;
+}

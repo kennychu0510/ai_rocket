@@ -139,7 +139,7 @@ export class Game {
     }
     if (this.rocketGA.launchRocketAIMode) {
       this.domElements.currentScore.textContent = String(
-        this.rocketGA.population[0].collectedStars,
+        this.rocketGA.populationGA[0].collectedStars,
       );
     }
   }
@@ -180,7 +180,7 @@ export class Game {
         star.draw();
       }
     } else {
-      for (const star of this.rocketGA.population[0].stars) {
+      for (const star of this.rocketGA.populationGA[0].stars) {
         star.draw();
       }
     }

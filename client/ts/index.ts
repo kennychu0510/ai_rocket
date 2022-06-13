@@ -44,6 +44,7 @@ const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
+const neuralNetworkMode = getDOMElement('#neural-network') as HTMLInputElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -55,7 +56,8 @@ const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
 const canvasOffset = 10;
-canvas.height = window.innerHeight * 0.78 - canvasOffset;
+canvas.height =
+  Math.floor((window.innerHeight * 0.78 - canvasOffset) / 100) * 100;
 canvas.width = canvas.height * 2.2;
 // console.log(canvas.width, canvas.height);
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
@@ -71,7 +73,7 @@ const gameStarted = false;
 // const trackLeftBound = boundaryOffset;
 // const trackRightBound = canvas.width - boundaryOffset;
 
-const boundaryOffset = 20;
+const boundaryOffset = 0;
 const domElements: gameDOMelements = {
   totalScore,
   currentScore,
@@ -508,6 +510,14 @@ speedUp.addEventListener('change', function() {
     score.classList.add('invisible');
   } else {
     score.classList.remove('invisible');
+  }
+});
+
+neuralNetworkMode.addEventListener('change', function() {
+  if (neuralNetworkMode.checked) {
+    game.rocketGA.neuralNetworkMode = true;
+  } else {
+    game.rocketGA.neuralNetworkMode = false;
   }
 });
 
