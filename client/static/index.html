@@ -66,8 +66,8 @@
           <input id="survival-rate" type="number" min="0" max="1" value="0.8" step="0.1"></input>
           <label for="mutation-rate">Mutation Rate:</label>
           <input id="mutation-rate" type="number" min="0" max="1" value="0.05" step="0.01"></input>
-          <label for="rocket-speed">Rocket Speed:</label>
-          <input id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
+          <label class="hidden" for="rocket-speed">Rocket Speed:</label>
+          <input class="hidden" id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
         <div class="panel-right">
           <input id="speed-up" type="checkbox">Speed up</input>
@@ -90,6 +90,9 @@
           <input id="forward-reward" type="number" value="1" step="1"></input>
         </div>
         <div class="panel-right">
+          <select id="select-rocket">
+            <!-- <option value="0">Select a Rocket</option> -->
+          </select>
           <button id="load-rocket">Load Rocket</button>
           <button id="launch-rocket">Launch Rocket</button>
         </div>

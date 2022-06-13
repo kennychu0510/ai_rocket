@@ -40,7 +40,9 @@ export class RocketGA {
       this.game.domElements.currentScore.textContent = String(
         this.populationSize,
       );
-      this.game.domElements.totalScore.textContent = String(this.populationSize);
+      this.game.domElements.totalScore.textContent = String(
+        this.populationSize,
+      );
       this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
         String(this.moves);
     }
@@ -70,7 +72,6 @@ export class RocketGA {
     }
     // console.log(this.population);
   }
-
 
   nextGen() {
     this.game.stopGame();
@@ -152,7 +153,7 @@ export class RocketGA {
     this.tick = 0;
     this.game.startAI = false;
     this.game.stopGame();
-    
+
     const rocketAI = new RocketAI(this.game, this);
     rocketAI.moves = moves;
     this.population.push(rocketAI);

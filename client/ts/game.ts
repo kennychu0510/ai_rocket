@@ -149,12 +149,12 @@ export class Game {
     }
     if (!this.startAI) {
       this.domElements.currentScore.textContent = String(
-        this.userRocket.collectedStars
+        this.userRocket.collectedStars,
       );
     }
     if (this.rocketGA.launchRocketAIMode) {
       this.domElements.currentScore.textContent = String(
-        this.rocketGA.population[0].collectedStars
+        this.rocketGA.population[0].collectedStars,
       );
     }
   }

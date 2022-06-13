@@ -20,7 +20,12 @@ export class RocketAIController {
     });
     res.json({ id: addedResult });
   };
+  getAll = async (req: Request, res: Response) => {
+    const mapID = Number(req.params.mapID);
+    res.json(await this.rocketAIServices.getAllRocket(mapID));
+  };
   get = async (req: Request, res: Response) => {
-    res.json(await this.rocketAIServices.getRocket());
+    const id = Number(req.params.id);
+    res.json(await this.rocketAIServices.getRocket(id));
   };
 }

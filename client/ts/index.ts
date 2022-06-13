@@ -44,6 +44,7 @@ const loadRocketBtn = getDOMElement('#load-rocket');
 const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 const score = getDOMElement('#score');
+const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -356,7 +357,7 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json[0]);
+      // console.log(json[0]);
       genGameMap(
         json[0].stars,
         json[0].meteorites,
@@ -366,6 +367,34 @@ easyMode.addEventListener('click', () => {
       game.mapID = json[0].id;
       // console.log(mapid);
       // console.log(typeof mapid);
+    });
+  fetch(APIOrigin + '/rocketAI/mapID/1', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
+    });
+});
+
+rocketAIdropdown.addEventListener('change', () => {
+  if (rocketAIdropdown.value === '0') return;
+  console.log(rocketAIdropdown.value);
+  fetch(APIOrigin + '/rocketAI/id/' + rocketAIdropdown.value, {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((moves) => {
+      game.rocketGA.loadRocketAI(moves);
     });
 });
 
@@ -404,6 +433,7 @@ hardMode.addEventListener('click', () => {
       game.mapID = json[0].id;
     });
 });
+
 seedBtn.addEventListener('click', () => {
   game.seed();
   // game.startGame();
@@ -421,31 +451,31 @@ seedBtn.addEventListener('click', () => {
 //   canvas.width = window.innerHeight * 1.8;
 // });
 
-loadRocketBtn.addEventListener('click', () => {
-  fetch(APIOrigin + '/rocketAI', {
-    method: 'GET',
-  })
-    .then((res) => res.json())
-    .catch((err) => ({ error: String(err) }))
-    .then((json) => {
-      console.log(json);
-      const moves = json.moves.split('').map(Number)
-      game.rocketGA.loadRocketAI(moves);
-    });
-});
+// loadRocketBtn.addEventListener('click', () => {
+//   fetch(APIOrigin + '/rocketAI', {
+//     method: 'GET',
+//   })
+//     .then((res) => res.json())
+//     .catch((err) => ({ error: String(err) }))
+//     .then((json) => {
+//       console.log(json);
+//       const moves = json.moves.split('').map(Number)
+
+//     });
+// });
 
 launchRocketBtn.addEventListener('click', () => {
+  if (rocketAIdropdown.value === '0') return;
   game.rocketGA.launchRocketAI();
-})
+});
 
 speedUp.addEventListener('change', function() {
-  if (this.checked) {
-    score.classList.add('invisible')
+  if (speedUp.checked) {
+    score.classList.add('invisible');
   } else {
-    score.classList.remove('invisible')
+    score.classList.remove('invisible');
   }
-})
-
+});
 
 /*
 ----------------------------------------------------------------
@@ -475,4 +505,12 @@ function resetAllButtons() {
   addMeteoriteModeOn = false;
   addBlackholeModeOn = false;
   addStarModeOn = false;
+}
+
+function resetRocketAIDropdown() {
+  rocketAIdropdown.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '0';
+  defaultOption.textContent = 'Select a Rocket';
+  rocketAIdropdown.appendChild(defaultOption);
 }

@@ -30,19 +30,18 @@ export class RocketAIServices {
       .returning('id');
     return row[0].id;
   }
-  async getRocket(): Promise<RocketAIRecord> {
+  async getAllRocket(mapID: number): Promise<RocketAIRecord[]> {
     const results = await this.knex
-      .select(
-        'id',
-        'name',
-        'map_id',
-        'fitness',
-        'moves',
-        'stars',
-        'total_moves',
-      )
+      .select('id', 'name', 'map_id', 'fitness', 'stars', 'total_moves')
       .from('ai_rocket')
-      .where('id', 3);
-    return results[0];
+      .where('map_id', mapID);
+    return results;
+  }
+  async getRocket(id: number): Promise<number[]> {
+    const results = await this.knex
+      .select('moves')
+      .from('ai_rocket')
+      .where('id', id);
+    return results[0].moves.split('').map(Number);
   }
 }
