@@ -131,21 +131,6 @@ export class Game {
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
       this.time++;
-      const timeTaken = Date.now() - this.startTime;
-      this.domElements.timerMilliseconds.textContent = String(
-        timeTaken % 1000,
-      ).padStart(3, '0');
-
-      // this.domElements.timerMilliseconds.textContent = String(
-      //   this.time % 1000
-      // ).padStart(3, '0');
-
-      this.domElements.timerSeconds.textContent = String(
-        Math.floor(timeTaken / 1000),
-      ).padStart(2, '0');
-      // this.domElements.timerSeconds.textContent = String(
-      //   Math.floor(this.time / 1000),
-      // ).padStart(2, '0');
     }
     if (!this.startAI) {
       this.domElements.currentScore.textContent = String(
@@ -209,6 +194,17 @@ export class Game {
     }
     this.rocketGA.draw();
     this.userRocket.draw();
+
+    if (this.gameOnGoing) {
+      const timeTaken = Date.now() - this.startTime;
+      this.domElements.timerMilliseconds.textContent = String(
+        timeTaken % 1000,
+      ).padStart(3, '0');
+
+      this.domElements.timerSeconds.textContent = String(
+        Math.floor(timeTaken / 1000),
+      ).padStart(2, '0');
+    }
   }
 
   reset() {

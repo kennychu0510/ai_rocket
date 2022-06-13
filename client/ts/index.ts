@@ -70,8 +70,8 @@ const gameStarted = false;
 // const trackBotBound = canvas.height - boundaryOffset;
 // const trackLeftBound = boundaryOffset;
 // const trackRightBound = canvas.width - boundaryOffset;
-const boundaryOffset = 20;
 
+const boundaryOffset = 20;
 const domElements: gameDOMelements = {
   totalScore,
   currentScore,
@@ -475,6 +475,7 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.innerHTML = '';
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
+  seedBtn.setAttribute('disabled', 'disabled');
 
   // aiStats.classList.add('active');
 });

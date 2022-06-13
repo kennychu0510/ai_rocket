@@ -52,13 +52,14 @@ export class Rocket {
   public finishTime = 0;
   public time = 0;
   constructor(public game: Game, public isUserControlled = true) {
-    const canvasWidth = game.canvasWidth;
-    const canvasHeight = game.canvasHeight;
     this.velocity = { x: 0, y: 0 };
     // this.acceleration === this.game.rocketGA.ticksBetweenMove / 10
 
     this.turn = 45;
-    this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
+    this.initialPosition = {
+      x: this.game.canvasHeight / 4,
+      y: this.game.canvasWidth / 10,
+    };
 
     this.reset();
   }
@@ -256,9 +257,6 @@ export class Rocket {
       ) {
         this.stop();
         this.onDie();
-
-        // this.game.reportRocketDead();
-
         return;
       }
     } else {
