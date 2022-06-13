@@ -62,7 +62,6 @@ canvas.width = canvas.height * 2.2;
 
 /* VARIABLES */
 const blackholeSizeRatio = 0.03;
-const mapid = 1;
 let addStarModeOn = false;
 let addMeteoriteModeOn = false;
 let addBlackholeModeOn = false;
