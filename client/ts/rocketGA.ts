@@ -84,6 +84,8 @@ export class RocketGA {
     if (!this.game.startAI || !this.game.gameOnGoing) return;
     const index = this.tick / this.ticksBetweenMove;
     if (index >= this.moves) {
+      this.game.stopGame();
+      this.game.gameEnd = true;
       if (this.launchRocketAIMode) return;
       this.nextGen();
       return;
