@@ -20,11 +20,11 @@ const meteorites = [
   { x: 900, y: 300 },
 ];
 
-export class Path {
+export class ForceField {
   public force: number[][];
   public horizontalGradient: number[][];
   public verticalGradient: number[][];
-  private stars: Position[];
+  public stars: Position[];
   private meteorites: Position[];
   private blockSize = 20;
   private horBlocks = 0;
@@ -146,7 +146,7 @@ export class Path {
   }
 }
 
-const path = new Path(canvas.width, canvas.height, ctx, stars, meteorites);
+// const path = new ForceField(canvas.width, canvas.height, ctx, stars, meteorites);
 
-path.calculate();
-path.draw();
+// path.calculate();
+// path.draw();

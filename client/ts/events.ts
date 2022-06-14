@@ -59,7 +59,7 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
   Swal.fire({
     title: `Save your best rocket?`,
     input: 'text',
-    html: `<pre>After ${game.rocketGA.generation} generations...\nFitness: ${game.rocketGA.bestFitness}\nStars: ${game.rocketGA.bestStarsCollected}/${game.totalStars}\nMoves: ${game.rocketGA.bestMovesUsed}</pre>`,
+    html: `<pre>After ${game.rocketTrainer.generation} generations...\nFitness: ${game.rocketTrainer.bestFitness}\nStars: ${game.rocketTrainer.bestStarsCollected}/${game.totalStars}\nMoves: ${game.rocketTrainer.bestMovesUsed}</pre>`,
     inputAttributes: {
       autocapitalize: 'off',
     },
@@ -74,10 +74,10 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
         body: JSON.stringify({
           mapID: game.mapID,
           name,
-          fitness: game.rocketGA.bestFitness,
-          starsCollected: game.rocketGA.bestStarsCollected,
-          moves: game.rocketGA.bestMovesSet,
-          totalMoves: game.rocketGA.moves,
+          fitness: game.rocketTrainer.bestFitness,
+          starsCollected: game.rocketTrainer.bestStarsCollected,
+          moves: game.rocketTrainer.bestMovesSet,
+          totalMoves: game.rocketTrainer.moves,
         }),
       })
         .then((response) => {

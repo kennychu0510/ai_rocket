@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Swal from 'sweetalert2';
+import { ForceField } from './force.js';
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
 import { NeuralNetwork } from './neuralNetwork.js';
 import { NeuralRocket } from './neuralRocket.js';
 import { Rocket } from './rocket.js';
 import { UserRocketImg } from './rocketImg.js';
-import { Move } from './type.js';
+import { Move, Position } from './type.js';
 const { random, floor, round } = Math;
 
-export class RocketGA {
+export class RocketTrainer {
   public populationSize = 100;
   public moves = 50;
   public survivalRate = 0.8;
@@ -35,14 +36,18 @@ export class RocketGA {
   public neuralNetworkMode = false;
   public sensors = 4;
   public neutralNetwork = new NeuralNetwork();
+  public forcefields: ForceField[];
   constructor(game: Game) {
     this.game = game;
+    this.forcefields = [];
+    this.makeAllPaths();
   }
 
   seed() {
     this.populationGA = [];
     if (this.neuralNetworkMode) {
       // this.addSeedNN(this.populationSize)
+      this.makeAllPaths();
     } else {
       this.addSeedGA(this.populationSize);
     }
@@ -59,6 +64,31 @@ export class RocketGA {
     this.tick = 0;
     this.game.startAI = false;
     this.game.stopGame();
+  }
+
+  makeAllPaths() {
+    const starsCombinations: Position[][] = [];
+    const allStars = this.game.stars;
+    for (let i = 0; i < allStars.length; i++) {
+      const newCombination = allStars
+        .filter((star, index) => index >= i)
+        .map((star) => star.position);
+      starsCombinations.push(newCombination);
+    }
+    const meteoritesPositions = this.game.meteorites.map(
+      (meteorite) => meteorite.position,
+    );
+    for (let i = 0; i < this.game.stars.length; i++) {
+      const forceField = new ForceField(
+        this.game.canvasWidth,
+        this.game.canvasHeight,
+        this.game.ctx,
+        starsCombinations[i],
+        meteoritesPositions,
+      );
+      forceField.calculate();
+      this.forcefields.push(forceField);
+    }
   }
 
   train() {
@@ -245,12 +275,12 @@ export class RocketGA {
 
 export class RocketAI extends Rocket {
   moves: Move[];
-  rocketGA: RocketGA;
+  rocketGA: RocketTrainer;
   numOfTurns = 0;
   numOfForward = 0;
 
   // private color: RocketColor;
-  constructor(game: Game, rocketGA: RocketGA) {
+  constructor(game: Game, rocketGA: RocketTrainer) {
     super(game, false);
     this.isUserControlled = false;
     this.rocketGA = rocketGA;

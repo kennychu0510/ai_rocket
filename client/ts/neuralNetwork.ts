@@ -27,10 +27,10 @@ export class NeuralNetwork {
     return this.output;
   }
 }
-const input = [0.1, 0.2, 0.3, 0.09];
-const weights = [0.25, 0.79, 0.67, 0.12, 0.24, 0.56, 0.12, 0.99];
-const nn = new NeuralNetwork();
-console.log(nn);
-const output = nn.compute(input, weights);
+// const input = [0.1, 0.2, 0.3, 0.09];
+// const weights = [0.25, 0.79, 0.67, 0.12, 0.24, 0.56, 0.12, 0.99];
+// const nn = new NeuralNetwork();
+// console.log(nn);
+// const output = nn.compute(input, weights);
 
-console.log(output);
+// console.log(output);

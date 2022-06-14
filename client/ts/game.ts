@@ -10,7 +10,7 @@ import {
 } from './type.js';
 import { Meteorite } from './meteorite.js';
 import { Blackhole } from './blackhole.js';
-import { RocketGA } from './rocketGA.js';
+import { RocketTrainer } from './rocketTrainer.js';
 import { showRecordScoreForm } from './events.js';
 const { floor, random } = Math;
 export class Game {
@@ -29,7 +29,7 @@ export class Game {
   public boundary: Boundary;
   private canvas: HTMLCanvasElement;
   public ctx: CanvasRenderingContext2D;
-  public rocketGA: RocketGA;
+  public rocketTrainer: RocketTrainer;
   public startAI: boolean;
   public domElements: gameDOMelements;
   public time = 0;
@@ -41,8 +41,8 @@ export class Game {
     gameBoundaries: GameBoundary,
     domElements: gameDOMelements,
   ) {
-    (this.canvas = canvas), (this.canvasWidth = window.innerWidth);
-    this.canvasHeight = window.innerHeight - 100;
+    (this.canvas = canvas), (this.canvasWidth = canvas.width);
+    this.canvasHeight = canvas.height;
     this.ctx = this.canvas.getContext('2d')!;
 
     this.boundary = new Boundary(
@@ -86,7 +86,7 @@ export class Game {
     this.blackholes = [];
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
-    this.rocketGA = new RocketGA(this);
+    this.rocketTrainer = new RocketTrainer(this);
     this.startAI = false;
     this.domElements = domElements;
   }
@@ -127,7 +127,7 @@ export class Game {
 
   update() {
     this.userRocket.update(this.userRocket.time);
-    this.rocketGA.update();
+    this.rocketTrainer.update();
     /* UPDATE TIMER */
     if (this.gameOnGoing) {
       this.time++;
@@ -137,9 +137,9 @@ export class Game {
         this.userRocket.collectedStars,
       );
     }
-    if (this.rocketGA.launchRocketAIMode) {
+    if (this.rocketTrainer.launchRocketAIMode) {
       this.domElements.currentScore.textContent = String(
-        this.rocketGA.populationGA[0].collectedStars,
+        this.rocketTrainer.populationGA[0].collectedStars,
       );
     }
   }
@@ -175,12 +175,12 @@ export class Game {
     this.gameInstructions.draw();
     this.boundary.draw();
 
-    if (!this.rocketGA.launchRocketAIMode) {
+    if (!this.rocketTrainer.launchRocketAIMode) {
       for (const star of this.userRocket.stars) {
         star.draw();
       }
     } else {
-      for (const star of this.rocketGA.populationGA[0].stars) {
+      for (const star of this.rocketTrainer.populationGA[0].stars) {
         star.draw();
       }
     }
@@ -192,7 +192,7 @@ export class Game {
     for (const meteorite of this.meteorites) {
       meteorite.draw();
     }
-    this.rocketGA.draw();
+    this.rocketTrainer.draw();
     this.userRocket.draw();
 
     if (this.gameOnGoing) {
@@ -218,7 +218,7 @@ export class Game {
     this.totalStars = 0;
     this.gameOnGoing = false;
     // this.userRocket.changeAcceleration(1 * this.canvasWidth);
-    this.rocketGA.reset();
+    this.rocketTrainer.reset();
     this.domElements.timerMilliseconds.textContent = '000';
     this.domElements.timerSeconds.textContent = '00';
     this.domElements.totalScore.textContent = '0';
@@ -229,7 +229,7 @@ export class Game {
   }
 
   seed() {
-    this.rocketGA.seed();
+    this.rocketTrainer.seed();
     this.statusMessage.updateMsg('');
     this.gameInstructions.updateMsg('');
   }

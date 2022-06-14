@@ -169,7 +169,7 @@ resetBtn.addEventListener('click', () => {
 trainBtn.addEventListener('click', () => {
   population.setAttribute('disabled', 'disabled');
   moves.setAttribute('disabled', 'disabled');
-  game.rocketGA.train();
+  game.rocketTrainer.train();
 });
 
 canvas.addEventListener('click', (e) => {
@@ -202,23 +202,23 @@ GAME SETTINGS
 rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 // game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 // population.value = String(game.rocketGA.populationSize);
-game.rocketGA.populationSize = Number(population.value);
-moves.value = String(game.rocketGA.moves);
-game.rocketGA.moves = Number(moves.value);
+game.rocketTrainer.populationSize = Number(population.value);
+moves.value = String(game.rocketTrainer.moves);
+game.rocketTrainer.moves = Number(moves.value);
 // survivalRate.value = String(game.rocketGA.survivalRate);
-game.rocketGA.survivalRate = Number(survivalRate.value);
+game.rocketTrainer.survivalRate = Number(survivalRate.value);
 // mutationRate.value = String(game.rocketGA.mutationRate);
-game.rocketGA.mutationRate = Number(mutationRate.value);
+game.rocketTrainer.mutationRate = Number(mutationRate.value);
 // starsReward.value = String(game.rocketGA.starsReward);
-game.rocketGA.starsReward = Number(starsReward.value);
+game.rocketTrainer.starsReward = Number(starsReward.value);
 // healthReward.value = String(game.rocketGA.healthReward);
-game.rocketGA.healthReward = Number(healthReward.value);
+game.rocketTrainer.healthReward = Number(healthReward.value);
 // stepsReward.value = String(game.rocketGA.stepsReward);
-game.rocketGA.stepsReward = Number(stepsReward.value);
+game.rocketTrainer.stepsReward = Number(stepsReward.value);
 // turnReward.value = String(game.rocketGA.turnReward);
-game.rocketGA.turnReward = Number(turnReward.value);
+game.rocketTrainer.turnReward = Number(turnReward.value);
 // forwardReward.value = String(game.rocketGA.forwardReward);
-game.rocketGA.forwardReward = Number(forwardReward.value);
+game.rocketTrainer.forwardReward = Number(forwardReward.value);
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
@@ -228,50 +228,50 @@ rocketSpeed.addEventListener('change', () => {
 population.addEventListener('change', () => {
   const n = Number(population.value);
   if (n <= 0) return;
-  game.rocketGA.populationSize = n;
+  game.rocketTrainer.populationSize = n;
 });
 
 moves.addEventListener('change', () => {
   const n = Number(moves.value);
   if (n <= 0) return;
-  game.rocketGA.moves = n;
+  game.rocketTrainer.moves = n;
 });
 
 survivalRate.addEventListener('change', () => {
   const n = Number(survivalRate.value);
   if (n <= 0 || n > 1) return;
-  game.rocketGA.survivalRate = n;
+  game.rocketTrainer.survivalRate = n;
 });
 
 mutationRate.addEventListener('change', () => {
   const n = Number(mutationRate.value);
   if (n <= 0 || n > 1) return;
-  game.rocketGA.mutationRate = n;
+  game.rocketTrainer.mutationRate = n;
 });
 
 starsReward.addEventListener('change', () => {
   const n = Number(starsReward.value);
-  game.rocketGA.starsReward = n;
+  game.rocketTrainer.starsReward = n;
 });
 
 healthReward.addEventListener('change', () => {
   const n = Number(healthReward.value);
-  game.rocketGA.healthReward = n;
+  game.rocketTrainer.healthReward = n;
 });
 
 stepsReward.addEventListener('change', () => {
   const n = Number(stepsReward.value);
-  game.rocketGA.stepsReward = n;
+  game.rocketTrainer.stepsReward = n;
 });
 
 turnReward.addEventListener('change', () => {
   const n = Number(turnReward.value);
-  game.rocketGA.turnReward = n;
+  game.rocketTrainer.turnReward = n;
 });
 
 forwardReward.addEventListener('change', () => {
   const n = Number(forwardReward.value);
-  game.rocketGA.forwardReward = n;
+  game.rocketTrainer.forwardReward = n;
 });
 
 boundaryModeBtn.addEventListener('click', () => {
@@ -377,7 +377,7 @@ easyMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -390,14 +390,14 @@ easyMode.addEventListener('click', () => {
 
 rocketAIdropdown.addEventListener('change', () => {
   if (rocketAIdropdown.value === '0') return;
-  console.log(rocketAIdropdown.value);
+  // console.log(rocketAIdropdown.value);
   fetch(APIOrigin + '/rocketAI/id/' + rocketAIdropdown.value, {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((moves) => {
-      game.rocketGA.loadRocketAI(moves);
+      game.rocketTrainer.loadRocketAI(moves);
     });
 });
 
@@ -424,7 +424,7 @@ normalMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -457,7 +457,7 @@ hardMode.addEventListener('click', () => {
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -502,7 +502,7 @@ seedBtn.addEventListener('click', () => {
 
 launchRocketBtn.addEventListener('click', () => {
   if (rocketAIdropdown.value === '0') return;
-  game.rocketGA.launchRocketAI();
+  game.rocketTrainer.launchRocketAI();
 });
 
 speedUp.addEventListener('change', function() {
@@ -515,9 +515,9 @@ speedUp.addEventListener('change', function() {
 
 neuralNetworkMode.addEventListener('change', function() {
   if (neuralNetworkMode.checked) {
-    game.rocketGA.neuralNetworkMode = true;
+    game.rocketTrainer.neuralNetworkMode = true;
   } else {
-    game.rocketGA.neuralNetworkMode = false;
+    game.rocketTrainer.neuralNetworkMode = false;
   }
 });
 

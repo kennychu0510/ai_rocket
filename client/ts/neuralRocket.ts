@@ -1,17 +1,18 @@
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
-import { RocketAI, RocketGA } from './rocketGA.js';
+import { RocketAI, RocketTrainer } from './rocketTrainer.js';
 import { Move } from './type.js';
 
 const { random, floor } = Math;
 
 export class NeuralRocket extends Rocket {
   weightGenes: number[];
-  rocketGA: RocketGA;
+  rocketGA: RocketTrainer;
   numOfTurns = 0;
   numOfForward = 0;
-  constructor(game: Game, rocketGA: RocketGA) {
+
+  constructor(game: Game, rocketGA: RocketTrainer) {
     super(game);
     this.weightGenes = [];
     this.rocketGA = rocketGA;
