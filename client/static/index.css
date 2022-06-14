@@ -93,6 +93,10 @@ input {
   height: 25px;
 }
 
+#life-img {
+  padding-left: 2rem;
+}
+
 #mode {
   display: inline-block;
 }
