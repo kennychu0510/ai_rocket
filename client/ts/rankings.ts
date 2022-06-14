@@ -3,9 +3,7 @@ import { getDOMElement } from './functions.js';
 
 const tbody = getDOMElement('#rankings')
 
-
-
-// function getUsersRanks() {
+// Fetch ranking to display in frontend
 fetch(APIOrigin + '/scores', {
   method: 'GET',
 })
@@ -13,10 +11,10 @@ fetch(APIOrigin + '/scores', {
   .catch((err) => ({ error: String(err) }))
   .then((json) => {
 
-    let i = 0;
+    let i = 1;
     json.getAddedResult.forEach((record: { user: string; time: string; map_id: number; }) => {
 
-
+      // insert into table
       let tr = document.createElement('tr')
       let defaultRanking = document.createElement('td')
       let td1 = document.createElement('td')
