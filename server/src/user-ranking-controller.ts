@@ -8,7 +8,6 @@ export class UserRankingController {
     get = async (req: Request, res: Response) => {
         const getAddedResult = await this.userRankingService.getUserRanks();
         console.log(getAddedResult);
-
         res.json({ getAddedResult })
     }
 }

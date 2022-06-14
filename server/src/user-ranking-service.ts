@@ -9,9 +9,10 @@ export class UserRankingService {
         const results = await this.knex
 
             .select()
+            .limit(10)
             .from('scores')
             .orderBy('time')
-        console.log(results);
+
 
         return results;
 
@@ -19,5 +20,5 @@ export class UserRankingService {
 
 }
 
-    
+
 
