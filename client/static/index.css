@@ -127,7 +127,3 @@ input {
 .invisible {
   visibility: hidden;
 }
-
-.swal2-height-auto {
-  height: 100% !important;
-}
