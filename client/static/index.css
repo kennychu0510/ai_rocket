@@ -88,8 +88,9 @@ input {
 }
 
 #star-img,
+#life-img,
 #clock-img {
-  height: 16px;
+  height: 25px;
 }
 
 #mode {
@@ -97,15 +98,17 @@ input {
 }
 
 #score,
+#life,
 #ai-stats,
-#score-mode {
+#score-mode,
+#life-mode {
   display: flex;
   align-items: center;
 }
 
-#score>* {
+#score>*,
+#life>* {
   margin-right: 5px;
-
 }
 
 #ai-stats>* {

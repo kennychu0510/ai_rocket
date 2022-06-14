@@ -14,6 +14,7 @@ if (!_canvas) throw new Error('canvas not found');
 const canvas = _canvas;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
+const currentLife = getDOMElement('#current-life') as HTMLElement; 
 const addMeteoriteBtn = getDOMElement('#add-meteor');
 const addBlackholeBtn = getDOMElement('#add-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
@@ -77,6 +78,7 @@ const boundaryOffset = 20;
 const domElements: gameDOMelements = {
   totalScore,
   currentScore,
+  currentLife,
   timerMilliseconds,
   timerSeconds,
   aiStats,
@@ -563,3 +565,4 @@ export function resetCustomMapDropdown() {
   defaultOption.textContent = 'Custom Map';
   customMapDropdown.appendChild(defaultOption);
 }
+

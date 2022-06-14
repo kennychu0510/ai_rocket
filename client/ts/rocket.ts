@@ -44,7 +44,7 @@ export class Rocket {
   protected angle = 0;
   protected turn: number;
   public collectedStars = 0;
-  protected health = 0;
+  public health = 0;
   public teleportTimeout = 0;
   public flyingTimeout = 0;
   public stars = new Set<Star>();
@@ -209,6 +209,7 @@ export class Rocket {
       this.finishTime = time;
       this.onDie();
     }
+    this.game.domElements.currentLife.textContent = String(this.health);
   }
 
   setTeleportationTimeout() {
