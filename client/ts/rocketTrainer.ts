@@ -46,7 +46,7 @@ export class RocketTrainer {
   seed() {
     this.populationGA = [];
     if (this.neuralNetworkMode) {
-      // this.addSeedNN(this.populationSize)
+      this.addSeedNN(this.populationSize)
       this.makeAllPaths();
     } else {
       this.addSeedGA(this.populationSize);
