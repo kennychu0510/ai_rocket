@@ -5,7 +5,7 @@ import { genTeleportMap, getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
 import { Star, starSizeRatio } from './star.js';
-import { GameBoundary, gameDOMelements } from './type.js';
+import { BlackholePairType, GameBoundary, gameDOMelements, Position } from './type.js';
 const { random, floor, round } = Math;
 
 /* QUERY SELECTORS */
@@ -292,6 +292,33 @@ saveObjBtn.addEventListener('click', () => {
   saveMap(game)
 });
 
+
+customMapDropdown.addEventListener('change', () => {
+  if (+customMapDropdown.value == 0){
+    return;
+  }
+  const x = +customMapDropdown.value
+  const res = maps.filter((x:any) => x.id == +customMapDropdown.value)
+  console.log('res', res);
+  console.log(res[0].stars);
+  genGameMap(
+    res[0].stars,
+    res[0].meteorites,
+    res[0].black_holes,
+    res[0].black_hole_map,
+  );
+  game.mapID = res[0].id;
+})
+
+let maps :GameMap[] = []
+type GameMap = {
+  id: number
+  stars: Position[]
+  meteorites: Position[]
+  black_holes: Position[]
+  black_hole_map: number[]
+}
+
 export function loadCustomMap (){
   fetch (APIOrigin + '/mapID/4',{
     method: 'GET',
@@ -299,39 +326,21 @@ export function loadCustomMap (){
   .then((res) => res.json())
   .catch((err) => {error: String(err)})
   .then((json) => {
+    maps = json
     json.forEach((map:any) => {
       const cMap = document.createElement('option');
       cMap.value = map.id;
       cMap.textContent = map.name;
       customMapDropdown.appendChild(cMap);
     })
-
-    customMapDropdown.addEventListener('click', () => {
-      // console.log(customMapDropdown.value);
-      // resetCustomMapDropdown()
-      if (+customMapDropdown.value == 0){
-        return;
-      }
-      const x = +customMapDropdown.value
-      const res = json.filter((x:any) => x.id == +customMapDropdown.value)
-      console.log(res);
-  
-      genGameMap(
-        res[0].stars,
-        res[0].meteorites,
-        res[0].black_holes,
-        res[0].black_hole_map,
-      );
-      game.mapID = res[0].id;
-    })
   })
 }
 loadCustomMap ()
 
 function genGameMap(
-  starsArr: any[],
-  meteoritesArr: any[],
-  blackholesArr: any[],
+  starsArr: Position[],
+  meteoritesArr: Position[],
+  blackholesArr: Position[],
   blackholeMap: number[],
 ) {
   game.reset();
