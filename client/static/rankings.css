@@ -34,7 +34,6 @@ table {
 }
 
 tr {
-
   color: #fff;
   font-weight: larger;
   font-weight: bold;
@@ -55,6 +54,8 @@ th {
   text-align: center;
 
 }
+
+tr:hover {background-color: #55608f;}
 
 #bottom-panel {
   margin-right: 10px;
