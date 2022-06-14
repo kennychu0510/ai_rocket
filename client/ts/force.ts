@@ -112,6 +112,10 @@ export class ForceField {
     }
   }
 
+  updateStars(stars: Position[]) {
+    this.calculate();
+  }
+
   /* Return Neighbor Forces Normalized */
   getNeighborForces(x: number, y: number, direction: number) {
     const row = Math.floor(x / this.blockSize);

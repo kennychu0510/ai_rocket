@@ -8,6 +8,7 @@ export type RocketAIRecord = {
   genes: string;
   totalMoves: number;
   type: string;
+  bias: string;
 };
 export class RocketAIServices {
   constructor(private knex: KnexType) {}
@@ -19,6 +20,7 @@ export class RocketAIServices {
     const genes = rocketAI.genes;
     const totalMoves = rocketAI.totalMoves;
     const type = rocketAI.type;
+    const bias = rocketAI.bias;
     const row = await this.knex
       .insert({
         name,
@@ -28,6 +30,7 @@ export class RocketAIServices {
         stars: starsCollected,
         total_moves: totalMoves,
         type,
+        bias,
       })
       .into('ai_rocket')
       .returning('id');

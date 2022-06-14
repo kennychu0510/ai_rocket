@@ -211,7 +211,7 @@ export class Game {
     this.statusMessage.updateMsg('W to move, A + D to turn, S to stop');
     this.gameInstructions.updateMsg('Add stars to start the game');
     this.userRocket.reset();
-    this.userRocket.stars = new Set<Star>();
+    this.userRocket.stars = [];
     this.stars = [];
     this.meteorites = [];
     this.blackholes = [];

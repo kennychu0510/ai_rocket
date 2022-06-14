@@ -13,7 +13,7 @@ const { random, floor, round } = Math;
 
 export class RocketTrainer {
   public populationSize = 100;
-  public moves = 5000;
+  public moves = 500;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
   public generation = 0;

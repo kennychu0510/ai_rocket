@@ -47,7 +47,7 @@ export class Rocket {
   protected health = 0;
   public teleportTimeout = 0;
   public flyingTimeout = 0;
-  public stars = new Set<Star>();
+  public stars: Star[];
   private initialPosition: Position;
   public finishTime = 0;
   public time = 0;
@@ -60,7 +60,7 @@ export class Rocket {
       x: this.game.canvasHeight / 4,
       y: this.game.canvasWidth / 10,
     };
-
+    this.stars = [];
     this.reset();
   }
 
@@ -179,7 +179,9 @@ export class Rocket {
     this.image_flying.setSrc(spaceshipFlyingImg.src, this);
     this.position.x = this.initialPosition.x;
     this.position.y = this.initialPosition.y;
-    this.stars = new Set(this.game.stars);
+    if (this.game.stars) {
+      this.stars = this.game.stars.map((star) => star);
+    }
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
@@ -280,7 +282,8 @@ export class Rocket {
   }
 
   checkStarCollection(time: number) {
-    for (const star of this.stars) {
+    for (let i = 0; i < this.stars.length; i++) {
+      const star = this.stars[i];
       const dx =
         this.position.x + this.width / 2 - (star.getX() + star.size / 2);
       const dy =
@@ -288,7 +291,7 @@ export class Rocket {
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < this.getC() / 4 + star.size / 2) {
-        this.stars.delete(star);
+        this.stars.splice(i, 1);
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
           this.finishTime = time;
@@ -359,11 +362,11 @@ export class Rocket {
   }
 
   isCollectedAllStars() {
-    return this.stars.size === 0;
+    return this.stars.length === 0;
   }
 
   addStar(star: Star) {
-    this.stars.add(star);
+    this.stars.push(star);
     // console.log(this.stars);
   }
 }

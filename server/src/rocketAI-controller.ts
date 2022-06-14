@@ -11,6 +11,7 @@ export class RocketAIController {
     const genes = String(req.body.genes);
     const totalMoves = Number(req.body.totalMoves);
     const type = req.body.type;
+    const bias = req.body.bias;
     const addedResult = await this.rocketAIServices.saveRocketAI({
       name,
       mapID,
@@ -19,6 +20,7 @@ export class RocketAIController {
       genes,
       totalMoves,
       type,
+      bias,
     });
     res.json({ id: addedResult });
   };

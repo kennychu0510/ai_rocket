@@ -125,7 +125,7 @@ export class RocketAI extends Rocket {
 
   getFitnessFromStars() {
     return (
-      (this.game.stars.length - this.stars.size) *
+      (this.game.stars.length - this.stars.length) *
       this.rocketTrainer.starsReward
     );
   }

@@ -1,3 +1,4 @@
+import { ForceField } from './force.js';
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
@@ -10,6 +11,7 @@ const { random, floor } = Math;
 export class NeuralRocket extends RocketAI {
   genes: number[];
   bias: number[];
+  forceField: ForceField;
   rocketTrainer: RocketTrainer;
   numOfTurns = 0;
   numOfForward = 0;
@@ -28,6 +30,17 @@ export class NeuralRocket extends RocketAI {
     for (let i = 0; i < this.rocketTrainer.neutralNetwork.outputNodes; i++) {
       this.bias.push(random() * 2 - 1);
     }
+    const stars = this.stars.map((star) => star.position);
+    const meteorites = this.game.meteorites.map(
+      (meteorite) => meteorite.position,
+    );
+    this.forceField = new ForceField(
+      this.game.canvasWidth,
+      this.game.canvasHeight,
+      this.game.ctx,
+      stars,
+      meteorites,
+    );
   }
   /* Take in force from four directions */
   move1() {
@@ -71,7 +84,7 @@ export class NeuralRocket extends RocketAI {
     if (this.health <= 0 || this.isCollectedAllStars()) {
       return;
     }
-    let forces = this.rocketTrainer.forcefields[0].getNeighborForces(
+    let forces = this.forceField.getNeighborForces(
       this.position.x,
       this.position.y,
       this.angle,
@@ -83,10 +96,10 @@ export class NeuralRocket extends RocketAI {
     );
     // console.log(forces);
 
-    if (forces[0] > 0.05) {
+    if (forces[0] > 0.5) {
       this.angle -= this.turn;
       this.numOfTurns++;
-    } else if (forces[0] < -0.05) {
+    } else if (forces[0] < -0.5) {
       this.angle += this.turn;
       this.numOfTurns++;
     } else {
@@ -151,5 +164,15 @@ export class NeuralRocket extends RocketAI {
 
   getGenes() {
     return this.genes;
+  }
+
+  calForceField() {
+    const starsPostion = this.stars.map((star) => star.position);
+    this.forceField.updateStars(starsPostion);
+  }
+
+  checkStarCollection(time: number) {
+    super.checkStarCollection(time);
+    this.calForceField();
   }
 }
