@@ -46,6 +46,7 @@ const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
+const life = getDOMElement('#life');
 
 
 const _scoreboard = document.querySelector('#scoreboard');
@@ -82,6 +83,7 @@ const domElements: gameDOMelements = {
   timerMilliseconds,
   timerSeconds,
   aiStats,
+  life,
 };
 
 const gameBoundaries: GameBoundary = {
@@ -484,6 +486,7 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.innerHTML = '';
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
+  life.classList.add("hidden");
   seedBtn.setAttribute('disabled', 'disabled');
 
   // aiStats.classList.add('active');
