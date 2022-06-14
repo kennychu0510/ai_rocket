@@ -46,6 +46,7 @@ const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 
+
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
 const scoreboard = _scoreboard as HTMLElement;
@@ -285,7 +286,6 @@ boundaryModeBtn.addEventListener('click', () => {
 
 saveObjBtn.addEventListener('click', () => {
   saveMap(game)
-  // loadCustomMap ()
 });
 
 export function loadCustomMap (){
