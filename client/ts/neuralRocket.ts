@@ -1,50 +1,46 @@
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
-import { RocketAI, RocketTrainer } from './rocketTrainer.js';
+import { RocketAI } from './rocketAI.js';
+import { RocketTrainer } from './rocketTrainer.js';
 import { Move } from './type.js';
 
 const { random, floor } = Math;
 
-export class NeuralRocket extends Rocket {
-  weightGenes: number[];
-  rocketGA: RocketTrainer;
+export class NeuralRocket extends RocketAI {
+  genes: number[];
+  bias: number[];
+  rocketTrainer: RocketTrainer;
   numOfTurns = 0;
   numOfForward = 0;
 
-  constructor(game: Game, rocketGA: RocketTrainer) {
-    super(game);
-    this.weightGenes = [];
-    this.rocketGA = rocketGA;
+  constructor(game: Game, rocketTrainer: RocketTrainer) {
+    super(game, rocketTrainer);
+    this.genes = [];
+    this.bias = [];
+    this.rocketTrainer = rocketTrainer;
     const numOfWeights =
-      this.rocketGA.neutralNetwork.outputNodes *
-      this.rocketGA.neutralNetwork.inputNodes;
-    for (let i = 0; i < this.rocketGA.sensors; i++) {
-      for (let j = 0; j < numOfWeights; i++) {
-        this.weightGenes.push(random());
-      }
+      this.rocketTrainer.neutralNetwork.outputNodes *
+      this.rocketTrainer.neutralNetwork.inputNodes;
+    for (let i = 0; i < numOfWeights; i++) {
+      this.genes.push(random() * 2 - 1);
+    }
+    for (let i = 0; i < this.rocketTrainer.neutralNetwork.outputNodes; i++) {
+      this.bias.push(random() * 2 - 1);
     }
   }
-
-  calMove(forces: number[]) {
+  /* Take in force from four directions */
+  move1() {
     if (this.health <= 0 || this.isCollectedAllStars()) {
       return;
     }
-    const output = this.rocketGA.neutralNetwork.compute(
-      forces,
-      this.weightGenes,
+    let forces = this.rocketTrainer.forcefields[0].getNeighborForces(
+      this.position.x,
+      this.position.y,
+      this.angle,
     );
-    let currentMove;
-    if (output[0] < 0.5 && output[1] < 0.5) {
-      currentMove = Move.left;
-      this.angle -= this.turn;
-      this.numOfTurns++;
-    } else if (output[0] < 0.5 && output[1] >= 0.5) {
-      currentMove = Move.right;
-      this.angle += this.turn;
-      this.numOfTurns++;
-    } else if (output[0] >= 0.5 && output[1] < 0.5) {
-      currentMove = Move.up;
+    console.log(forces);
+    if (forces[0] === forces[1]) {
       this.numOfForward++;
       {
         const x_direction =
@@ -56,8 +52,54 @@ export class NeuralRocket extends Rocket {
         this.flyingTimeout = 10;
       }
     } else {
-      currentMove = Move.none;
+      forces = this.rocketTrainer.neutralNetwork.compute(
+        forces,
+        this.genes,
+        this.bias,
+      );
+      if (forces[0] > forces[1]) {
+        this.angle -= this.turn;
+        this.numOfTurns++;
+      } else {
+        this.angle += this.turn;
+        this.numOfTurns++;
+      }
+    }
+  }
+
+  move() {
+    if (this.health <= 0 || this.isCollectedAllStars()) {
+      return;
+    }
+    let forces = this.rocketTrainer.forcefields[0].getNeighborForces(
+      this.position.x,
+      this.position.y,
+      this.angle,
+    );
+    forces = this.rocketTrainer.neutralNetwork.compute(
+      forces,
+      this.genes,
+      this.bias,
+    );
+    // console.log(forces);
+
+    if (forces[0] > 0.05) {
+      this.angle -= this.turn;
+      this.numOfTurns++;
+    } else if (forces[0] < -0.05) {
+      this.angle += this.turn;
+      this.numOfTurns++;
+    } else {
       this.numOfForward++;
+      {
+        const x_direction =
+          this.acceleration * Math.sin(degreeToRadian(this.angle));
+        const y_direction =
+          -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
+        this.velocity.x = x_direction;
+        this.velocity.y = y_direction;
+        this.flyingTimeout = 10;
+      }
     }
   }
 
@@ -66,30 +108,27 @@ export class NeuralRocket extends Rocket {
   }
 
   crossOverGenes(parentA: NeuralRocket, parentB: NeuralRocket) {
-    const a = parentA.weightGenes;
-    const b = parentB.weightGenes;
+    const a = parentA.genes;
+    const aBias = parentA.bias;
+    const b = parentB.genes;
+    const bBias = parentB.bias;
     const n = a.length;
-    const c = this.weightGenes;
+    const nBiasLength = aBias.length;
+    const c = this.genes;
+    const cBias = this.bias;
+    const mutate = randomBool(0.5);
     for (let i = 0; i < n; i++) {
-      c[i] = randomBool(0.5) ? a[i] : b[i];
+      c[i] = mutate ? a[i] : b[i];
     }
-  }
-
-  crossOverColor(parentA: RocketAI, parentB: RocketAI) {
-    const a = parentA.color;
-    const b = parentB.color;
-    const c = this.color;
-    c[0] = randomBool(0.5) ? a[0] : b[0];
-    c[1] = randomBool(0.5) ? a[1] : b[1];
-    c[2] = randomBool(0.5) ? a[2] : b[2];
-    this.image_flying.updateImgData();
-    this.image_static.updateImgData();
+    for (let i = 0; i < nBiasLength; i++) {
+      cBias[i] = mutate ? aBias[i] : bBias[i];
+    }
   }
 
   mutate(parent: NeuralRocket) {
     const p = parent.color;
     const c = this.color;
-    const r = this.rocketGA.mutationRate;
+    const r = this.rocketTrainer.mutationRate;
     if (randomBool(r)) {
       c[0] = floor(random() * 256);
       c[1] = floor(random() * 256);
@@ -101,9 +140,16 @@ export class NeuralRocket extends Rocket {
       c[1] = p[1];
       c[2] = p[2];
     }
-
-    for (let i = 0; i < this.weightGenes.length; i++) {
-      this.weightGenes[i] = randomBool(0.5) ? parent.weightGenes[i] : random();
+    const mutate = randomBool(0.5);
+    for (let i = 0; i < this.genes.length; i++) {
+      this.genes[i] = mutate ? parent.genes[i] : random();
     }
+    for (let i = 0; i < this.bias.length; i++) {
+      this.bias[i] = mutate ? parent.bias[i] : random();
+    }
+  }
+
+  getGenes() {
+    return this.genes;
   }
 }

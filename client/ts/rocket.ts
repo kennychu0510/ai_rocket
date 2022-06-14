@@ -118,7 +118,11 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    // console.log(this.stats());
+    if (this.angle < 0) {
+      this.angle = 360 + this.angle;
+    }
+    if (this.angle === 360) this.angle = 0;
+    // console.log(this.stats().angle_degrees);
   }
 
   slowDown() {
@@ -227,11 +231,11 @@ export class Rocket {
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
     }
+    this.updateRocketPosition();
     this.checkRocketAndBoundary();
     this.checkStarCollection(time);
     this.checkMeteoriteCollision(time);
     this.checkBlackholeTeleportation();
-    this.updateRocketPosition();
     if (
       this.game.gameOnGoing &&
       this.collectedStars === this.game.totalStars &&

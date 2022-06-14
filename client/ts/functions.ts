@@ -43,3 +43,7 @@ export function genTeleportMap(n: number): Array<number> {
 export function randomBool(prob: number): boolean {
   return random() < prob;
 }
+
+export function sigmoid(n: number) {
+  return 1 / (1 + Math.exp(-n));
+}

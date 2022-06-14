@@ -39,12 +39,12 @@ const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
 const trainBtn = getDOMElement('#train');
-const loadRocketBtn = getDOMElement('#load-rocket');
 const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const neuralNetworkMode = getDOMElement('#neural-network') as HTMLInputElement;
+const showForces = getDOMElement('#show-forces') as HTMLInputElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -90,6 +90,8 @@ const gameBoundaries: GameBoundary = {
 };
 
 speedUp.checked = false;
+neuralNetworkMode.checked = false;
+showForces.checked = false;
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries, domElements);
 
@@ -352,6 +354,7 @@ function genGameMap(
   game.teleportMap = blackholeMap;
   // window.prompt('d')
   totalScore.textContent = String(starsArr.length);
+  game.rocketTrainer.makeAllPaths();
 }
 easyMode.addEventListener('click', () => {
   fetch(APIOrigin + '/mode?diff=easy', {
@@ -371,13 +374,12 @@ easyMode.addEventListener('click', () => {
       // console.log(mapid);
       // console.log(typeof mapid);
     });
-  fetch(APIOrigin + '/rocketAI/mapID/1', {
+  fetch(APIOrigin + '/rocketAI/mapID/1/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -396,8 +398,8 @@ rocketAIdropdown.addEventListener('change', () => {
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
-    .then((moves) => {
-      game.rocketTrainer.loadRocketAI(moves);
+    .then((genes) => {
+      game.rocketTrainer.loadRocketAI(genes);
     });
 });
 
@@ -417,8 +419,7 @@ normalMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
-
-  fetch(APIOrigin + '/rocketAI/mapID/2', {
+  fetch(APIOrigin + '/rocketAI/mapID/2/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -451,7 +452,7 @@ hardMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
-  fetch(APIOrigin + '/rocketAI/mapID/3', {
+  fetch(APIOrigin + '/rocketAI/mapID/3/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -521,6 +522,14 @@ neuralNetworkMode.addEventListener('change', function() {
   }
 });
 
+showForces.addEventListener('change', () => {
+  if (showForces.checked) {
+    game.rocketTrainer.showForces = true;
+  } else {
+    game.rocketTrainer.showForces = false;
+  }
+});
+
 /*
 ----------------------------------------------------------------
 FUNCTIONS
@@ -557,4 +566,9 @@ function resetRocketAIDropdown() {
   defaultOption.value = '0';
   defaultOption.textContent = 'Select a Rocket';
   rocketAIdropdown.appendChild(defaultOption);
+}
+
+function getAIMode() {
+  if (neuralNetworkMode.checked) return 'nn';
+  else return 'ga';
 }

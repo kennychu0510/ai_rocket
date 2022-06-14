@@ -76,8 +76,10 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
           name,
           fitness: game.rocketTrainer.bestFitness,
           starsCollected: game.rocketTrainer.bestStarsCollected,
-          moves: game.rocketTrainer.bestMovesSet,
+          genes: game.rocketTrainer.bestGenes,
+          bias: game.rocketTrainer.bestBias,
           totalMoves: game.rocketTrainer.moves,
+          type: game.rocketTrainer.neuralNetworkMode ? 'nn' : 'ga',
         }),
       })
         .then((response) => {

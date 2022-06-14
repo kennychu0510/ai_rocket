@@ -75,7 +75,8 @@ input {
 }
 
 #speed-up,
-#neural-network {
+#neural-network,
+#show-forces {
   width: fit-content;
 }
 

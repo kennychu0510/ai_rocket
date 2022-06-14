@@ -1,28 +1,24 @@
 const { random } = Math;
 
 export class NeuralNetwork {
-  inputNodes = 4;
+  inputNodes = 2;
   hiddenLayers = 0;
   outputNodes = 2;
   private output: number[];
   private input: number[];
-  private weights: number[];
   constructor() {
     this.input = [0];
-    this.weights = [0];
     this.output = [0, 0];
   }
 
-  updateWeights(newWeights: number[]) {
-    this.weights = newWeights;
-  }
-
-  compute(input: number[], weights: number[]) {
+  compute(input: number[], weights: number[], bias: number[]) {
     this.input = input;
     for (let i = 0; i < this.outputNodes; i++) {
+      this.output[i] = 0;
       for (let j = 0; j < this.inputNodes; j++) {
-        this.output[i] += this.input[j] * this.weights[j + i * j];
+        this.output[i] += this.input[j] * weights[j + i * j];
       }
+      this.output[i] += bias[i];
     }
     return this.output;
   }
