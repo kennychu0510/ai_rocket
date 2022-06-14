@@ -7,7 +7,6 @@ export type Map = {
 };
 
 export type UserRanking = {
-  
   name: string;
   time: string;
   level: number;

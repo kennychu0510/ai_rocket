@@ -3,21 +3,21 @@ import { UserRanking } from './types';
 
 
 
-export class UserRankingService{
-    constructor(private knex: KnexType){}
-        async getUserRanks(): Promise<UserRanking[]> {
-            const results = await this.knex
+export class UserRankingService {
+    constructor(private knex: KnexType) { }
+    async getUserRanks(): Promise<UserRanking[]> {
+        const results = await this.knex
 
-            .select ()
+            .select()
             .from('scores')
             .orderBy('time')
-            console.log(results);
-            
-            return results;
-            
-        }   
-    
+        console.log(results);
+
+        return results;
+
     }
+
+}
 
     
 
