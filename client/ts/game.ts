@@ -1,17 +1,18 @@
 import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
-import { Star } from './star.js';
+import { Star, starSizeRatio } from './star.js';
 import {
   BlackholePairType,
   GameBoundary,
   gameDOMelements,
   Position,
 } from './type.js';
-import { Meteorite } from './meteorite.js';
-import { Blackhole } from './blackhole.js';
+import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
+import { Blackhole, blackholeSizeRatio } from './blackhole.js';
 import { RocketGA } from './rocketGA.js';
 import { showRecordScoreForm } from './events.js';
+import Swal from 'sweetalert2';
 const { floor, random } = Math;
 export class Game {
   public statusMessage: CanvasText;
@@ -92,6 +93,15 @@ export class Game {
   }
 
   addStar(position: Position) {
+    const size = starSizeRatio * this.canvasWidth * 1.3;
+    for (let i = 0; i < this.stars.length; i++) {
+      const nSPosition = this.stars[i].position;
+      const dx = Math.abs(nSPosition.x - position.x);
+      const dy = Math.abs(nSPosition.y - position.y);
+      if (dx < size && dy < size) {
+        return Swal.fire('Star position too close !');
+      }
+    }
     const newStar = new Star(position, this.canvasWidth, this.ctx);
     this.stars.push(newStar);
     this.totalStars++;
@@ -100,11 +110,29 @@ export class Game {
   }
 
   addMeteorite(position: Position) {
+    const size = meteoriteSizeRatio * this.canvasWidth * 1.3;
+    for (let i = 0; i < this.meteorites.length; i++) {
+      const nMPosition = this.meteorites[i].position;
+      const dx = Math.abs(nMPosition.x - position.x);
+      const dy = Math.abs(nMPosition.y - position.y);
+      if (dx < size && dy < size) {
+        return Swal.fire('Meteorite position too close !');
+      }
+    }
     const newMeteorite = new Meteorite(position, this.canvasWidth, this.ctx);
     this.meteorites.push(newMeteorite);
   }
 
   addBlackhole(position: Position) {
+    const size = blackholeSizeRatio * this.canvasWidth * 1.3;
+    for (let i = 0; i < this.blackholes.length; i++) {
+      const nBPosition = this.blackholes[i].position;
+      const dx = Math.abs(nBPosition.x - position.x);
+      const dy = Math.abs(nBPosition.y - position.y);
+      if (dx < size && dy < size) {
+        return Swal.fire('Blackhole position too close !');
+      }
+    }
     const newBlackhole = new Blackhole(position, this.canvasWidth, this.ctx);
     this.blackholes.push(newBlackhole);
   }

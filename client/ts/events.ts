@@ -102,8 +102,7 @@ export function saveRocketAI(game: Game, domElements: gameDOMelements) {
   });
 }
 
-
-export function saveMap(game: Game){
+export function saveMap(game: Game) {
   const stars = game.stars.map((star) => {
     const newX = star.getX() / game.canvasWidth;
     const newY = star.getY() / game.canvasHeight;
@@ -126,7 +125,7 @@ export function saveMap(game: Game){
     title: 'Submit your map name',
     input: 'text',
     inputAttributes: {
-      autocapitalize: 'off'
+      autocapitalize: 'off',
     },
     showCancelButton: true,
     confirmButtonText: 'Save',
@@ -141,33 +140,32 @@ export function saveMap(game: Game){
           blackholes,
           blackholeMap,
           name,
-    }),
+        }),
       })
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
-            throw new Error(response.statusText)
+            throw new Error(response.statusText);
           }
-          return response.json()
+          return response.json();
         })
-        .catch(error => {
-          Swal.showValidationMessage(
-            `Request failed: ${error}`
-          )
-        })
+        .catch((error) => {
+          Swal.showValidationMessage(`Request failed: ${error}`);
+        });
     },
-    allowOutsideClick: () => !Swal.isLoading()
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: `Your map saved successfully`,
-        imageUrl: './media/save-map.gif'
-      })
-    }
+    allowOutsideClick: () => !Swal.isLoading(),
   })
-  .then(() => {
-    resetCustomMapDropdown()
-  })
-  .then(() => {
-    loadCustomMap()
-  })
+    .then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `Your map saved successfully`,
+          imageUrl: './media/save-map.gif',
+        });
+      }
+    })
+    .then(() => {
+      resetCustomMapDropdown();
+    })
+    .then(() => {
+      loadCustomMap();
+    });
 }

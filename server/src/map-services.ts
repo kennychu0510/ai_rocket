@@ -23,7 +23,7 @@ export class MapService {
         meteorites: JSON.stringify(meteorites),
         black_holes: JSON.stringify(blackholes),
         black_hole_map: JSON.stringify(blackholeMap),
-        name: JSON.stringify(name)
+        name: JSON.stringify(name),
       })
       .into('map')
       .returning('id');
@@ -77,7 +77,14 @@ export class MapService {
 
   async getCustomMaps(): Promise<Map[]> {
     const results = await this.knex
-      .select('id', 'stars', 'meteorites', 'black_holes', 'black_hole_map', 'name')
+      .select(
+        'id',
+        'stars',
+        'meteorites',
+        'black_holes',
+        'black_hole_map',
+        'name',
+      )
       .from('map')
       .where('id', '>', 3);
     results.forEach((row) => {
@@ -86,7 +93,7 @@ export class MapService {
       row.meteorites = JSON.parse(row.meteorites);
       row.black_holes = JSON.parse(row.black_holes);
       row.black_hole_map = JSON.parse(row.black_hole_map);
-      row.name = JSON.parse(row.name)
+      row.name = JSON.parse(row.name);
     });
     return results;
   }

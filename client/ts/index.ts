@@ -5,7 +5,12 @@ import { genTeleportMap, getDOMElement } from './functions.js';
 import { Game } from './game.js';
 import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
 import { Star, starSizeRatio } from './star.js';
-import { BlackholePairType, GameBoundary, gameDOMelements, Position } from './type.js';
+import {
+  BlackholePairType,
+  GameBoundary,
+  gameDOMelements,
+  Position,
+} from './type.js';
 const { random, floor, round } = Math;
 
 /* QUERY SELECTORS */
@@ -14,7 +19,7 @@ if (!_canvas) throw new Error('canvas not found');
 const canvas = _canvas;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
-const currentLife = getDOMElement('#current-life') as HTMLElement; 
+const currentLife = getDOMElement('#current-life') as HTMLElement;
 const addMeteoriteBtn = getDOMElement('#add-meteor');
 const addBlackholeBtn = getDOMElement('#add-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
@@ -47,7 +52,6 @@ const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 const life = getDOMElement('#life');
-
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -289,16 +293,15 @@ boundaryModeBtn.addEventListener('click', () => {
 });
 
 saveObjBtn.addEventListener('click', () => {
-  saveMap(game)
+  saveMap(game);
 });
 
-
 customMapDropdown.addEventListener('change', () => {
-  if (+customMapDropdown.value == 0){
+  if (+customMapDropdown.value == 0) {
     return;
   }
-  const x = +customMapDropdown.value
-  const res = maps.filter((x:any) => x.id == +customMapDropdown.value)
+  const x = +customMapDropdown.value;
+  const res = maps.filter((x: any) => x.id == +customMapDropdown.value);
   console.log('res', res);
   console.log(res[0].stars);
   genGameMap(
@@ -308,34 +311,36 @@ customMapDropdown.addEventListener('change', () => {
     res[0].black_hole_map,
   );
   game.mapID = res[0].id;
-})
+});
 
-let maps :GameMap[] = []
+let maps: GameMap[] = [];
 type GameMap = {
-  id: number
-  stars: Position[]
-  meteorites: Position[]
-  black_holes: Position[]
-  black_hole_map: number[]
-}
+  id: number;
+  stars: Position[];
+  meteorites: Position[];
+  black_holes: Position[];
+  black_hole_map: number[];
+};
 
-export function loadCustomMap (){
-  fetch (APIOrigin + '/mapID/4',{
+export function loadCustomMap() {
+  fetch(APIOrigin + '/mapID/4', {
     method: 'GET',
   })
-  .then((res) => res.json())
-  .catch((err) => {error: String(err)})
-  .then((json) => {
-    maps = json
-    json.forEach((map:any) => {
-      const cMap = document.createElement('option');
-      cMap.value = map.id;
-      cMap.textContent = map.name;
-      customMapDropdown.appendChild(cMap);
+    .then((res) => res.json())
+    .catch((err) => {
+      String(err);
     })
-  })
+    .then((json) => {
+      maps = json;
+      json.forEach((map: any) => {
+        const cMap = document.createElement('option');
+        cMap.value = map.id;
+        cMap.textContent = map.name;
+        customMapDropdown.appendChild(cMap);
+      });
+    });
 }
-loadCustomMap ()
+loadCustomMap();
 
 function genGameMap(
   starsArr: Position[],
@@ -485,7 +490,6 @@ hardMode.addEventListener('click', () => {
     });
 });
 
-
 seedBtn.addEventListener('click', () => {
   game.seed();
   // game.startGame();
@@ -495,7 +499,7 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.innerHTML = '';
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
-  life.classList.add("hidden");
+  life.classList.add('hidden');
   seedBtn.setAttribute('disabled', 'disabled');
 
   // aiStats.classList.add('active');
@@ -577,4 +581,3 @@ export function resetCustomMapDropdown() {
   defaultOption.textContent = 'Custom Map';
   customMapDropdown.appendChild(defaultOption);
 }
-
