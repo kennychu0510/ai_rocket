@@ -285,7 +285,7 @@ boundaryModeBtn.addEventListener('click', () => {
 
 saveObjBtn.addEventListener('click', () => {
   saveMap(game)
-  loadCustomMap ()
+  // loadCustomMap ()
 });
 
 export function loadCustomMap (){
