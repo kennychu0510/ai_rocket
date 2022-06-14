@@ -5,15 +5,18 @@ import { MapService } from './map-services';
 export class MapController {
   constructor(private mapService: MapService) {}
   get = async (req: Request, res: Response) => {
-    const level = req.query.diff;
-    if (level === 'easy') {
+    const id = Number(req.params.id);
+    if (id === 1) {
       res.json(await this.mapService.getEasyMaps());
     }
-    if (level === 'normal') {
+    if (id === 2) {
       res.json(await this.mapService.getNormalMaps());
     }
-    if (level === 'hard') {
+    if (id === 3) {
       res.json(await this.mapService.getHardMaps());
+    }
+    if (id > 3) {
+      res.json(await this.mapService.getCustomMaps());
     }
   };
 

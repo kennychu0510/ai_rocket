@@ -74,4 +74,20 @@ export class MapService {
     });
     return results;
   }
+
+  async getCustomMaps(): Promise<Map[]> {
+    const results = await this.knex
+      .select('id', 'stars', 'meteorites', 'black_holes', 'black_hole_map', 'name')
+      .from('map')
+      .where('id', '>', 3);
+    results.forEach((row) => {
+      console.log(row);
+      row.stars = JSON.parse(row.stars);
+      row.meteorites = JSON.parse(row.meteorites);
+      row.black_holes = JSON.parse(row.black_holes);
+      row.black_hole_map = JSON.parse(row.black_hole_map);
+      row.name = JSON.parse(row.name)
+    });
+    return results;
+  }
 }

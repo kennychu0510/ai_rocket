@@ -2,6 +2,7 @@ import { Game } from './game.js';
 import { gameDOMelements } from './type.js';
 import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
+import { loadCustomMap, resetCustomMapDropdown } from './index.js';
 
 /* CHECK IF ALL STARS COLLECTED */
 export function showRecordScoreForm(game: Game, domElements: gameDOMelements) {
@@ -162,5 +163,11 @@ export function saveMap(game: Game){
         imageUrl: './media/save-map.gif'
       })
     }
+  })
+  .then(() => {
+    resetCustomMapDropdown()
+  })
+  .then(() => {
+    loadCustomMap()
   })
 }

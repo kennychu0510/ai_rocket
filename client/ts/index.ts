@@ -44,6 +44,7 @@ const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
 const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
+const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -284,7 +285,44 @@ boundaryModeBtn.addEventListener('click', () => {
 
 saveObjBtn.addEventListener('click', () => {
   saveMap(game)
+  loadCustomMap ()
 });
+
+export function loadCustomMap (){
+  fetch (APIOrigin + '/mapID/4',{
+    method: 'GET',
+  })
+  .then((res) => res.json())
+  .catch((err) => {error: String(err)})
+  .then((json) => {
+    json.forEach((map:any) => {
+      const cMap = document.createElement('option');
+      cMap.value = map.id;
+      cMap.textContent = map.name;
+      customMapDropdown.appendChild(cMap);
+    })
+
+    customMapDropdown.addEventListener('click', () => {
+      // console.log(customMapDropdown.value);
+      // resetCustomMapDropdown()
+      if (+customMapDropdown.value == 0){
+        return;
+      }
+      const x = +customMapDropdown.value
+      const res = json.filter((x:any) => x.id == +customMapDropdown.value)
+      console.log(res);
+  
+      genGameMap(
+        res[0].stars,
+        res[0].meteorites,
+        res[0].black_holes,
+        res[0].black_hole_map,
+      );
+      game.mapID = res[0].id;
+    })
+  })
+}
+loadCustomMap ()
 
 function genGameMap(
   starsArr: any[],
@@ -320,7 +358,7 @@ function genGameMap(
   totalScore.textContent = String(starsArr.length);
 }
 easyMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=easy', {
+  fetch(APIOrigin + '/mapID/1', {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -368,7 +406,7 @@ rocketAIdropdown.addEventListener('change', () => {
 });
 
 normalMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=normal', {
+  fetch(APIOrigin + '/mapID/2', {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -402,7 +440,7 @@ normalMode.addEventListener('click', () => {
 });
 
 hardMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=hard', {
+  fetch(APIOrigin + '/mapID/3', {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -433,6 +471,7 @@ hardMode.addEventListener('click', () => {
       });
     });
 });
+
 
 seedBtn.addEventListener('click', () => {
   game.seed();
@@ -515,4 +554,12 @@ function resetRocketAIDropdown() {
   defaultOption.value = '0';
   defaultOption.textContent = 'Select a Rocket';
   rocketAIdropdown.appendChild(defaultOption);
+}
+
+export function resetCustomMapDropdown() {
+  customMapDropdown.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '0';
+  defaultOption.textContent = 'Custom Map';
+  customMapDropdown.appendChild(defaultOption);
 }
