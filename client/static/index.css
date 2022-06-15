@@ -12,6 +12,10 @@ body,
   height: 100% !important;
 }
 
+body.swal2-height-auto {
+  height: 100% !important;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -76,7 +80,8 @@ input {
 
 #speed-up,
 #neural-network,
-#show-forces {
+#show-forces,
+#save-best {
   width: fit-content;
 }
 

@@ -39,16 +39,16 @@ export class RocketAIServices {
   async getAllRocket(mapID: number, aiMode: string): Promise<RocketAIRecord[]> {
     const results = await this.knex
       .select('id', 'name', 'map_id', 'fitness', 'stars', 'total_moves', 'type')
-      .from('ai_rocket')
-      // .where('map_id', mapID)
-      .andWhere('type', aiMode);
+      .from('ai_rocket');
+    // .where('map_id', mapID)
+    // .andWhere('type', aiMode);
     return results;
   }
   async getRocket(id: number): Promise<number[]> {
     const results = await this.knex
-      .select('genes')
+      .select('genes', 'bias', 'type')
       .from('ai_rocket')
       .where('id', id);
-    return results[0].genes.split(',').map(Number);
+    return results[0];
   }
 }

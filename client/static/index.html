@@ -71,6 +71,7 @@
           <input class="hidden" id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
         <div class="panel-right">
+          <input id="save-best" type="checkbox">Save Best</input>
           <input id="neural-network" type="checkbox">Neural Network</input>
           <input id="speed-up" type="checkbox">Speed up</input>
           <button id="reset">Refresh</button>
@@ -85,11 +86,13 @@
           <label for="health-reward">Health Reward:</label>
           <input id="health-reward" type="number" value="1" step="1"></input>
           <label for="steps-reward">Steps Reward:</label>
-          <input id="steps-reward" type="number" value="-1" step="1"></input>
+          <input id="steps-reward" type="number" value="1" step="1"></input>
           <label for="turn-reward">Turn Reward:</label>
-          <input id="turn-reward" type="number" value="-1" step="1"></input>
+          <input id="turn-reward" type="number" value="0" step="1"></input>
           <label for="forward-reward">Forward Reward:</label>
-          <input id="forward-reward" type="number" value="1" step="1"></input>
+          <input id="forward-reward" type="number" value="0" step="1"></input>
+          <label for="brightness-reward">BR Reward:</label>
+          <input id="brightness-reward" type="number" value="1" step="1"></input>
         </div>
         <div class="panel-right">
           <input id="show-forces" type="checkbox">Show Forces</input>
@@ -100,7 +103,7 @@
         </div>
       </div>
     </div>
-    
+    <img id="time-travel" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" src="/media/waiting.png" alt="time-travel" class="hidden">
     <script type="module" src="/js/index.js"></script>
 </body>
 

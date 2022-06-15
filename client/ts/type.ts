@@ -21,6 +21,7 @@ export type gameDOMelements = {
   timerMilliseconds: Element;
   timerSeconds: Element;
   aiStats: Element;
+  saveBest: HTMLInputElement;
 };
 
 export type RocketColor = [r: number, g: number, b: number];

@@ -27,9 +27,9 @@ export class ForceField {
   public verticalGradient: number[][];
   public stars: Position[];
   private meteorites: Position[];
-  private blockSize = 20;
-  private horBlocks = 0;
-  private verBlocks = 0;
+  public blockSize = 20;
+  public horBlocks = 0;
+  public verBlocks = 0;
   private maxValue = 255;
   private minValue = -255;
   private fieldMode = false;

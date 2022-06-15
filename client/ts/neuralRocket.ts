@@ -15,6 +15,7 @@ export class NeuralRocket extends RocketAI {
   rocketTrainer: RocketTrainer;
   numOfTurns = 0;
   numOfForward = 0;
+  cellsTraveled = new Map<number, number>();
 
   constructor(game: Game, rocketTrainer: RocketTrainer) {
     super(game, rocketTrainer);
@@ -104,6 +105,17 @@ export class NeuralRocket extends RocketAI {
         this.flyingTimeout = 10;
       }
     }
+    // Update blocks traveled
+    const index = this.getCurrentPositionIndex();
+    const cell = this.cellsTraveled.get(index);
+    if (!cell) {
+      this.cellsTraveled.set(
+        index,
+        this.forceField.forcefield[this.coordinateToCell(this.position.x)][
+          this.coordinateToCell(this.position.y)
+        ],
+      );
+    }
   }
 
   crossOver(parentA: NeuralRocket, parentB: NeuralRocket) {
@@ -159,5 +171,16 @@ export class NeuralRocket extends RocketAI {
   checkStarCollection(time: number) {
     super.checkStarCollection(time);
     this.forceField = this.rocketTrainer.getForceField(this.mapID);
+  }
+
+  coordinateToCell(n: number) {
+    return Math.floor(n / this.forceField.blockSize);
+  }
+
+  getCurrentPositionIndex() {
+    const x = Math.floor(this.position.x / this.forceField.blockSize);
+    const y = Math.floor(this.position.y / this.forceField.blockSize);
+    const i = y * this.forceField.horBlocks + x;
+    return i;
   }
 }

@@ -1,5 +1,6 @@
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
+import { NeuralRocket } from './neuralRocket.js';
 import { Rocket } from './rocket.js';
 import { RocketTrainer } from './rocketTrainer.js';
 import { Move } from './type.js';
@@ -12,6 +13,7 @@ export class RocketAI extends Rocket {
   numOfForward = 0;
   bias: number[];
   public isBest = false;
+  cellsTraveled = new Map<number, number>();
 
   // private color: RocketColor;
   constructor(game: Game, rocketTrainer: RocketTrainer) {
@@ -51,6 +53,13 @@ export class RocketAI extends Rocket {
       this.angle += this.turn;
       this.numOfTurns++;
       break;
+    }
+    const travelIndex = this.getCurrentPositionIndex();
+    let cell = this.cellsTraveled.get(index);
+    if (!cell) {
+      this.cellsTraveled.set(index, 1);
+    } else {
+      this.cellsTraveled.set(index, cell++);
     }
   }
 
@@ -114,7 +123,8 @@ export class RocketAI extends Rocket {
       this.getFitnessFromStars() +
       this.getFitnessFromHealth() +
       this.getFitnessFromSteps() +
-      this.getFitnessFromAction()
+      this.getFitnessFromAction() +
+      this.getFitnessFromCellsTraveled()
     );
   }
 
@@ -133,10 +143,12 @@ export class RocketAI extends Rocket {
   }
 
   getFitnessFromSteps() {
-    return (
-      round(this.getStepsTaken() / this.rocketTrainer.moves) *
-      this.rocketTrainer.stepsReward
-    );
+    // if (this instanceof NeuralRocket)
+    return this.cellsTraveled.size * this.rocketTrainer.stepsReward;
+    // return (
+    //   round(this.getStepsTaken() / this.rocketTrainer.moves) *
+    //   this.rocketTrainer.stepsReward
+    // );
   }
 
   getFitnessFromAction() {
@@ -146,11 +158,24 @@ export class RocketAI extends Rocket {
     );
   }
 
+  getFitnessFromCellsTraveled() {
+    if (this instanceof NeuralRocket) {
+      let brightness = 0;
+      this.cellsTraveled.forEach((value) => {
+        brightness += value;
+      });
+      const avgBrightness = Math.floor(
+        (brightness = brightness / this.cellsTraveled.size) *
+          this.rocketTrainer.brightnessReward,
+      );
+      // console.log(avgBrightness)
+      return avgBrightness;
+    }
+    return 0;
+  }
+
   getStepsTaken() {
-    return (
-      round(this.finishTime / this.rocketTrainer.ticksBetweenMove) ||
-      round(this.rocketTrainer.tick / this.rocketTrainer.ticksBetweenMove)
-    );
+    return this.cellsTraveled.size;
   }
 
   getGenes() {
@@ -170,6 +195,12 @@ export class RocketAI extends Rocket {
       this.width,
       this.height,
     );
+  }
+  getCurrentPositionIndex() {
+    const x = Math.floor(this.position.x / 20);
+    const y = Math.floor(this.position.y / 20);
+    const i = y * 20 + x;
+    return i;
   }
 }
 

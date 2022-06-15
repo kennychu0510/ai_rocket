@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Swal from 'sweetalert2';
+import { saveRocketAI } from './events.js';
 import { ForceField } from './force.js';
 import { degreeToRadian, randomBool } from './functions.js';
 import { Game } from './game.js';
@@ -12,16 +13,17 @@ import { Move, Position } from './type.js';
 const { random, floor, round } = Math;
 export class RocketTrainer {
   public populationSize = 100;
-  public moves = 2500;
+  public moves = 1500;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
   public generation = 0;
   public ticksBetweenMove = 1;
   public starsReward = 500;
   public healthReward = 1;
-  public stepsReward = 0;
+  public stepsReward = 1;
   public turnReward = -1;
   public forwardReward = 1;
+  public brightnessReward = 1;
   public tick = 0;
   public populationGA: RocketAI[] = [];
   public populationNN: NeuralRocket[] = [];
@@ -145,6 +147,9 @@ export class RocketTrainer {
     this.game.stopGame();
     this.evolve();
     this.report();
+    if (this.game.domElements.saveBest.checked) {
+      saveRocketAI(this.game, this.game.domElements);
+    }
     this.train();
   }
 
@@ -205,7 +210,10 @@ export class RocketTrainer {
 
   draw() {
     if (this.showForces) {
-      const rocket = this.bestRocket;
+      if (!this.neuralNetworkMode) return;
+      const rocket = this.bestRocket ?
+        this.bestRocket :
+        this.getPopulation()[0];
       if (rocket instanceof NeuralRocket) {
         rocket.forceField.draw();
       }
@@ -247,15 +255,15 @@ export class RocketTrainer {
     }
   }
 
-  loadRocketAI(genes: number[]) {
+  loadRocketAI(genes: number[], bias: number[], type: string) {
     this.reset();
     this.tick = 0;
     this.game.startAI = false;
     this.game.stopGame();
-
     let rocketAI;
-    if (this.neuralNetworkMode) {
+    if (type == 'nn') {
       rocketAI = new NeuralRocket(this.game, this);
+      rocketAI.bias = bias;
       this.populationNN.push(rocketAI);
     } else {
       rocketAI = new RocketAI(this.game, this);
@@ -298,17 +306,17 @@ export class RocketTrainer {
     bestRocketInGen.isBest = true;
     this.bestRocket = bestRocketInGen;
 
-    if (bestRocketInGen.getFitness() > this.bestFitness) {
-      this.bestFitness = bestRocketInGen.getFitness();
-      this.bestGenes = String(bestRocketInGen.getGenes());
-      this.bestStarsCollected = bestRocketInGen.collectedStars;
-      this.bestMovesUsed = bestRocketInGen.getStepsTaken();
-      this.bestBias = String(bestRocketInGen.getBias());
-      console.log('new best rocket ', {
-        bestfitness: this.bestFitness,
-        starsCollected: this.bestStarsCollected,
-      });
-    }
+    // if (bestRocketInGen.getFitness() > this.bestFitness) {
+    this.bestFitness = bestRocketInGen.getFitness();
+    this.bestGenes = String(bestRocketInGen.getGenes());
+    this.bestStarsCollected = bestRocketInGen.collectedStars;
+    this.bestMovesUsed = bestRocketInGen.getStepsTaken();
+    this.bestBias = String(bestRocketInGen.getBias());
+    // console.log('new best rocket in gen', {
+    //   bestfitness: this.bestFitness,
+    //   starsCollected: this.bestStarsCollected,
+    // });
+    // }
 
     console.log({
       generation: this.generation,
@@ -316,6 +324,7 @@ export class RocketTrainer {
       stars: `${bestRocketInGen.collectedStars} out of ${this.game.stars.length}`,
       stepsTaken: bestRocketInGen.getStepsTaken(),
       alive: bestRocketInGen.alive,
+      avgBrightness: bestRocketInGen.getFitnessFromCellsTraveled(),
       freeSteps: this.moves - bestRocketInGen.getStepsTaken(),
       genes: bestRocketInGen.getGenes(),
     });
