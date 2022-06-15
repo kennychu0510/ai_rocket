@@ -1,28 +1,34 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import Swal from 'sweetalert2';
 import { degreeToRadian } from './functions.js';
 import { Game } from './game.js';
 import { Rocket } from './rocket.js';
-import { RocketImg } from './rocketImg.js';
+import { UserRocketImg } from './rocketImg.js';
 import { Move } from './type.js';
 const { random, floor, round } = Math;
 
 export class RocketGA {
   public populationSize = 100;
-  public moves = 500;
+  public moves = 50;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
-  private generation = 0;
-  public tickBetweenMove = 1;
+  public generation = 0;
+  public ticksBetweenMove = 30;
   public starsReward = 500;
   public healthReward = 1;
   public stepsReward = -1;
   public turnReward = -1;
   public forwardReward = 1;
   public tick = 0;
-  private population: RocketAI[] = [];
+  public population: RocketAI[] = [];
   private game: Game;
   public numArrived = 0;
   public numAlive = 0;
+  public bestMovesSet = '';
+  public bestFitness: number = Number.NEGATIVE_INFINITY;
+  public bestStarsCollected = 0;
+  public bestMovesUsed = 0;
+  public launchRocketAIMode = false;
   constructor(game: Game) {
     this.game = game;
   }
@@ -30,12 +36,16 @@ export class RocketGA {
   seed() {
     this.population = [];
     this.addSeed(this.populationSize);
-    this.game.domElements.currentScore.textContent = String(
-      this.populationSize,
-    );
-    this.game.domElements.totalScore.textContent = String(this.populationSize);
-    this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
-      String(this.moves);
+    if (!this.launchRocketAIMode) {
+      this.game.domElements.currentScore.textContent = String(
+        this.populationSize,
+      );
+      this.game.domElements.totalScore.textContent = String(
+        this.populationSize,
+      );
+      this.game.domElements.aiStats.querySelector('#total-moves')!.textContent =
+        String(this.moves);
+    }
     this.tick = 0;
     this.game.startAI = false;
     this.game.stopGame();
@@ -72,13 +82,16 @@ export class RocketGA {
 
   update() {
     if (!this.game.startAI || !this.game.gameOnGoing) return;
-    const index = this.tick / this.tickBetweenMove;
-    if (index === this.moves) {
+    const index = this.tick / this.ticksBetweenMove;
+    if (index >= this.moves) {
+      this.game.stopGame();
+      this.game.gameEnd = true;
+      if (this.launchRocketAIMode) return;
       this.nextGen();
       return;
     }
     for (const rocket of this.population) {
-      if (this.tick % this.tickBetweenMove === 0) {
+      if (this.tick % this.ticksBetweenMove === 0) {
         rocket.move(index);
       }
       rocket.update(this.tick);
@@ -87,13 +100,22 @@ export class RocketGA {
   }
 
   onDie() {
+    if (this.launchRocketAIMode) {
+      this.game.gameEnd = true;
+      this.game.stopGame();
+    }
     this.numAlive--;
     this.game.domElements.currentScore.textContent = String(this.numAlive);
     if (this.numAlive === 0) this.nextGen();
+    if (this.numArrived === this.numAlive) this.nextGen();
   }
 
   onFinish() {
     this.numArrived++;
+    if (this.launchRocketAIMode) {
+      this.game.gameEnd = true;
+      this.game.stopGame();
+    }
     if (this.numArrived === this.numAlive) this.nextGen();
   }
 
@@ -132,6 +154,26 @@ export class RocketGA {
     }
   }
 
+  loadRocketAI(moves: Move[]) {
+    this.population = [];
+    this.tick = 0;
+    this.game.startAI = false;
+    this.game.stopGame();
+
+    const rocketAI = new RocketAI(this.game, this);
+    rocketAI.moves = moves;
+    this.population.push(rocketAI);
+  }
+
+  launchRocketAI() {
+    this.launchRocketAIMode = true;
+    this.game.startGame();
+    this.game.startAI = true;
+    this.numArrived = 0;
+    this.numAlive = this.populationSize;
+    this.tick = 0;
+  }
+
   report() {
     // this.population.sort((a, b) => {
     //   return a.getFitness() - b.getFitness();
@@ -146,17 +188,30 @@ export class RocketGA {
     //     freeSteps: this.moves * this.stepsBetweenMove - rocket.getStepsTaken(),
     //   });
     // }
-    const bestRocket = this.population.reduce((a, b) => {
+    const bestRocketInGen = this.population.reduce((a, b) => {
       if (a.getFitness() < b.getFitness()) return b;
       return a;
     });
-    const rocket = bestRocket;
+
+    if (bestRocketInGen.getFitness() > this.bestFitness) {
+      this.bestFitness = bestRocketInGen.getFitness();
+      this.bestMovesSet = bestRocketInGen.moves.join('');
+      this.bestStarsCollected = bestRocketInGen.collectedStars;
+      this.bestMovesUsed = bestRocketInGen.getStepsTaken();
+      console.log('new best rocket ', {
+        bestfitness: this.bestFitness,
+        starsCollected: this.bestStarsCollected,
+      });
+    }
+
     console.log({
-      fitness: rocket.getFitness(),
-      stars: `${rocket.collectedStars} out of ${this.game.stars.length}`,
-      stepsTaken: rocket.getStepsTaken(),
-      alive: rocket.alive,
-      freeSteps: this.moves * this.tickBetweenMove - rocket.getStepsTaken(),
+      generation: this.generation,
+      fitness: bestRocketInGen.getFitness(),
+      stars: `${bestRocketInGen.collectedStars} out of ${this.game.stars.length}`,
+      stepsTaken: bestRocketInGen.getStepsTaken(),
+      alive: bestRocketInGen.alive,
+      freeSteps: this.moves - bestRocketInGen.getStepsTaken(),
+      moves: bestRocketInGen.moves,
     });
   }
 }
@@ -308,42 +363,10 @@ class RocketAI extends Rocket {
   }
 
   getStepsTaken() {
-    return this.finishTime || this.rocketGA.tick;
-  }
-
-  draw() {
-    super.draw();
-
-    // let image;
-    // if (this.flyingTimeout > 0) {
-    //   image = this.flyingImg;
-    // } else {
-    //   image = this.staticImg;
-    // }
-    // this.game.ctx.putImageData(image, this.position.x, this.position.y);
-    // this.game.ctx.restore();
-
-    // this.game.ctx.save();
-    // const imageData = this.game.ctx.getImageData(0, 0, this.game.canvasWidth, this.game.canvasHeight);
-    // let i = 0;
-    // const R = 0;
-    // const G = 1;
-    // const B = 2;
-    // const A = 3;
-    // for (let y = 0; y < this.game.canvasHeight; y++) {
-    //   for (let x = 0; x < this.game.canvasWidth; x++) {
-    //     const a = imageData.data[i + A];
-    //     if (a != 0) {
-    //       imageData.data[i + R] = this.color.r;
-    //       imageData.data[i + G] = this.color.g;
-    //       imageData.data[i + B] = this.color.b;
-    //       // imageData.data[i + A] = randomA;
-    //     }
-    //     i += 4;
-    //   }
-    // }
-    // this.game.ctx.putImageData(imageData, 0, 0);
-    // this.game.ctx.restore();
+    return (
+      round(this.finishTime / this.rocketGA.ticksBetweenMove) ||
+      round(this.rocketGA.tick / this.rocketGA.ticksBetweenMove)
+    );
   }
 }
 

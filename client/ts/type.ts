@@ -18,9 +18,13 @@ export type BlackholePairType = {
 export type gameDOMelements = {
   totalScore: Element;
   currentScore: Element;
+  currentLife: Element;
   timerMilliseconds: Element;
   timerSeconds: Element;
   aiStats: Element;
+  life: Element;
+  totalMeteorite: Element;
+  totalBlackhole: Element;
 };
 
 export type RocketColor = [r: number, g: number, b: number];

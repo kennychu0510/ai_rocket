@@ -3,7 +3,7 @@ export type Map = {
   stars: string;
   meteorites: string;
   black_holes: string;
-  levels: number;
+  name: string;
 };
 
 export type UserRanking = {

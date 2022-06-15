@@ -5,8 +5,10 @@ import { MapService } from './map-services';
 import { MapController } from './map-controller';
 import { UserService } from './result-services';
 import { UserController } from './result-controller';
-import {UserRankingService} from './user-ranking-service'
-import {UserRankingController} from './user-ranking-controller'
+import { UserRankingService } from './user-ranking-service';
+import { UserRankingController } from './user-ranking-controller';
+import { RocketAIServices } from './rocektAI-services';
+import { RocketAIController } from './rocketAI-controller';
 import cors from 'cors';
 
 const mapService = new MapService(knex);
@@ -16,14 +18,18 @@ const userService = new UserService(knex);
 export const userController = new UserController(userService);
 
 const userRankingService = new UserRankingService(knex);
-export const userRankingController = new UserRankingController(userRankingService)
+export const userRankingController = new UserRankingController(
+  userRankingService,
+);
+const rocketAIServices = new RocketAIServices(knex);
+export const rocketAIController = new RocketAIController(rocketAIServices);
 
 import { routes } from './routes';
 export const app = express();
+
 app.use(cors());
 app.use(express.static('../client/build'));
 app.use(express.json());
-
 
 app.use('/', routes);
 

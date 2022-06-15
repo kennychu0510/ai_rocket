@@ -1,10 +1,17 @@
-import Swal from 'sweetalert2';
 import { APIOrigin } from './api.js';
-import { getDOMElement } from './functions.js';
+import { Blackhole } from './blackhole.js';
+import { saveMap, saveRocketAI } from './events.js';
+import { genTeleportMap, getDOMElement } from './functions.js';
 import { Game } from './game.js';
-import { meteoriteSizeRatio } from './meteorite.js';
-import { starSizeRatio } from './star.js';
-import { GameBoundary, gameDOMelements } from './type.js';
+import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
+import { Star, starSizeRatio } from './star.js';
+import {
+  BlackholePairType,
+  GameBoundary,
+  gameDOMelements,
+  Position,
+} from './type.js';
+const { random, floor, round } = Math;
 
 /* QUERY SELECTORS */
 const _canvas = document.querySelector('canvas');
@@ -12,6 +19,7 @@ if (!_canvas) throw new Error('canvas not found');
 const canvas = _canvas;
 const currentScore = getDOMElement('#current-score');
 const totalScore = getDOMElement('#total-score');
+const currentLife = getDOMElement('#current-life') as HTMLElement;
 const addMeteoriteBtn = getDOMElement('#add-meteor');
 const addBlackholeBtn = getDOMElement('#add-blackhole');
 const rocketSpeed = getDOMElement('#rocket-speed') as HTMLInputElement;
@@ -37,6 +45,15 @@ const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
 const trainBtn = getDOMElement('#train');
+const loadRocketBtn = getDOMElement('#load-rocket');
+const launchRocketBtn = getDOMElement('#launch-rocket');
+const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
+const score = getDOMElement('#score');
+const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
+const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
+const life = getDOMElement('#life');
+const totalMeteorite = getDOMElement('#total-meteorite');
+const totalBlackhole = getDOMElement('#total-blackhole');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -49,27 +66,32 @@ const timerSeconds = getDOMElement('#second');
 /* CANVAS */
 const canvasOffset = 10;
 canvas.height = window.innerHeight * 0.78 - canvasOffset;
-canvas.width = window.innerHeight * 1.8;
+canvas.width = canvas.height * 2.2;
 // console.log(canvas.width, canvas.height);
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
 
 /* VARIABLES */
 const blackholeSizeRatio = 0.03;
-let mapid = 1;
-
-let addBlackholeCounter = 0;
+let addStarModeOn = false;
+let addMeteoriteModeOn = false;
+let addBlackholeModeOn = false;
+const gameStarted = false;
 // const trackTopBound = boundaryOffset;
 // const trackBotBound = canvas.height - boundaryOffset;
 // const trackLeftBound = boundaryOffset;
 // const trackRightBound = canvas.width - boundaryOffset;
-const boundaryOffset = 20;
 
+const boundaryOffset = 20;
 const domElements: gameDOMelements = {
   totalScore,
   currentScore,
+  currentLife,
   timerMilliseconds,
   timerSeconds,
   aiStats,
+  life,
+  totalMeteorite,
+  totalBlackhole,
 };
 
 const gameBoundaries: GameBoundary = {
@@ -79,6 +101,7 @@ const gameBoundaries: GameBoundary = {
   right: canvas.width - boundaryOffset,
 };
 
+speedUp.checked = false;
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries, domElements);
 
@@ -87,58 +110,19 @@ function animate() {
   requestAnimationFrame(animate);
   game.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  /* CHECK IF ALL STARS COLLECTED */
-  // if (game.totalStars === game.userRocket.collectedStars ) {
-  //   game.statusMessage.updateMsg('Well Done!');
-  //   game.userRocket.stop();
-  //   const endTime = new Date();
-  //   console.log(`time taken: ` + (+endTime - +game.startTime) / 1000);
-  //   game.stopGame;
-  //   const timeTaken =
-  //     `${timerSeconds.textContent + '.'}` + `${timerMilliseconds.textContent}`;
-  //   Swal.fire({
-  //     title: 'Submit your Name!',
-  //     input: 'text',
-  //     text: 'Your Time: ' + timeTaken,
-  //     inputAttributes: {
-  //       autocapitalize: 'off',
-  //     },
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Submit',
-  //     showLoaderOnConfirm: true,
-  //     preConfirm: (login) => {
-  //       return fetch(APIOrigin + '/scores', {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({
-  //           id: mapid,
-  //           user: login,
-  //           timeTaken,
-  //         }),
-  //       })
-  //         .then((response) => {
-  //           if (!response.ok) {
-  //             throw new Error(response.statusText);
-  //           }
-  //           return response.json();
-  //         })
-  //         .catch((error) => {
-  //           Swal.showValidationMessage(`Request failed: ${error}`);
-  //         });
-  //     },
-  //     allowOutsideClick: () => !Swal.isLoading(),
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       Swal.fire({
-  //         title: 'Your record has been saved!',
-  //         imageUrl: './media/champion.png',
-  //       });
-  //     }
-  //   });
-  // }
+  if (speedUp.checked) {
+    if (!game.startAI) return;
+    for (let i = 0; i < 50 * 100 * 30; i++) {
+      game.update();
+    }
+    game.startAI = false;
+    saveRocketAI(game, domElements);
+  }
 
-  game.update();
-  game.draw();
+  if (!speedUp.checked) {
+    game.update();
+    game.draw();
+  }
 
   // console.log(userCar.stats())
 }
@@ -153,92 +137,36 @@ window.addEventListener('keydown', ({ key }) => {
   if (game.buttons.includes(key)) {
     if (!game.gameOnGoing && game.stars.length > 0 && !game.gameEnd) {
       game.startGame();
+      resetAllButtons();
+      changeButtonModes();
     }
     game.userRocket.changeDirection(key);
   }
 });
 
 addStarBtn.addEventListener('click', () => {
-  game.addStarModeOn = !game.addStarModeOn;
-  if (game.addStarModeOn) {
-    addStarBtn.textContent = 'Done';
-
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor',
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.setAttribute('disabled', '');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole',
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.setAttribute('disabled', '');
-  } else {
-    addStarBtn.textContent = 'Add Star';
-
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor',
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.removeAttribute('disabled');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole',
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.removeAttribute('disabled');
-  }
+  addStarModeOn = !addStarModeOn;
+  resetOtherBtnStates('stars');
+  changeButtonModes();
 });
 
 addMeteoriteBtn.addEventListener('click', () => {
-  game.addMeteoriteModeOn = !game.addMeteoriteModeOn;
-
-  if (game.addMeteoriteModeOn) {
-    addMeteoriteBtn.textContent = 'Done';
-
-    const addStarBtn = document.getElementById(
-      'add-star',
-    ) as HTMLButtonElement | null;
-    addStarBtn?.setAttribute('disabled', '');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole',
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.setAttribute('disabled', '');
-  } else {
-    addMeteoriteBtn.textContent = 'Add Meteorite';
-
-    const addStarBtn = document.getElementById(
-      'add-star',
-    ) as HTMLButtonElement | null;
-    addStarBtn?.removeAttribute('disabled');
-    const addBlackholeBtn = document.getElementById(
-      'add-blackhole',
-    ) as HTMLButtonElement | null;
-    addBlackholeBtn?.removeAttribute('disabled');
-  }
+  addMeteoriteModeOn = !addMeteoriteModeOn;
+  resetOtherBtnStates('meteorite');
+  changeButtonModes();
 });
 
 addBlackholeBtn.addEventListener('click', () => {
-  game.addBlackholeModeOn = !game.addBlackholeModeOn;
-  if (game.addBlackholeModeOn) {
-    addBlackholeBtn.textContent = 'Done';
-
-    const addStarBtn = document.getElementById(
-      'add-star',
-    ) as HTMLButtonElement | null;
-    addStarBtn?.setAttribute('disabled', '');
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor',
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.setAttribute('disabled', '');
-  } else {
-    addBlackholeBtn.textContent = 'Add Blackhole';
-
-    const addStarBtn = document.getElementById(
-      'add-star',
-    ) as HTMLButtonElement | null;
-    addStarBtn?.removeAttribute('disabled');
-    const addMeteoriteBtn = document.getElementById(
-      'add-meteor',
-    ) as HTMLButtonElement | null;
-    addMeteoriteBtn?.removeAttribute('disabled');
-  }
+  addBlackholeModeOn = !addBlackholeModeOn;
+  resetOtherBtnStates('blackhole');
+  changeButtonModes();
 });
+
+function changeButtonModes() {
+  addStarBtn.textContent = addStarModeOn ? 'Done' : 'Add Star';
+  addMeteoriteBtn.textContent = addMeteoriteModeOn ? 'Done' : 'Add Meteorite';
+  addBlackholeBtn.textContent = addBlackholeModeOn ? 'Done' : 'Add Blackhole';
+}
 
 resetBtn.addEventListener('click', () => {
   location.reload();
@@ -251,52 +179,30 @@ resetBtn.addEventListener('click', () => {
 });
 
 trainBtn.addEventListener('click', () => {
+  population.setAttribute('disabled', 'disabled');
+  moves.setAttribute('disabled', 'disabled');
   game.rocketGA.train();
 });
 
 canvas.addEventListener('click', (e) => {
   const leftOffset = canvas.getBoundingClientRect().left;
   const botOffset = scoreboard.getBoundingClientRect().bottom;
-  if (game.addStarModeOn) {
+  if (addStarModeOn) {
     const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - starSizeRatio * canvas.width;
     const position = { x, y };
     game.addStar(position);
-  }
-
-  if (game.addMeteoriteModeOn) {
+  } else if (addMeteoriteModeOn) {
     const x = e.clientX - leftOffset - (meteoriteSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - (meteoriteSizeRatio * canvas.width) / 1.5;
     const position = { x, y };
     game.addMeteorite(position);
-  }
-
-  if (game.addBlackholeModeOn) {
-    let x1 = 0;
-    let y1 = 0;
-    if (addBlackholeCounter === 0) {
-      x1 = e.clientX - (blackholeSizeRatio * canvas.width) / 2;
-      y1 =
-        e.clientY -
-        scoreboard.getBoundingClientRect().bottom -
-        (blackholeSizeRatio * canvas.width) / 2;
-      addBlackholeCounter++;
-      console.log(x1, y1);
-      return;
-    }
-    if (addBlackholeCounter === 1) {
-      const x2 = e.clientX - (blackholeSizeRatio * canvas.width) / 2;
-      const y2 =
-        e.clientY -
-        scoreboard.getBoundingClientRect().bottom -
-        (blackholeSizeRatio * canvas.width) / 2;
-      const blackhole1 = { x: x1, y: y1 };
-      const blackhole2 = { x: x2, y: y2 };
-      const position = { blackhole1, blackhole2 };
-      console.log(x1, y1, x2, y2);
-      game.addBlackholePair(position);
-      addBlackholeCounter = 0;
-    }
+  } else if (addBlackholeModeOn) {
+    const x = e.clientX - leftOffset - (blackholeSizeRatio * canvas.width) / 2;
+    const y = e.clientY - botOffset - (blackholeSizeRatio * canvas.width) / 2;
+    const position = { x, y };
+    game.addBlackhole(position);
+    game.genTeleportMap(game.blackholes.length);
   }
 });
 
@@ -305,8 +211,8 @@ canvas.addEventListener('click', (e) => {
 GAME SETTINGS
 ----------------------------------------------------------------
 */
-// rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
-game.userRocket.changeAcceleration(Number(rocketSpeed.value));
+rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
+// game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 // population.value = String(game.rocketGA.populationSize);
 game.rocketGA.populationSize = Number(population.value);
 moves.value = String(game.rocketGA.moves);
@@ -390,143 +296,204 @@ boundaryModeBtn.addEventListener('click', () => {
   }
 });
 
-// saveStarsBtn.addEventListener('click', () => {
-//   const listOfStarsPercentage = game.stars.map((star) => {
-//     const newX = star.getX() / canvas.width;
-//     const newY = star.getY() / canvas.height;
-//     return { x: newX, y: newY };
-//   });
-//   const starMap = {
-//     count: game.stars.length,
-//     coordinates: JSON.stringify(listOfStarsPercentage),
-//   };
-//   fetch('/star-map', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({
-//       starMap,
-//     }),
-//   })
-//     .then((res) => res.json())
-//     .catch((err) => ({ error: String(err) }))
-//     .then((json) => {
-//       console.log(json.id);
-//     });
-// });
-
 saveObjBtn.addEventListener('click', () => {
-  const stars = game.stars.map((star) => {
-    const newX = star.getX() / canvas.width;
-    const newY = star.getY() / canvas.height;
-    return { x: newX, y: newY };
-  });
-  const meteorites = game.meteorites.map((meteorite) => {
-    const newX = meteorite.getX() / canvas.width;
-    console.log(meteorite);
-    const newY = meteorite.getY() / canvas.height;
-    return { x: newX, y: newY };
-  });
-  const blackholes = game.blackholes.map((blackholes) => {
-    const newX1 = blackholes.getX().x1 / canvas.width;
-    const newX2 = blackholes.getX().x2 / canvas.width;
-    const newY1 = blackholes.getY().y1 / canvas.height;
-    const newY2 = blackholes.getY().y2 / canvas.height;
-    return { x1: newX1, y1: newY1, x2: newX2, y2: newY2 };
-  });
-  console.log(blackholes);
-
-  fetch(APIOrigin + '/map', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      stars,
-      meteorites,
-      blackholes,
-    }),
-  })
-    .then((res) => res.json())
-    .catch((err) => ({ error: String(err) }))
-    .then((json) => {
-      console.log(json.id);
-    });
+  saveMap(game);
 });
 
-// rankingsBtn.addEventListener('click', () => {
+customMapDropdown.addEventListener('change', () => {
+  if (+customMapDropdown.value == 0) {
+    return;
+  }
+  const x = +customMapDropdown.value;
+  const res = maps.filter((x: any) => x.id == +customMapDropdown.value);
+  console.log('res', res);
+  console.log(res[0].stars);
+  genGameMap(
+    res[0].stars,
+    res[0].meteorites,
+    res[0].black_holes,
+    res[0].black_hole_map,
+  );
+  game.mapID = res[0].id;
+});
 
-//   });
+let maps: GameMap[] = [];
+type GameMap = {
+  id: number;
+  stars: Position[];
+  meteorites: Position[];
+  black_holes: Position[];
+  black_hole_map: number[];
+};
 
-// })
+export function loadCustomMap() {
+  fetch(APIOrigin + '/mapID/4', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => {
+      String(err);
+    })
+    .then((json) => {
+      maps = json;
+      json.forEach((map: any) => {
+        const cMap = document.createElement('option');
+        cMap.value = map.id;
+        cMap.textContent = map.name;
+        customMapDropdown.appendChild(cMap);
+      });
+    });
+}
+loadCustomMap();
 
 function genGameMap(
-  starsArr: any[],
-  meteoritesArr: any[],
-  blackholesArr: any[],
+  starsArr: Position[],
+  meteoritesArr: Position[],
+  blackholesArr: Position[],
+  blackholeMap: number[],
 ) {
   game.reset();
   for (const s of starsArr) {
-    const result = {
-      x: s.x * game.canvasWidth,
-      y: s.y * game.canvasHeight,
+    const star = {
+      x: s.x * canvas.width,
+      y: s.y * canvas.height,
     };
-    game.addStar(result);
+    game.addStar(star);
   }
   for (const m of meteoritesArr) {
-    const result = {
-      x: m.x * game.canvasWidth,
-      y: m.y * game.canvasHeight,
+    const meteorite = {
+      x: m.x * canvas.width,
+      y: m.y * canvas.height,
     };
-    game.addMeteorite(result);
+    game.addMeteorite(meteorite);
   }
   for (const b of blackholesArr) {
-    const result = {
-      blackhole1: { x: b.x1 * game.canvasWidth, y: b.y1 * game.canvasHeight },
-      blackhole2: { x: b.x2 * game.canvasWidth, y: b.y2 * game.canvasHeight },
+    const blackhole = {
+      x: b.x * canvas.width,
+      y: b.y * canvas.height,
     };
-    game.addBlackholePair(result);
+    game.addBlackhole(blackhole);
   }
+  // console.log(blackholeMap);
+  game.teleportMap = blackholeMap;
+  // window.prompt('d')
   totalScore.textContent = String(starsArr.length);
 }
-
 easyMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=easy', {
+  fetch(APIOrigin + '/mapID/1', {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      // console.log(json[0].stars.length);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
-      mapid = json[0].id;
-      console.log(mapid);
-      console.log(typeof mapid);
+      // console.log(json[0]);
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      );
+      game.mapID = json[0].id;
+      // console.log(mapid);
+      // console.log(typeof mapid);
+    });
+  fetch(APIOrigin + '/rocketAI/mapID/1', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
+    });
+});
+
+rocketAIdropdown.addEventListener('change', () => {
+  if (rocketAIdropdown.value === '0') return;
+  console.log(rocketAIdropdown.value);
+  fetch(APIOrigin + '/rocketAI/id/' + rocketAIdropdown.value, {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((moves) => {
+      game.rocketGA.loadRocketAI(moves);
     });
 });
 
 normalMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=normal', {
+  fetch(APIOrigin + '/mapID/2', {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       // console.log(json);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
-      mapid = json[0].id;
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      );
+      game.mapID = json[0].id;
+    });
+
+  fetch(APIOrigin + '/rocketAI/mapID/2', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
     });
 });
 
 hardMode.addEventListener('click', () => {
-  fetch(APIOrigin + '/mode?diff=hard', {
+  fetch(APIOrigin + '/mapID/3', {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
       // console.log(json);
-      genGameMap(json[0].stars, json[0].meteorites, json[0].black_holes);
-      mapid = json[0].id;
+      genGameMap(
+        json[0].stars,
+        json[0].meteorites,
+        json[0].black_holes,
+        json[0].black_hole_map,
+      );
+      game.mapID = json[0].id;
+    });
+  fetch(APIOrigin + '/rocketAI/mapID/3', {
+    method: 'GET',
+  })
+    .then((res) => res.json())
+    .catch((err) => ({ error: String(err) }))
+    .then((json) => {
+      console.log(json);
+      resetRocketAIDropdown();
+      json.forEach((rocket: any) => {
+        const rocket_ai = document.createElement('option');
+        rocket_ai.value = rocket.id;
+        rocket_ai.textContent = rocket.name;
+        rocketAIdropdown.appendChild(rocket_ai);
+      });
     });
 });
+
 seedBtn.addEventListener('click', () => {
   game.seed();
   // game.startGame();
@@ -536,6 +503,9 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.innerHTML = '';
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
+  life.classList.add('hidden');
+  seedBtn.setAttribute('disabled', 'disabled');
+
   // aiStats.classList.add('active');
 });
 
@@ -543,3 +513,75 @@ seedBtn.addEventListener('click', () => {
 //   canvas.height = window.innerHeight * 0.78;
 //   canvas.width = window.innerHeight * 1.8;
 // });
+
+// loadRocketBtn.addEventListener('click', () => {
+//   fetch(APIOrigin + '/rocketAI', {
+//     method: 'GET',
+//   })
+//     .then((res) => res.json())
+//     .catch((err) => ({ error: String(err) }))
+//     .then((json) => {
+//       console.log(json);
+//       const moves = json.moves.split('').map(Number)
+
+//     });
+// });
+
+launchRocketBtn.addEventListener('click', () => {
+  if (rocketAIdropdown.value === '0') return;
+  game.rocketGA.launchRocketAI();
+});
+
+speedUp.addEventListener('change', function() {
+  if (speedUp.checked) {
+    score.classList.add('invisible');
+  } else {
+    score.classList.remove('invisible');
+  }
+});
+
+/*
+----------------------------------------------------------------
+FUNCTIONS
+----------------------------------------------------------------
+*/
+
+function disableAddButtons() {
+  const buttons = document.querySelectorAll('button.add-objects');
+  buttons.forEach((button) => button.setAttribute('disabled', ''));
+}
+
+function resetOtherBtnStates(mode: string) {
+  if (mode === 'stars') {
+    addMeteoriteModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'meteorite') {
+    addStarModeOn = false;
+    addBlackholeModeOn = false;
+  } else if (mode === 'blackhole') {
+    addMeteoriteModeOn = false;
+    addStarModeOn = false;
+  }
+}
+
+function resetAllButtons() {
+  addMeteoriteModeOn = false;
+  addBlackholeModeOn = false;
+  addStarModeOn = false;
+}
+
+function resetRocketAIDropdown() {
+  rocketAIdropdown.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '0';
+  defaultOption.textContent = 'Select a Rocket';
+  rocketAIdropdown.appendChild(defaultOption);
+}
+
+export function resetCustomMapDropdown() {
+  customMapDropdown.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '0';
+  defaultOption.textContent = 'Custom Map';
+  customMapDropdown.appendChild(defaultOption);
+}

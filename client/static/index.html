@@ -26,6 +26,20 @@
           <div class="ai-stats-label">Generation: </div>
           <div id="current-generation">0</div>
         </div>
+        <div id="meteorite">
+          <div id="meteorite-mode"><img id="meteorite-img" src="/media/meteorite.png" alt="meteorite"></div>
+          <div id="total-meteorite">0</div>
+        </div>
+        <div id="blackhole">
+          <div id="blackhole-mode"><img id="blackhole-img" src="/media/blackhole.png" alt="blackhole"></div>
+          <div id="total-blackhole">0</div>
+        </div>
+        <div id="life">
+          <div id="life-mode"><img id="life-img" src="/media/life.png" alt="life"></div>
+          <div id="current-life">3</div>
+          <div> / </div>
+          <div id="total-life">3</div>
+        </div>
       </div>
       <div id="title">AI Rocket</div>
       <div id="time">
@@ -41,21 +55,21 @@
       <div id="control-panel-1" class="control-panel">
         <div class="panel-left">
           <button id="boundary-mode">Turn Off Boundary</button>
-          <button id="add-star">Add Star</button>
-          <button id="add-meteor">Add Meteorite</button>
-          <button id="add-blackhole">Add Blackhole</button>
-          <button id="save-obj">Save Object</button>
-          
+          <button id="add-star" class="add-objects">Add Star</button>
+          <button id="add-meteor" class="add-objects">Add Meteorite</button>
+          <button id="add-blackhole" class="add-objects">Add Blackhole</button>
+          <button id="save-obj" class="add-objects">Save Map</button>
+        </div>
+        <div class="panel-right">
+          <select id="custom-map">
+            <option value="0">Custom Map</option>
+          </select>
           <div id="mode">
             <button id="easy-mode">Easy Mode</button>
             <button id="normal-mode">Normal Mode</button>
             <button id="hard-mode">Hard Mode</button>
+            <a href="rankings.html"><button id="rankings">Rankings</button></a>
           </div>
-          <a href="rankings.html"><button id="rankings">Rankings</button></a>
-        </div>
-        <div class="panel-right">
-          <label for="rocket-speed">Rocket Speed:</label>
-          <input id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
 
       </div>
@@ -69,30 +83,39 @@
           <input id="survival-rate" type="number" min="0" max="1" value="0.8" step="0.1"></input>
           <label for="mutation-rate">Mutation Rate:</label>
           <input id="mutation-rate" type="number" min="0" max="1" value="0.05" step="0.01"></input>
+          <label class="hidden" for="rocket-speed">Rocket Speed:</label>
+          <input class="hidden" id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
         <div class="panel-right">
+          <input id="speed-up" type="checkbox">Speed up</input>
           <button id="reset">Refresh</button>
           <button id="seed">Seed</button>
           <button id="train">Train</button>
         </div>
       </div>
       <div id="control-panel-3">
-        <label for="stars-reward">Stars Reward:</label>
-        <input id="stars-reward" type="number" value="500" step="1"></input>
-        <label for="health-reward">Health Reward:</label>
-        <input id="health-reward" type="number" value="1" step="1"></input>
-        <label for="steps-reward">Steps Reward:</label>
-        <input id="steps-reward" type="number" value="-1" step="1"></input>
-        <label for="turn-reward">Turn Reward:</label>
-        <input id="turn-reward" type="number" value="-1" step="1"></input>
-        <label for="forward-reward">Forward Reward:</label>
-        <input id="forward-reward" type="number" value="1" step="1"></input>
+        <div class="panel-left">
+          <label for="stars-reward">Stars Reward:</label>
+          <input id="stars-reward" type="number" value="500" step="1"></input>
+          <label for="health-reward">Health Reward:</label>
+          <input id="health-reward" type="number" value="1" step="1"></input>
+          <label for="steps-reward">Steps Reward:</label>
+          <input id="steps-reward" type="number" value="-1" step="1"></input>
+          <label for="turn-reward">Turn Reward:</label>
+          <input id="turn-reward" type="number" value="-1" step="1"></input>
+          <label for="forward-reward">Forward Reward:</label>
+          <input id="forward-reward" type="number" value="1" step="1"></input>
+        </div>
+        <div class="panel-right">
+          <select id="select-rocket">
+            <!-- <option value="0">Select a Rocket</option> -->
+          </select>
+          <button id="load-rocket">Load Rocket</button>
+          <button id="launch-rocket">Launch Rocket</button>
+        </div>
       </div>
     </div>
-    <!-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> -->
+    <link rel="stylesheet" href="/sweetalert2.css">
     <script type="module" src="/js/index.js"></script>
 </body>
 

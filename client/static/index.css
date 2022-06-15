@@ -57,19 +57,25 @@ body,
 }
 
 #control-panel-1,
-#control-panel-2 {
+#control-panel-2,
+#control-panel-3 {
   display: flex;
   justify-content: space-between;
 }
 
 #control-panel-1>*,
-#control-panel-2>* {
+#control-panel-2>*,
+#control-panel-3>* {
   margin-right: 10px;
   margin-bottom: 10px;
 }
 
 input {
   width: 50px;
+}
+
+#speed-up {
+  width: fit-content;
 }
 
 #footer {
@@ -81,11 +87,23 @@ input {
   margin-right: 5px;
 }
 
-
-
-#star-img,
+#star-img {
+  height: 23px;
+}
+#life-img,
+#blackhole-img,
 #clock-img {
-  height: 16px;
+  height: 25px;
+}
+
+#meteorite-img {
+  height: 30px;
+}
+
+#life-img,
+#meteorite-img,
+#blackhole-img {
+  padding-left: 2rem;
 }
 
 #mode {
@@ -93,15 +111,23 @@ input {
 }
 
 #score,
+#life,
 #ai-stats,
-#score-mode {
+#score-mode,
+#life-mode,
+#meteorite,
+#meteorite-mode,
+#blackhole,
+#blackhole-mode {
   display: flex;
   align-items: center;
 }
 
-#score>* {
+#score>*,
+#life>*
+#meteorite>*,
+#blackhole>* {
   margin-right: 5px;
-
 }
 
 #ai-stats>* {
@@ -117,6 +143,9 @@ input {
 }
 
 .active {
-  display: inline;
+  display: inline !important;
 }
 
+.invisible {
+  visibility: hidden;
+}

@@ -5,15 +5,18 @@ import { MapService } from './map-services';
 export class MapController {
   constructor(private mapService: MapService) {}
   get = async (req: Request, res: Response) => {
-    const level = req.query.diff;
-    if (level === 'easy') {
+    const id = Number(req.params.id);
+    if (id === 1) {
       res.json(await this.mapService.getEasyMaps());
     }
-    if (level === 'normal') {
+    if (id === 2) {
       res.json(await this.mapService.getNormalMaps());
     }
-    if (level === 'hard') {
+    if (id === 3) {
       res.json(await this.mapService.getHardMaps());
+    }
+    if (id > 3) {
+      res.json(await this.mapService.getCustomMaps());
     }
   };
 
@@ -21,6 +24,8 @@ export class MapController {
     const stars = req.body.stars;
     const meteorites = req.body.meteorites;
     const blackholes = req.body.blackholes;
+    const blackholeMap = req.body.blackholeMap;
+    const name = req.body.name;
     if (stars.length <= 0 && meteorites.length <= 0 && blackholes.length <= 0) {
       res.status(404).json({ msg: 'nothing is added' });
       return;
@@ -28,8 +33,10 @@ export class MapController {
     const addedMap = await this.mapService.createMap({
       stars,
       meteorites,
-      blackholes: blackholes,
+      blackholes,
+      blackholeMap,
+      name,
     });
-    res.json({ id: addedMap });
+    res.json({ msg: `added map-${addedMap}` });
   };
 }

@@ -6,7 +6,7 @@ export type user = {
   id: number;
 };
 export class UserService {
-  constructor(private knex: KnexType) { }
+  constructor(private knex: KnexType) {}
   async createResult(scores: user) {
     const user = scores.user;
     const timeTaken = scores.timeTaken;

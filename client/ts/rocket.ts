@@ -31,9 +31,9 @@ export class Rocket {
   public height = 0;
   protected acceleration = 0;
   color: RocketColor = [
-    Math.floor(Math.random() * 256),
-    Math.floor(Math.random() * 256),
-    Math.floor(Math.random() * 256),
+    Math.floor(Math.random() * 128 + 128),
+    Math.floor(Math.random() * 128 + 128),
+    Math.floor(Math.random() * 128 + 128),
   ];
   public image_static = this.isUserControlled ?
     new UserRocketImg() :
@@ -44,7 +44,7 @@ export class Rocket {
   protected angle = 0;
   protected turn: number;
   public collectedStars = 0;
-  protected health = 0;
+  public health = 0;
   public teleportTimeout = 0;
   public flyingTimeout = 0;
   public stars = new Set<Star>();
@@ -52,13 +52,14 @@ export class Rocket {
   public finishTime = 0;
   public time = 0;
   constructor(public game: Game, public isUserControlled = true) {
-    const canvasWidth = game.canvasWidth;
-    const canvasHeight = game.canvasHeight;
     this.velocity = { x: 0, y: 0 };
-    // this.acceleration === rocketGA.stepsBetweenMove / 10
+    // this.acceleration === this.game.rocketGA.ticksBetweenMove / 10
 
     this.turn = 45;
-    this.initialPosition = { x: canvasHeight / 4, y: canvasWidth / 10 };
+    this.initialPosition = {
+      x: this.game.canvasHeight / 4,
+      y: this.game.canvasWidth / 10,
+    };
 
     this.reset();
   }
@@ -88,17 +89,11 @@ export class Rocket {
   }
 
   drawImage() {
-    // let image;
-    // if (this.flyingTimeout > 0) {
-    //   image = this.image_flying;
-    // } else {
-    //   image = this.image_static;
-    // }
     const image = this.flyingTimeout ? this.image_flying : this.image_static;
     this.game.ctx.drawImage(
       image.image,
-      this.position.x + this.velocity.x,
-      this.position.y + this.velocity.y,
+      this.position.x,
+      this.position.y,
       this.width,
       this.height,
     );
@@ -123,7 +118,7 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    console.log(this.stats());
+    // console.log(this.stats());
   }
 
   slowDown() {
@@ -184,7 +179,7 @@ export class Rocket {
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
-    this.acceleration = 0.04 * this.game.canvasWidth;
+    this.acceleration = 0.002 * this.game.canvasWidth;
   }
 
   setPosition(position: Position) {
@@ -213,6 +208,11 @@ export class Rocket {
       this.image_flying.setSrc(boomImg.src, this);
       this.finishTime = time;
       this.onDie();
+    }
+    const x = String(this.health);
+    this.game.domElements.currentLife.textContent = x;
+    if (x < '0') {
+      return (this.game.domElements.currentLife.textContent = '0');
     }
   }
 
@@ -262,9 +262,6 @@ export class Rocket {
       ) {
         this.stop();
         this.onDie();
-
-        // this.game.reportRocketDead();
-
         return;
       }
     } else {
@@ -291,7 +288,7 @@ export class Rocket {
         this.position.y + this.height / 2 - (star.getY() + star.size / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < this.getC() / 2 + star.size / 2) {
+      if (distance < this.getC() / 4 + star.size / 2) {
         this.stars.delete(star);
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
@@ -313,38 +310,31 @@ export class Rocket {
   }
 
   checkBlackholeTeleportation() {
-    for (const blackholePair of this.game.blackholes) {
-      const dx1 =
+    const blackholes = this.game.blackholes;
+    const teleportMap = this.game.teleportMap;
+    for (let i = 0; i < blackholes.length; i++) {
+      const blackholeIndex = this.game.teleportMap[i];
+      const dx =
         this.position.x +
         this.width / 2 -
-        (blackholePair.blackhole1.x + blackholePair.size / 2);
-      const dy1 =
+        (blackholes[i].getX() + blackholes[i].size / 2);
+      const dy =
         this.position.y +
         this.height / 2 -
-        (blackholePair.blackhole1.y + blackholePair.size / 2);
-      const dx2 =
-        this.position.x +
-        this.width / 2 -
-        (blackholePair.blackhole2.x + blackholePair.size / 2);
-      const dy2 =
-        this.position.y +
-        this.height / 2 -
-        (blackholePair.blackhole2.y + blackholePair.size / 2);
-      const distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
-      const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-      const range = this.getC() / 2 + blackholePair.size / 2;
+        (blackholes[i].getY() + blackholes[i].size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance1 <= range / 2 && this.teleportTimeout === 0) {
+      const range = this.getC() / 2 + blackholes[i].size / 2;
+
+      if (distance <= range / 2 && this.teleportTimeout === 0) {
         this.position.x =
-          blackholePair.blackhole2.x + blackholePair.size / 2 - this.width / 2;
+          this.game.blackholes[blackholeIndex].position.x +
+          blackholes[i].size / 2 -
+          this.width / 2;
         this.position.y =
-          blackholePair.blackhole2.y + blackholePair.size / 2 - this.height / 2;
-        this.setTeleportationTimeout();
-      } else if (distance2 <= range / 2 && this.teleportTimeout === 0) {
-        this.position.x =
-          blackholePair.blackhole1.x + blackholePair.size / 2 - this.width / 2;
-        this.position.y =
-          blackholePair.blackhole1.y + blackholePair.size / 2 - this.height / 2;
+          this.game.blackholes[blackholeIndex].position.y +
+          blackholes[i].size / 2 -
+          this.height / 2;
         this.setTeleportationTimeout();
       }
     }
