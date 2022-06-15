@@ -1,3 +1,14 @@
+let c = document.getElementById("myCanvas");
+let ctx = c.getContext("2d");
+// Create gradient
+let grd = ctx.createRadialGradient(75,50,5,90,60,100);
+grd.addColorStop(0,"red");
+grd.addColorStop(1,"white");
+
+// Fill with gradient
+ctx.fillStyle = grd;
+ctx.fillRect(10,10,150,80);
+
 let content = document.querySelector('#content');
     let box = ``
     for (let i = 1; i < 15; i++) {
@@ -5,7 +16,7 @@ let content = document.querySelector('#content');
       <div class="box">
         <div id="">No.${i}</div>
         <div id="canvas-container">
-          <canvas></canvas>
+        <canvas id="myCanvas" width="250" height="150"></canvas>
         </div>
         <div id="info">
           <div id="status">
