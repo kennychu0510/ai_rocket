@@ -336,7 +336,7 @@ export class RocketTrainer {
       healthReward: this.healthReward,
       brightnessReward: this.brightnessReward,
       turnReward: this.turnReward,
-      forwardReward: this.forwardReward
+      forwardReward: this.forwardReward,
     });
   }
 }

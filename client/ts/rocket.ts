@@ -1,5 +1,11 @@
 import { blockSize } from './force.js';
-import { degreeToRadian, directionToNeighborCells, drawBlock, validCol, validRow } from './functions.js';
+import {
+  degreeToRadian,
+  directionToNeighborCells,
+  drawBlock,
+  validCol,
+  validRow,
+} from './functions.js';
 import { Game } from './game.js';
 import { RocketImg, UserRocketImg } from './rocketImg.js';
 import { Star } from './star.js';
@@ -102,21 +108,19 @@ export class Rocket {
       this.height,
     );
 
-    if (false) {
-      const row = floor(this.position.x / blockSize);
-      const col = floor(this.position.y / blockSize);
-      const rightBoundary = this.game.canvasWidth / blockSize;
-      const bottomBoundary = this.game.canvasHeight / blockSize;
-  
-      const neighborCells = directionToNeighborCells(this.angle).map((cell) => {
-        cell[0] = validRow(row, cell[0], rightBoundary);
-        cell[1] = validCol(col, cell[1], bottomBoundary);
-        return cell;
-      });
-      for (let i = 0; i < neighborCells.length; i++) {
-        drawBlock(neighborCells[i][0], neighborCells[i][1], this.game.ctx, i);
-      }
-    }
+    // const row = floor(this.position.x / blockSize);
+    // const col = floor(this.position.y / blockSize);
+    // const rightBoundary = this.game.canvasWidth / blockSize;
+    // const bottomBoundary = this.game.canvasHeight / blockSize;
+
+    // const neighborCells = directionToNeighborCells(this.angle).map((cell) => {
+    //   cell[0] = validRow(row, cell[0], rightBoundary);
+    //   cell[1] = validCol(col, cell[1], bottomBoundary);
+    //   return cell;
+    // });
+    // for (let i = 0; i < neighborCells.length; i++) {
+    //   drawBlock(neighborCells[i][0], neighborCells[i][1], this.game.ctx, i);
+    // }
   }
 
   changeDirection(key: string) {

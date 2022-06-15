@@ -42,7 +42,7 @@ export class ForceField {
     height: number,
     ctx: CanvasRenderingContext2D,
     stars: Position[],
-    meteorites: Position[]
+    meteorites: Position[],
   ) {
     this.horBlocks = width / this.blockSize;
     this.verBlocks = height / this.blockSize;
@@ -131,7 +131,7 @@ export class ForceField {
       row,
       col,
       degree,
-      this.forcefield
+      this.forcefield,
     );
     return neighborForces;
   }
@@ -147,7 +147,7 @@ export class ForceField {
           const forces = this.getNeighborForces(
             i * this.blockSize,
             j * this.blockSize,
-            90
+            90,
           );
           let d = forces[0] - forces[1];
           d = Math.floor(sigmoid(d) * 256);
@@ -156,7 +156,7 @@ export class ForceField {
             i * this.blockSize,
             j * this.blockSize,
             this.blockSize,
-            this.blockSize
+            this.blockSize,
           );
         } else {
           const value = Math.floor((this.forcefield[i][j] + 1) * 128);
@@ -165,7 +165,7 @@ export class ForceField {
             i * this.blockSize,
             j * this.blockSize,
             this.blockSize,
-            this.blockSize
+            this.blockSize,
           );
         }
       }

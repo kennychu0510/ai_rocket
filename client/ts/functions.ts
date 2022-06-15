@@ -93,12 +93,11 @@ export function validCol(n: number, sign: number, boundary: number) {
   }
 }
 
-
 export function drawBlock(
   i: number,
   j: number,
   ctx: CanvasRenderingContext2D,
-  c: number
+  c: number,
 ) {
   ctx.fillStyle = `rgb${16 + c * 20}, ${16 + c * 20}, ${16 + c * 20}`;
   ctx.fillRect(i * blockSize, j * blockSize, blockSize, blockSize);

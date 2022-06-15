@@ -3,8 +3,8 @@ import { getDOMElement } from './functions.js';
 const canvas = getDOMElement('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 export class BgStar {
   x = 0;
   y = 0;
