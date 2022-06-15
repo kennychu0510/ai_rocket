@@ -5,11 +5,11 @@ body {
 }
 
 body {
-  margin: 0;
-  background: linear-gradient(45deg, #49a09d, #5f2c82);
-  background-image: url('/media/space_background.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+ margin: 0; 
+  /* background: linear-gradient(45deg, #49a09d, #5f2c82); */
+  /* background-image: url('/media/space_background.png'); */
+  /* background-repeat: no-repeat;
+  background-size: cover;  */
   font-family: sans-serif;
   font-weight: 100;
 }
@@ -19,6 +19,14 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+canvas{
+  position: absolute;
+  
+  
+  width: 100vw;
+  height: 100vh;
+  
 }
 
 h1 {

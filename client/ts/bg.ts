@@ -1,3 +1,8 @@
+import { getDOMElement } from "./functions.js";
+
+console.log('123')
+const canvas = getDOMElement('canvas') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d')!;
 
 export class BgStar {
   x = 0;
@@ -13,7 +18,7 @@ export class BgStar {
     this.ctx = ctx;
   }
   update() {
-    this.z -= 10;
+    this.z -= 50;
     if (this.z <= 0) this.reset()
   }
   reset(){
@@ -26,12 +31,28 @@ export class BgStar {
     this.offsetY = 100 * (this.y / this.z); 
     this.scalesZ = 0.0001 * (2000 - this.z);
     this.ctx.beginPath()
-    this.ctx.arc(this.offsetX, this.offsetY, 3, 0, Math.PI * 2)
+    this.ctx.arc(this.offsetX, this.offsetY, 1, 0, Math.PI * 2)
     this.ctx.fillStyle = 'white'
     this.ctx.fill()
   }
 }
-
+let stars:BgStar[] = []
+for(let i = 0; i <100; i++) { 
+  stars.push(new BgStar(ctx))
+}
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle =  'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.translate(canvas.width/2, canvas.height/2);
+  for (let star of stars) {
+     star.draw();
+     star.update();
+  }
+ 
+}
+animate();
 // console.log("hello");
 
 // let stars = []
