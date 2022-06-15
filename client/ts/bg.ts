@@ -37,7 +37,7 @@ export class BgStar {
   }
 }
 let stars:BgStar[] = []
-for(let i = 0; i <100; i++) { 
+for(let i = 0; i <500; i++) { 
   stars.push(new BgStar(ctx))
 }
 function animate() {
@@ -50,7 +50,7 @@ function animate() {
      star.draw();
      star.update();
   }
- 
+  ctx.translate(-canvas.width/2, -canvas.height/2)
 }
 animate();
 // console.log("hello");
