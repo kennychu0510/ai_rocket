@@ -200,15 +200,15 @@ trainBtn.addEventListener('click', () => {
 
 canvas.addEventListener('click', (e) => {
   const leftOffset = canvas.getBoundingClientRect().left;
-  const botOffset = scoreboard.getBoundingClientRect().bottom;
+  const botOffset = canvas.getBoundingClientRect().top;
   if (addStarModeOn) {
     const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2;
-    const y = e.clientY - botOffset - starSizeRatio * canvas.width;
+    const y = e.clientY - botOffset - (starSizeRatio * canvas.width) / 2;
     const position = { x, y };
     game.addStar(position);
   } else if (addMeteoriteModeOn) {
     const x = e.clientX - leftOffset - (meteoriteSizeRatio * canvas.width) / 2;
-    const y = e.clientY - botOffset - (meteoriteSizeRatio * canvas.width) / 1.5;
+    const y = e.clientY - botOffset - (meteoriteSizeRatio * canvas.width) / 2;
     const position = { x, y };
     game.addMeteorite(position);
   } else if (addBlackholeModeOn) {
@@ -327,8 +327,8 @@ customMapDropdown.addEventListener('change', () => {
   }
   const x = +customMapDropdown.value;
   const res = maps.filter((x: any) => x.id == +customMapDropdown.value);
-  console.log('res', res);
-  console.log(res[0].stars);
+  // console.log('res', res);
+  // console.log(res[0].stars);
   genGameMap(
     res[0].stars,
     res[0].meteorites,

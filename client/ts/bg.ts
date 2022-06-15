@@ -1,9 +1,10 @@
 import { getDOMElement } from './functions.js';
 
-console.log('123');
 const canvas = getDOMElement('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
 
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
 export class BgStar {
   x = 0;
   y = 0;
@@ -18,7 +19,7 @@ export class BgStar {
     this.ctx = ctx;
   }
   update() {
-    this.z -= 100;
+    this.z -= 25;
     if (this.z <= 0) this.reset();
   }
   reset() {
@@ -31,13 +32,13 @@ export class BgStar {
     this.offsetY = 100 * (this.y / this.z);
     this.scalesZ = 0.0001 * (2000 - this.z);
     this.ctx.beginPath();
-    this.ctx.arc(this.offsetX, this.offsetY, 0.5, 0, Math.PI * 2);
+    this.ctx.arc(this.offsetX, this.offsetY, 1.5, 0, Math.PI * 2);
     this.ctx.fillStyle = 'white';
     this.ctx.fill();
   }
 }
 const stars: BgStar[] = [];
-for (let i = 0; i < 500; i++) {
+for (let i = 0; i < 100; i++) {
   stars.push(new BgStar(ctx));
 }
 function animate() {
@@ -53,6 +54,7 @@ function animate() {
   ctx.translate(-canvas.width / 2, -canvas.height / 2);
 }
 animate();
+
 // console.log("hello");
 
 // let stars = []

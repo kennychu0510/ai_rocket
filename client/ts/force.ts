@@ -8,6 +8,8 @@ const ctx = canvas.getContext('2d')!;
 canvas.height = Math.floor((window.innerHeight * 0.78) / 100) * 100;
 canvas.width = canvas.height * 2.2;
 
+export const blockSize = 20;
+
 /* TEST */
 const stars = [
   { x: 100, y: 100 },
@@ -27,7 +29,7 @@ export class ForceField {
   public verticalGradient: number[][];
   public stars: Position[];
   private meteorites: Position[];
-  public blockSize = 20;
+  public blockSize = blockSize;
   public horBlocks = 0;
   public verBlocks = 0;
   private maxValue = 255;
@@ -40,7 +42,7 @@ export class ForceField {
     height: number,
     ctx: CanvasRenderingContext2D,
     stars: Position[],
-    meteorites: Position[],
+    meteorites: Position[]
   ) {
     this.horBlocks = width / this.blockSize;
     this.verBlocks = height / this.blockSize;
@@ -129,7 +131,7 @@ export class ForceField {
       row,
       col,
       degree,
-      this.forcefield,
+      this.forcefield
     );
     return neighborForces;
   }
@@ -145,7 +147,7 @@ export class ForceField {
           const forces = this.getNeighborForces(
             i * this.blockSize,
             j * this.blockSize,
-            90,
+            90
           );
           let d = forces[0] - forces[1];
           d = Math.floor(sigmoid(d) * 256);
@@ -154,7 +156,7 @@ export class ForceField {
             i * this.blockSize,
             j * this.blockSize,
             this.blockSize,
-            this.blockSize,
+            this.blockSize
           );
         } else {
           const value = Math.floor((this.forcefield[i][j] + 1) * 128);
@@ -163,7 +165,7 @@ export class ForceField {
             i * this.blockSize,
             j * this.blockSize,
             this.blockSize,
-            this.blockSize,
+            this.blockSize
           );
         }
       }
@@ -227,11 +229,11 @@ class ForceCalculator {
   }
 
   private directionToNeighborCells(degree: number) {
-    const neighborForces = [];
+    const neighborCells = [];
     for (let i = 0; i < 8; i++) {
-      neighborForces.push(this.directionToRowCol(degree + 45 * i));
+      neighborCells.push(this.directionToRowCol(degree + 45 * i));
     }
-    return neighborForces;
+    return neighborCells;
   }
 
   getNeighborForces(

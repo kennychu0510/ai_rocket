@@ -1,4 +1,5 @@
-const { floor, random } = Math;
+const { floor, random, round, sqrt, sin, cos } = Math;
+import { blockSize } from './force.js';
 import { Game } from './game.js';
 
 export function getDOMElement(element: string) {
@@ -46,4 +47,59 @@ export function randomBool(prob: number): boolean {
 
 export function sigmoid(n: number) {
   return 1 / (1 + Math.exp(-n));
+}
+
+function directionToRow(degree: number) {
+  const radians = degreeToRadian(degree);
+  return round(cos(radians) * sqrt(2) * -2);
+}
+
+function directionToCol(degree: number) {
+  const radians = degreeToRadian(degree);
+  return round(sin(radians) * sqrt(2) * 2);
+}
+
+export function directionToRowCol(degree: number) {
+  return [directionToRow(degree), directionToCol(degree)];
+}
+
+export function directionToNeighborCells(degree: number) {
+  const neighborCells = [];
+  for (let i = 0; i < 8; i++) {
+    neighborCells.push(directionToRowCol(degree + 45 * i));
+  }
+  return neighborCells;
+}
+
+export function validRow(n: number, sign: number, boundary: number) {
+  n += sign;
+  if (n < 0) {
+    return boundary - sign;
+  } else if (n >= boundary) {
+    return 0;
+  } else {
+    return n;
+  }
+}
+
+export function validCol(n: number, sign: number, boundary: number) {
+  n += sign;
+  if (n < 0) {
+    return boundary - sign;
+  } else if (n >= boundary) {
+    return 0;
+  } else {
+    return n;
+  }
+}
+
+
+export function drawBlock(
+  i: number,
+  j: number,
+  ctx: CanvasRenderingContext2D,
+  c: number
+) {
+  ctx.fillStyle = `rgb${16 + c * 20}, ${16 + c * 20}, ${16 + c * 20}`;
+  ctx.fillRect(i * blockSize, j * blockSize, blockSize, blockSize);
 }

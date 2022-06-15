@@ -133,7 +133,10 @@ input {
 #score>*,
 #life>*
 #meteorite>*,
-#blackhole>* {
+#blackhole>*,
+#life-mode>*,
+#meteorite-mode>*,
+#blackhole-mode>* {
   margin-right: 5px;
 }
 

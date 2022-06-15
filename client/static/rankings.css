@@ -5,7 +5,7 @@ body {
 }
 
 body {
- margin: 0; 
+  margin: 0;
   /* background: linear-gradient(45deg, #49a09d, #5f2c82); */
   /* background-image: url('/media/space_background.png'); */
   /* background-repeat: no-repeat;
@@ -20,13 +20,14 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-canvas{
+
+canvas {
   position: absolute;
-  
-  
+
+
   width: 100vw;
   height: 100vh;
-  
+
 }
 
 h1 {
@@ -55,19 +56,25 @@ td {
   color: #fff;
   font-weight: bold;
   text-align: center;
-  border: 2px solid #55608f;
+  border: 2px solid black;
 }
 
 th {
   text-align: center;
-
+  padding: 5px;
 }
 
-tr:hover {background-color: #55608f;}
+tr:hover {
+  background-color: #55608f;
+}
 
 #bottom-panel {
   margin-right: 10px;
   margin-top: 10px;
   display: flex;
   justify-content: center;
+}
+
+#level {
+  margin-bottom: 10px
 }

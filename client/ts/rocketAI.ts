@@ -1,4 +1,5 @@
-import { degreeToRadian, randomBool } from './functions.js';
+import { blockSize } from './force.js';
+import { degreeToRadian, directionToNeighborCells, drawBlock, randomBool, validCol, validRow } from './functions.js';
 import { Game } from './game.js';
 import { NeuralRocket } from './neuralRocket.js';
 import { Rocket } from './rocket.js';
@@ -14,6 +15,7 @@ export class RocketAI extends Rocket {
   bias: number[];
   public isBest = false;
   cellsTraveled = new Map<number, number>();
+  private drawSensor = false;
 
   // private color: RocketColor;
   constructor(game: Game, rocketTrainer: RocketTrainer) {
@@ -195,6 +197,21 @@ export class RocketAI extends Rocket {
       this.width,
       this.height,
     );
+    if (this.isBest && this.drawSensor) {
+      const row = floor(this.position.x / blockSize)
+      const col = floor(this.position.y / blockSize)
+      const rightBoundary = this.game.canvasWidth / blockSize
+      const bottomBoundary = this.game.canvasHeight / blockSize
+
+      const neighborCells = directionToNeighborCells(this.angle).map(cell => {
+        cell[0] = validRow(row, cell[0], rightBoundary)
+        cell[1] = validCol(col, cell[1], bottomBoundary)
+        return cell
+      })
+      for (let i = 0; i < neighborCells.length; i++) {
+        drawBlock(neighborCells[i][0], neighborCells[i][1], this.game.ctx, i);
+      }
+    }
   }
   getCurrentPositionIndex() {
     const x = Math.floor(this.position.x / 20);
@@ -222,3 +239,5 @@ function randomColor() {
 }
 
 const getMax = (a: number, b: number) => Math.max(a, b);
+
+
