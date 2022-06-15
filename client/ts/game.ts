@@ -67,8 +67,8 @@ export class Game {
         imageAlt: 'Game Over',
         confirmButtonText: 'Continue',
       }).then(() => {
-        this.reset();
-      });
+        location.reload();
+        })
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');

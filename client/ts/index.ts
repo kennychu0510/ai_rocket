@@ -52,6 +52,8 @@ const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 const life = getDOMElement('#life');
+const meteorite = getDOMElement('#meteorite');
+const blackhole = getDOMElement('#blackhole');
 const totalMeteorite = getDOMElement('#total-meteorite');
 const totalBlackhole = getDOMElement('#total-blackhole');
 
@@ -504,6 +506,8 @@ seedBtn.addEventListener('click', () => {
   scoreOrRockets.appendChild(rocketImg);
   aiStats.classList.remove('hidden');
   life.classList.add('hidden');
+  meteorite.classList.add('hidden');
+  blackhole.classList.add('hidden');
   seedBtn.setAttribute('disabled', 'disabled');
 
   // aiStats.classList.add('active');
