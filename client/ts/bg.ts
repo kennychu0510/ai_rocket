@@ -18,7 +18,7 @@ export class BgStar {
     this.ctx = ctx;
   }
   update() {
-    this.z -= 50;
+    this.z -= 100;
     if (this.z <= 0) this.reset()
   }
   reset(){
@@ -31,7 +31,7 @@ export class BgStar {
     this.offsetY = 100 * (this.y / this.z); 
     this.scalesZ = 0.0001 * (2000 - this.z);
     this.ctx.beginPath()
-    this.ctx.arc(this.offsetX, this.offsetY, 1, 0, Math.PI * 2)
+    this.ctx.arc(this.offsetX, this.offsetY, 0.5, 0, Math.PI * 2)
     this.ctx.fillStyle = 'white'
     this.ctx.fill()
   }
