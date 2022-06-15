@@ -6,6 +6,7 @@ export const starSizeRatio = 0.015;
 
 export class Star {
   public position: Position;
+  public id: string;
   private image: HTMLImageElement;
   public size: number;
   private ctx: CanvasRenderingContext2D;
@@ -18,6 +19,7 @@ export class Star {
     this.image = starImg;
     this.size = starSizeRatio * canvasWidth;
     this.ctx = ctx;
+    this.id = this.position.x + ',' + this.position.y;
   }
 
   draw() {

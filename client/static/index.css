@@ -9,7 +9,11 @@ body {
 html,
 body,
 #app {
-  height: 100%;
+  height: 100% !important;
+}
+
+body.swal2-height-auto {
+  height: 100% !important;
 }
 
 #app {
@@ -74,7 +78,10 @@ input {
   width: 50px;
 }
 
-#speed-up {
+#speed-up,
+#neural-network,
+#show-forces,
+#save-best {
   width: fit-content;
 }
 

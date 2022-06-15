@@ -38,3 +38,12 @@ export function genTeleportMap(n: number): Array<number> {
   }
   return map;
 }
+
+// If prob is greater, chance of true is greater
+export function randomBool(prob: number): boolean {
+  return random() < prob;
+}
+
+export function sigmoid(n: number) {
+  return 1 / (1 + Math.exp(-n));
+}

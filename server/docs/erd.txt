@@ -34,8 +34,10 @@ ai_rocket
 ---------
 id pk
 name varchar(255)
+type varchar(30)
 map_id fk >- map.id
 fitness
-moves text
+genes text
 stars
 total_moves
+bias text null

@@ -32,6 +32,9 @@ const healthReward = getDOMElement('#health-reward') as HTMLInputElement;
 const stepsReward = getDOMElement('#steps-reward') as HTMLInputElement;
 const turnReward = getDOMElement('#turn-reward') as HTMLInputElement;
 const forwardReward = getDOMElement('#forward-reward') as HTMLInputElement;
+const brightnessReward = getDOMElement(
+  '#brightness-reward',
+) as HTMLInputElement;
 const addStarBtn = getDOMElement('#add-star');
 const resetBtn = getDOMElement('#reset');
 const rankingsBtn = getDOMElement('#rankings');
@@ -45,10 +48,11 @@ const canvasContainer = getDOMElement('#canvas-container');
 const scoreOrRockets = getDOMElement('#score-mode');
 const aiStats = getDOMElement('#ai-stats');
 const trainBtn = getDOMElement('#train');
-const loadRocketBtn = getDOMElement('#load-rocket');
 const launchRocketBtn = getDOMElement('#launch-rocket');
 const speedUp = getDOMElement('#speed-up') as HTMLInputElement;
+const saveBest = getDOMElement('#save-best') as HTMLInputElement;
 const score = getDOMElement('#score');
+const timeTravel = getDOMElement('#time-travel');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 const life = getDOMElement('#life');
@@ -56,6 +60,8 @@ const meteorite = getDOMElement('#meteorite');
 const blackhole = getDOMElement('#blackhole');
 const totalMeteorite = getDOMElement('#total-meteorite');
 const totalBlackhole = getDOMElement('#total-blackhole');
+const neuralNetworkMode = getDOMElement('#neural-network') as HTMLInputElement;
+const showForces = getDOMElement('#show-forces') as HTMLInputElement;
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -67,7 +73,8 @@ const timerSeconds = getDOMElement('#second');
 
 /* CANVAS */
 const canvasOffset = 10;
-canvas.height = window.innerHeight * 0.78 - canvasOffset;
+canvas.height =
+  Math.floor((window.innerHeight * 0.78 - canvasOffset) / 100) * 100;
 canvas.width = canvas.height * 2.2;
 // console.log(canvas.width, canvas.height);
 // console.log('canvas ratio: ' + canvas.width / canvas.height);
@@ -83,7 +90,7 @@ const gameStarted = false;
 // const trackLeftBound = boundaryOffset;
 // const trackRightBound = canvas.width - boundaryOffset;
 
-const boundaryOffset = 20;
+const boundaryOffset = 0;
 const domElements: gameDOMelements = {
   totalScore,
   currentScore,
@@ -94,6 +101,7 @@ const domElements: gameDOMelements = {
   life,
   totalMeteorite,
   totalBlackhole,
+  saveBest,
 };
 
 const gameBoundaries: GameBoundary = {
@@ -104,6 +112,8 @@ const gameBoundaries: GameBoundary = {
 };
 
 speedUp.checked = false;
+neuralNetworkMode.checked = false;
+showForces.checked = false;
 /* SET UP NEW GAME */
 const game = new Game(canvas, gameBoundaries, domElements);
 
@@ -114,7 +124,8 @@ function animate() {
 
   if (speedUp.checked) {
     if (!game.startAI) return;
-    for (let i = 0; i < 50 * 100 * 30; i++) {
+    const gen = game.rocketTrainer.neuralNetworkMode ? 25 : 50;
+    for (let i = 0; i < gen * 100 * 30; i++) {
       game.update();
     }
     game.startAI = false;
@@ -183,7 +194,8 @@ resetBtn.addEventListener('click', () => {
 trainBtn.addEventListener('click', () => {
   population.setAttribute('disabled', 'disabled');
   moves.setAttribute('disabled', 'disabled');
-  game.rocketGA.train();
+  // timeTravel.classList.remove('hidden');
+  game.rocketTrainer.train();
 });
 
 canvas.addEventListener('click', (e) => {
@@ -216,23 +228,25 @@ GAME SETTINGS
 rocketSpeed.value = String(Math.round(game.userRocket.stats().acceleration));
 // game.userRocket.changeAcceleration(Number(rocketSpeed.value));
 // population.value = String(game.rocketGA.populationSize);
-game.rocketGA.populationSize = Number(population.value);
-moves.value = String(game.rocketGA.moves);
-game.rocketGA.moves = Number(moves.value);
+game.rocketTrainer.populationSize = Number(population.value);
+moves.value = String(game.rocketTrainer.moves);
+game.rocketTrainer.moves = Number(moves.value);
 // survivalRate.value = String(game.rocketGA.survivalRate);
-game.rocketGA.survivalRate = Number(survivalRate.value);
+game.rocketTrainer.survivalRate = Number(survivalRate.value);
 // mutationRate.value = String(game.rocketGA.mutationRate);
-game.rocketGA.mutationRate = Number(mutationRate.value);
+game.rocketTrainer.mutationRate = Number(mutationRate.value);
 // starsReward.value = String(game.rocketGA.starsReward);
-game.rocketGA.starsReward = Number(starsReward.value);
+game.rocketTrainer.starsReward = Number(starsReward.value);
 // healthReward.value = String(game.rocketGA.healthReward);
-game.rocketGA.healthReward = Number(healthReward.value);
+game.rocketTrainer.healthReward = Number(healthReward.value);
 // stepsReward.value = String(game.rocketGA.stepsReward);
-game.rocketGA.stepsReward = Number(stepsReward.value);
+game.rocketTrainer.stepsReward = Number(stepsReward.value);
 // turnReward.value = String(game.rocketGA.turnReward);
-game.rocketGA.turnReward = Number(turnReward.value);
+game.rocketTrainer.turnReward = Number(turnReward.value);
 // forwardReward.value = String(game.rocketGA.forwardReward);
-game.rocketGA.forwardReward = Number(forwardReward.value);
+game.rocketTrainer.forwardReward = Number(forwardReward.value);
+
+game.rocketTrainer.brightnessReward = Number(brightnessReward.value);
 
 rocketSpeed.addEventListener('change', () => {
   if (Number(rocketSpeed.value) <= 0) return;
@@ -242,50 +256,55 @@ rocketSpeed.addEventListener('change', () => {
 population.addEventListener('change', () => {
   const n = Number(population.value);
   if (n <= 0) return;
-  game.rocketGA.populationSize = n;
+  game.rocketTrainer.populationSize = n;
 });
 
 moves.addEventListener('change', () => {
   const n = Number(moves.value);
   if (n <= 0) return;
-  game.rocketGA.moves = n;
+  game.rocketTrainer.moves = n;
 });
 
 survivalRate.addEventListener('change', () => {
   const n = Number(survivalRate.value);
   if (n <= 0 || n > 1) return;
-  game.rocketGA.survivalRate = n;
+  game.rocketTrainer.survivalRate = n;
 });
 
 mutationRate.addEventListener('change', () => {
   const n = Number(mutationRate.value);
   if (n <= 0 || n > 1) return;
-  game.rocketGA.mutationRate = n;
+  game.rocketTrainer.mutationRate = n;
 });
 
 starsReward.addEventListener('change', () => {
   const n = Number(starsReward.value);
-  game.rocketGA.starsReward = n;
+  game.rocketTrainer.starsReward = n;
 });
 
 healthReward.addEventListener('change', () => {
   const n = Number(healthReward.value);
-  game.rocketGA.healthReward = n;
+  game.rocketTrainer.healthReward = n;
 });
 
 stepsReward.addEventListener('change', () => {
   const n = Number(stepsReward.value);
-  game.rocketGA.stepsReward = n;
+  game.rocketTrainer.stepsReward = n;
 });
 
 turnReward.addEventListener('change', () => {
   const n = Number(turnReward.value);
-  game.rocketGA.turnReward = n;
+  game.rocketTrainer.turnReward = n;
 });
 
 forwardReward.addEventListener('change', () => {
   const n = Number(forwardReward.value);
-  game.rocketGA.forwardReward = n;
+  game.rocketTrainer.forwardReward = n;
+});
+
+brightnessReward.addEventListener('change', () => {
+  const n = Number(brightnessReward.value);
+  game.rocketTrainer.brightnessReward = n;
 });
 
 boundaryModeBtn.addEventListener('click', () => {
@@ -399,13 +418,12 @@ easyMode.addEventListener('click', () => {
       // console.log(mapid);
       // console.log(typeof mapid);
     });
-  fetch(APIOrigin + '/rocketAI/mapID/1', {
+  fetch(APIOrigin + '/rocketAI/mapID/1/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -418,14 +436,18 @@ easyMode.addEventListener('click', () => {
 
 rocketAIdropdown.addEventListener('change', () => {
   if (rocketAIdropdown.value === '0') return;
-  console.log(rocketAIdropdown.value);
+  // console.log(rocketAIdropdown.value);
   fetch(APIOrigin + '/rocketAI/id/' + rocketAIdropdown.value, {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
-    .then((moves) => {
-      game.rocketGA.loadRocketAI(moves);
+    .then((results) => {
+      const genes = results.genes.split(',').map(Number);
+      const bias = results.bias.split(',').map(Number);
+      console.log(genes);
+      console.log(bias);
+      game.rocketTrainer.loadRocketAI(genes, bias, results.type);
     });
 });
 
@@ -445,14 +467,13 @@ normalMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
-
-  fetch(APIOrigin + '/rocketAI/mapID/2', {
+  fetch(APIOrigin + '/rocketAI/mapID/2/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -479,13 +500,13 @@ hardMode.addEventListener('click', () => {
       );
       game.mapID = json[0].id;
     });
-  fetch(APIOrigin + '/rocketAI/mapID/3', {
+  fetch(APIOrigin + '/rocketAI/mapID/3/aiMode/' + getAIMode(), {
     method: 'GET',
   })
     .then((res) => res.json())
     .catch((err) => ({ error: String(err) }))
     .then((json) => {
-      console.log(json);
+      // console.log(json);
       resetRocketAIDropdown();
       json.forEach((rocket: any) => {
         const rocket_ai = document.createElement('option');
@@ -533,7 +554,7 @@ seedBtn.addEventListener('click', () => {
 
 launchRocketBtn.addEventListener('click', () => {
   if (rocketAIdropdown.value === '0') return;
-  game.rocketGA.launchRocketAI();
+  game.rocketTrainer.launchRocketAI();
 });
 
 speedUp.addEventListener('change', function() {
@@ -541,6 +562,22 @@ speedUp.addEventListener('change', function() {
     score.classList.add('invisible');
   } else {
     score.classList.remove('invisible');
+  }
+});
+
+neuralNetworkMode.addEventListener('change', function() {
+  if (neuralNetworkMode.checked) {
+    game.rocketTrainer.neuralNetworkMode = true;
+  } else {
+    game.rocketTrainer.neuralNetworkMode = false;
+  }
+});
+
+showForces.addEventListener('change', () => {
+  if (showForces.checked) {
+    game.rocketTrainer.showForces = true;
+  } else {
+    game.rocketTrainer.showForces = false;
   }
 });
 
@@ -588,4 +625,9 @@ export function resetCustomMapDropdown() {
   defaultOption.value = '0';
   defaultOption.textContent = 'Custom Map';
   customMapDropdown.appendChild(defaultOption);
+}
+function getAIMode() {
+  return 'nn';
+  if (neuralNetworkMode.checked) return 'nn';
+  else return 'ga';
 }
