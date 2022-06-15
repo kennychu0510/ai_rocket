@@ -2,11 +2,7 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star, starSizeRatio } from './star.js';
-import {
-  GameBoundary,
-  gameDOMelements,
-  Position,
-} from './type.js';
+import { GameBoundary, gameDOMelements, Position } from './type.js';
 import { Meteorite, meteoriteSizeRatio } from './meteorite.js';
 import { Blackhole, blackholeSizeRatio } from './blackhole.js';
 import { RocketTrainer } from './rocketTrainer.js';
@@ -67,7 +63,7 @@ export class Game {
         confirmButtonText: 'Continue',
       }).then(() => {
         location.reload();
-        })
+      });
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
