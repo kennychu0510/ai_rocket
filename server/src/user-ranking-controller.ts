@@ -1,13 +1,19 @@
+import { log } from 'console';
 import { Request, Response } from 'express';
 import { UserRankingService } from './user-ranking-service'
 
 
 export class UserRankingController {
     constructor(private userRankingService: UserRankingService) { }
-
     get = async (req: Request, res: Response) => {
-        const getAddedResult = await this.userRankingService.getUserRanks();
-        console.log(getAddedResult);
-        res.json({ getAddedResult })
+    
+        const level = +req.query.level
+        const page = +req.query.page
+
+
+        const data = await this.userRankingService.getUserRanks(level, page);
+        console.log(data);
+        res.json({ data })
     }
+
 }

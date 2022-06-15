@@ -8,4 +8,5 @@ export const routes = express.Router();
 routes.get('/mode', mapController.get);
 routes.post('/map', mapController.create);
 routes.post('/scores', userController.create);
-routes.get('/scores', userRankingController.get);
+routes.get('/rankingForm', userRankingController.get);
+

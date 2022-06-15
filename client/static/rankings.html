@@ -9,33 +9,53 @@
     <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
 </head>
 
+
+
 <body>
-   
-
     <div class="container">
-    <h1>Rankings</h1> 
-    <table>
-        <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Time</th>
-            <th>Level</th>
-        </tr>
-        <tbody id="rankings">
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-        </tbody>
+        <h1>Rankings</h1>
+        <form action="" id="rankingForm">
+            <select name="level" id="level">
+                <option value="1">Easy</option>
+                <option value="2">Normal</option>
+                <option value="3">Hard</option>
+            </select>
+            <input type="number" name="page" hidden value="1" />
+            <button onclick="previous(event)">Back</button>
+            <button onclick="next(event)">Next</button>
 
-    </table>
-    <div id="bottom-panel"><a href="index.html"><button id="rankings">Return</button></a></div>
-</div>
-    
+            <table>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Level</th>
+                </tr>
+                <tbody id="rankings">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tbody>
+
+            </table>
+            
+
+        </form>
+        <div id="bottom-panel"><a href="index.html"><button id="rankings">Return</button></a></div>
+    </div>
+
     <link rel="stylesheet" href="rankings.css">
     <script type="module" src="/js/rankings.js"></script>
+    </script>
+    <script>
+  
+   
+    </script>
+
+
 
 </body>
 

@@ -3,55 +3,80 @@ import { getDOMElement } from './functions.js';
 
 const tbody = getDOMElement('#rankings')
 
+const rankingForm = getDOMElement('#rankingForm') as HTMLFormElement
 // Fetch ranking to display in frontend
-fetch(APIOrigin + '/scores', {
-  method: 'GET',
-})
-  .then((res) => res.json())
-  .catch((err) => ({ error: String(err) }))
-  .then((json) => {
 
-    let i = 1;
-    json.getAddedResult.forEach((record: { user: string; time: string; map_id: number; }) => {
+updateRankingTable(APIOrigin)
+ 
+  rankingForm.addEventListener('change', event => {
+    updateRankingTable(APIOrigin)
+    // loadData()
+  }
+  )
+  function loadData() {
+    console.log('Loading data...', {
+      level: rankingForm.level.value,
+      page: rankingForm.page.value,
+    })
+    let params = new URLSearchParams()
+    params.set('level', rankingForm.level.value)
+    params.set('page', rankingForm.page.value)
+    let url = '/rankingForm?' + params.toString()
+    console.log(url)
+    return url
+  }
 
-      // insert into table
-      let tr = document.createElement('tr')
-      let defaultRanking = document.createElement('td')
-      let td1 = document.createElement('td')
-      let td2 = document.createElement('td')
-      let td3 = document.createElement('td')
+  function nextPage(event: { preventDefault: () => void; }) {
+    event.preventDefault()
+    rankingForm.page.value++
+    loadData()
+  }
 
-      td1.textContent = record.user
-      td2.textContent = record.time
-      td3.textContent = (record.map_id === 1) ? 'Easy' : (record.map_id === 2) ? 'Normal' : 'Hard'
-      defaultRanking.innerHTML += i
+  function prevPage(event: { preventDefault: () => void; }) {
+    event.preventDefault()
+    rankingForm.page.value--
+    
+    loadData()
 
-      parseInt(defaultRanking.innerHTML)
-      tr.appendChild(defaultRanking)
-      tr.appendChild(td1)
-      tr.appendChild(td2)
-      tr.appendChild(td3)
-      tbody.appendChild(tr)
-      i++;
-    }
-    )
-  })
+  }
+  
+  function updateRankingTable(APIOrigin: string) {
+    tbody.innerHTML = ''
+    fetch(APIOrigin + loadData(), {
+      method: 'GET',
+    })
+      .then((res) => res.json())
+      .catch((err) => ({ error: String(err) }))
+      .then((json) => {
+        
+        let i = 1;
+        json.data.forEach((record: { user: string; time: string; map_id: number; }) => {
+    
+          // insert into table
+          let tr = document.createElement('tr')
+          let defaultRanking = document.createElement('td')
+          let td1 = document.createElement('td')
+          let td2 = document.createElement('td')
+          let td3 = document.createElement('td')
+    
+          td1.textContent = record.user
+          td2.textContent = record.time
+          td3.textContent = (record.map_id === 1) ? 'Easy' : (record.map_id === 2) ? 'Normal' : 'Hard'
+          defaultRanking.innerHTML += i
+    
+          parseInt(defaultRanking.innerHTML)
+          tr.appendChild(defaultRanking)
+          tr.appendChild(td1)
+          tr.appendChild(td2)
+          tr.appendChild(td3)
+          tbody.appendChild(tr)
+          i++;
+        }
+        )
+      })
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 
