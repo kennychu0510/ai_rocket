@@ -115,14 +115,14 @@ export class Game {
 
   addMeteorite(position: Position) {
     const size = meteoriteSizeRatio * this.canvasWidth * 1.3;
-    // for (let i = 0; i < this.meteorites.length; i++) {
-    //   const nMPosition = this.meteorites[i].position;
-    //   const dx = Math.abs(nMPosition.x - position.x);
-    //   const dy = Math.abs(nMPosition.y - position.y);
-    //   if (dx < size && dy < size) {
-    //     return Swal.fire('Meteorite position too close !');
-    //   }
-    // }
+    for (let i = 0; i < this.meteorites.length; i++) {
+      const nMPosition = this.meteorites[i].position;
+      const dx = Math.abs(nMPosition.x - position.x);
+      const dy = Math.abs(nMPosition.y - position.y);
+      if (dx < size && dy < size) {
+        return Swal.fire('Meteorite position too close !');
+      }
+    }
     const newMeteorite = new Meteorite(position, this.canvasWidth, this.ctx);
     this.meteorites.push(newMeteorite);
     this.totalMeteorites++;
