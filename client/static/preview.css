@@ -1,0 +1,72 @@
+body {
+  background-image: url('/media/space_background.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+}
+
+#top {
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 24px;
+}
+#map {
+  display: flex;
+}
+#map>* {
+  margin-right: 5px;
+}
+#map-img {
+  height: 30px;
+}
+
+#canvas-container {
+  flex-grow: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.box {
+  margin: 1rem;
+  width: 320px;
+  height: 250px;
+  background-color: white;
+  color: black;
+  font-size: 25px;
+}
+
+#info {
+  display: flex;
+  font-size: 2rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#status {
+  display: flex;
+}
+
+#play {
+  padding:  5px;
+}
+#star-img {
+  height: 23px;
+  padding: 5px;
+}
+
+#blackhole-img {
+  height: 25px;
+  padding: 5px;
+}
+
+#meteorite-img {
+  height: 30px;
+  padding: 5px;
+}
