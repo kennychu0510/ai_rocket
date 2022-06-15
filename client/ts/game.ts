@@ -19,6 +19,8 @@ export class Game {
   public gameInstructions: CanvasText;
   public startTime: number;
   public totalStars: number;
+  public totalMeteorites: number;
+  public totalBlackHoles: number;
   public canvasWidth: number;
   public canvasHeight: number;
   public gameOnGoing: boolean;
@@ -87,6 +89,8 @@ export class Game {
     this.blackholes = [];
     this.buttons = ['w', 's', 'd', 'a'];
     this.totalStars = 0;
+    this.totalMeteorites = 0;
+    this.totalBlackHoles = 0;
     this.rocketGA = new RocketGA(this);
     this.startAI = false;
     this.domElements = domElements;
@@ -111,16 +115,18 @@ export class Game {
 
   addMeteorite(position: Position) {
     const size = meteoriteSizeRatio * this.canvasWidth * 1.3;
-    for (let i = 0; i < this.meteorites.length; i++) {
-      const nMPosition = this.meteorites[i].position;
-      const dx = Math.abs(nMPosition.x - position.x);
-      const dy = Math.abs(nMPosition.y - position.y);
-      if (dx < size && dy < size) {
-        return Swal.fire('Meteorite position too close !');
-      }
-    }
+    // for (let i = 0; i < this.meteorites.length; i++) {
+    //   const nMPosition = this.meteorites[i].position;
+    //   const dx = Math.abs(nMPosition.x - position.x);
+    //   const dy = Math.abs(nMPosition.y - position.y);
+    //   if (dx < size && dy < size) {
+    //     return Swal.fire('Meteorite position too close !');
+    //   }
+    // }
     const newMeteorite = new Meteorite(position, this.canvasWidth, this.ctx);
     this.meteorites.push(newMeteorite);
+    this.totalMeteorites++;
+    this.domElements.totalMeteorite.textContent = String(this.totalMeteorites);
   }
 
   addBlackhole(position: Position) {
@@ -135,6 +141,8 @@ export class Game {
     }
     const newBlackhole = new Blackhole(position, this.canvasWidth, this.ctx);
     this.blackholes.push(newBlackhole);
+    this.totalBlackHoles++;
+    this.domElements.totalBlackhole.textContent = String(this.totalBlackHoles)
   }
 
   startGame() {
@@ -244,6 +252,7 @@ export class Game {
     this.meteorites = [];
     this.blackholes = [];
     this.totalStars = 0;
+    this.totalMeteorites = 0;
     this.gameOnGoing = false;
     // this.userRocket.changeAcceleration(1 * this.canvasWidth);
     this.rocketGA.reset();
@@ -251,6 +260,7 @@ export class Game {
     this.domElements.timerSeconds.textContent = '00';
     this.domElements.totalScore.textContent = '0';
     this.domElements.currentScore.textContent = '0';
+    this.domElements.totalMeteorite.textContent = '0';
     this.time = 0;
     // console.log({ x: this.canvasWidth / 10, y: this.canvasHeight / 4 });
     // console.log(this.initialPosition);

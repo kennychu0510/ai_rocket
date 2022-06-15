@@ -52,6 +52,8 @@ const score = getDOMElement('#score');
 const rocketAIdropdown = getDOMElement('#select-rocket') as HTMLSelectElement;
 const customMapDropdown = getDOMElement('#custom-map') as HTMLSelectElement;
 const life = getDOMElement('#life');
+const totalMeteorite = getDOMElement('#total-meteorite');
+const totalBlackhole = getDOMElement('#total-blackhole');
 
 const _scoreboard = document.querySelector('#scoreboard');
 if (!_scoreboard) throw new Error('score-board not found');
@@ -88,6 +90,8 @@ const domElements: gameDOMelements = {
   timerSeconds,
   aiStats,
   life,
+  totalMeteorite,
+  totalBlackhole
 };
 
 const gameBoundaries: GameBoundary = {

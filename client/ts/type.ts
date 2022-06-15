@@ -23,6 +23,8 @@ export type gameDOMelements = {
   timerSeconds: Element;
   aiStats: Element;
   life: Element;
+  totalMeteorite: Element;
+  totalBlackhole: Element;
 };
 
 export type RocketColor = [r: number, g: number, b: number];

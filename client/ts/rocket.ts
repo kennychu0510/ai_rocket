@@ -209,7 +209,11 @@ export class Rocket {
       this.finishTime = time;
       this.onDie();
     }
-    this.game.domElements.currentLife.textContent = String(this.health);
+    let x = String(this.health);
+    this.game.domElements.currentLife.textContent = x;
+    if (x < "0"){
+      return this.game.domElements.currentLife.textContent = "0"
+    }
   }
 
   setTeleportationTimeout() {

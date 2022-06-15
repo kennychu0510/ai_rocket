@@ -87,13 +87,22 @@ input {
   margin-right: 5px;
 }
 
-#star-img,
+#star-img {
+  height: 23px;
+}
 #life-img,
+#blackhole-img,
 #clock-img {
   height: 25px;
 }
 
-#life-img {
+#meteorite-img {
+  height: 30px;
+}
+
+#life-img,
+#meteorite-img,
+#blackhole-img {
   padding-left: 2rem;
 }
 
@@ -105,13 +114,19 @@ input {
 #life,
 #ai-stats,
 #score-mode,
-#life-mode {
+#life-mode,
+#meteorite,
+#meteorite-mode,
+#blackhole,
+#blackhole-mode {
   display: flex;
   align-items: center;
 }
 
 #score>*,
-#life>* {
+#life>*
+#meteorite>*,
+#blackhole>* {
   margin-right: 5px;
 }
 
