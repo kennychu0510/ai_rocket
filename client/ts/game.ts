@@ -57,9 +57,18 @@ export class Game {
     );
     this.userRocket = new Rocket(this);
     this.userRocket.onDie = () => {
-      this.statusMessage.updateMsg('Game Over');
+      // this.statusMessage.updateMsg('Game Over');
       this.gameEnd = true;
       this.stopGame();
+      Swal.fire({
+        imageUrl: './media/boom.gif',
+        imageWidth: 400,
+        imageHeight: 400,
+        imageAlt: 'Game Over',
+        confirmButtonText:'Continue'
+      }).then(() => {
+        this.reset();
+        })
     };
     this.userRocket.onFinish = () => {
       this.statusMessage.updateMsg('Well Done!');
