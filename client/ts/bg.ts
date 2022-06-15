@@ -50,7 +50,7 @@ function animate() {
      star.draw();
      star.update();
   }
- 
+ ctx.translate(-canvas.width/2, -canvas.height/2)
 }
 animate();
 // console.log("hello");
