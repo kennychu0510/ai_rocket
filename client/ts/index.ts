@@ -354,7 +354,6 @@ function genGameMap(
   game.teleportMap = blackholeMap;
   // window.prompt('d')
   totalScore.textContent = String(starsArr.length);
-  game.rocketTrainer.makeAllPaths();
 }
 easyMode.addEventListener('click', () => {
   fetch(APIOrigin + '/mode?diff=easy', {

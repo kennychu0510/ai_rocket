@@ -30,55 +30,45 @@ export class NeuralRocket extends RocketAI {
     for (let i = 0; i < this.rocketTrainer.neutralNetwork.outputNodes; i++) {
       this.bias.push(random() * 2 - 1);
     }
-    const stars = this.stars.map((star) => star.position);
-    const meteorites = this.game.meteorites.map(
-      (meteorite) => meteorite.position,
-    );
-    this.forceField = new ForceField(
-      this.game.canvasWidth,
-      this.game.canvasHeight,
-      this.game.ctx,
-      stars,
-      meteorites,
-    );
+    this.forceField = this.rocketTrainer.getForceField(this.mapID);
   }
   /* Take in force from four directions */
-  move1() {
-    if (this.health <= 0 || this.isCollectedAllStars()) {
-      return;
-    }
-    let forces = this.rocketTrainer.forcefields[0].getNeighborForces(
-      this.position.x,
-      this.position.y,
-      this.angle,
-    );
-    console.log(forces);
-    if (forces[0] === forces[1]) {
-      this.numOfForward++;
-      {
-        const x_direction =
-          this.acceleration * Math.sin(degreeToRadian(this.angle));
-        const y_direction =
-          -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
-        this.velocity.x = x_direction;
-        this.velocity.y = y_direction;
-        this.flyingTimeout = 10;
-      }
-    } else {
-      forces = this.rocketTrainer.neutralNetwork.compute(
-        forces,
-        this.genes,
-        this.bias,
-      );
-      if (forces[0] > forces[1]) {
-        this.angle -= this.turn;
-        this.numOfTurns++;
-      } else {
-        this.angle += this.turn;
-        this.numOfTurns++;
-      }
-    }
-  }
+  // move1() {
+  //   if (this.health <= 0 || this.isCollectedAllStars()) {
+  //     return;
+  //   }
+  //   let forces = this.rocketTrainer.forcefields[0].getNeighborForces(
+  //     this.position.x,
+  //     this.position.y,
+  //     this.angle,
+  //   );
+  //   console.log(forces);
+  //   if (forces[0] === forces[1]) {
+  //     this.numOfForward++;
+  //     {
+  //       const x_direction =
+  //         this.acceleration * Math.sin(degreeToRadian(this.angle));
+  //       const y_direction =
+  //         -this.acceleration * Math.sin(degreeToRadian(90 - this.angle));
+  //       this.velocity.x = x_direction;
+  //       this.velocity.y = y_direction;
+  //       this.flyingTimeout = 10;
+  //     }
+  //   } else {
+  //     forces = this.rocketTrainer.neutralNetwork.compute(
+  //       forces,
+  //       this.genes,
+  //       this.bias,
+  //     );
+  //     if (forces[0] > forces[1]) {
+  //       this.angle -= this.turn;
+  //       this.numOfTurns++;
+  //     } else {
+  //       this.angle += this.turn;
+  //       this.numOfTurns++;
+  //     }
+  //   }
+  // }
 
   move() {
     if (this.health <= 0 || this.isCollectedAllStars()) {
@@ -166,13 +156,8 @@ export class NeuralRocket extends RocketAI {
     return this.genes;
   }
 
-  calForceField() {
-    const starsPostion = this.stars.map((star) => star.position);
-    this.forceField.updateStars(starsPostion);
-  }
-
   checkStarCollection(time: number) {
     super.checkStarCollection(time);
-    this.calForceField();
+    this.forceField = this.rocketTrainer.getForceField(this.mapID);
   }
 }

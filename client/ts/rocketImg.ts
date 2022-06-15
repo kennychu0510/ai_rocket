@@ -7,11 +7,13 @@ const A = 3;
 
 export class UserRocketImg {
   image = new Image();
+  srcImage = new Image();
   constructor() {
     // Do Nothing
   }
   setSrc(src: string, size: { width: number; height: number }) {
     this.image.src = src;
+    this.srcImage.src = src;
   }
   updateImgData() {
     // Do Nothing
@@ -38,6 +40,7 @@ export class RocketImg extends UserRocketImg {
     };
 
     image.src = src;
+    this.srcImage.src = src;
   }
 
   onload(image: HTMLImageElement) {

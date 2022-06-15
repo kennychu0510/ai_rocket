@@ -2,12 +2,7 @@ import { Boundary } from './boundary.js';
 import { CanvasText } from './canvasText.js';
 import { Rocket } from './rocket.js';
 import { Star } from './star.js';
-import {
-  BlackholePairType,
-  GameBoundary,
-  gameDOMelements,
-  Position,
-} from './type.js';
+import { GameBoundary, gameDOMelements, Position } from './type.js';
 import { Meteorite } from './meteorite.js';
 import { Blackhole } from './blackhole.js';
 import { RocketTrainer } from './rocketTrainer.js';

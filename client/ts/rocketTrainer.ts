@@ -10,10 +10,9 @@ import { RocketAI } from './rocketAI.js';
 import { UserRocketImg } from './rocketImg.js';
 import { Move, Position } from './type.js';
 const { random, floor, round } = Math;
-
 export class RocketTrainer {
   public populationSize = 100;
-  public moves = 500;
+  public moves = 2500;
   public survivalRate = 0.8;
   public mutationRate = 0.05;
   public generation = 0;
@@ -32,18 +31,34 @@ export class RocketTrainer {
   public bestGenes = '';
   public bestBias = '';
   public bestFitness: number = Number.NEGATIVE_INFINITY;
+  public bestRocket?: RocketAI;
   public bestStarsCollected = 0;
   public bestMovesUsed = 0;
   public launchRocketAIMode = false;
   public neuralNetworkMode = false;
   public sensors = 4;
   public neutralNetwork = new NeuralNetwork();
-  public forcefields: ForceField[];
+  private forcefields = new Map<string, ForceField>();
   public showForces = false;
   constructor(game: Game) {
     this.game = game;
-    this.forcefields = [];
-    this.makeAllPaths();
+  }
+
+  getForceField(mapID: string) {
+    let forcefield = this.forcefields.get(mapID);
+    if (!forcefield) {
+      forcefield = new ForceField(
+        this.game.canvasWidth,
+        this.game.canvasHeight,
+        this.game.ctx,
+        this.game.stars
+          .filter((star) => mapID.includes(star.id))
+          .map((star) => star.position),
+        this.game.meteorites.map((m) => m.position),
+      );
+      this.forcefields.set(mapID, forcefield);
+    }
+    return forcefield;
   }
 
   seed() {
@@ -69,31 +84,33 @@ export class RocketTrainer {
     this.game.stopGame();
   }
 
-  makeAllPaths() {
-    const starsCombinations: Position[][] = [];
-    const allStars = this.game.stars;
-    for (let i = 0; i < allStars.length; i++) {
-      const newCombination = allStars
-        .filter((star, index) => index >= i)
-        .map((star) => star.position);
-      starsCombinations.push(newCombination);
-    }
-    const meteoritesPositions = this.game.meteorites.map(
-      (meteorite) => meteorite.position,
-    );
-    for (let i = 0; i < this.game.stars.length; i++) {
-      const forceField = new ForceField(
-        this.game.canvasWidth,
-        this.game.canvasHeight,
-        this.game.ctx,
-        starsCombinations[i],
-        meteoritesPositions,
-      );
-      forceField.calculate();
-      this.forcefields.push(forceField);
-    }
-    // console.log(this.forcefields[0]);
-  }
+  // makeAllPaths() {
+  //   // const starsCombinations: Position[][] = [];
+  //   // const allStars = this.game.stars;
+  //   // for (let i = 0; i < allStars.length; i++) {
+  //   //   const newCombination = allStars
+  //   //     .filter((star, index) => index >= i)
+  //   //     .map((star) => star.position);
+  //   //   starsCombinations.push(newCombination);
+  //   // }
+  //   const starPositions = this.game.stars.map(star => star.position)
+  //   const meteoritesPositions = this.game.meteorites.map(
+  //     (meteorite) => meteorite.position,
+  //   );
+  //   // for (let i = 0; i < this.game.stars.length; i++) {
+  //   //   const forceField = new ForceField(
+  //   //     this.game.canvasWidth,
+  //   //     this.game.canvasHeight,
+  //   //     this.game.ctx,
+  //   //     starsCombinations[i],
+  //   //     meteoritesPositions,
+  //   //   );
+  //   //   forceField.calculate();
+  //   //   // this.forcefields.push(forceField);
+  //   // }
+  //   // console.log(this.forcefields[0]);
+
+  // }
 
   train() {
     this.getPopulation().forEach((rocket) => rocket.reset());
@@ -187,13 +204,16 @@ export class RocketTrainer {
   }
 
   draw() {
-    if (this.forcefields.length === 0) return;
     if (this.showForces) {
-      this.forcefields[0].draw();
+      const rocket = this.bestRocket;
+      if (rocket instanceof NeuralRocket) {
+        rocket.forceField.draw();
+      }
     }
     for (const rocket of this.getPopulation()) {
       rocket.draw();
     }
+    this.bestRocket?.draw();
   }
 
   reset() {
@@ -268,9 +288,15 @@ export class RocketTrainer {
     //   });
     // }
     const bestRocketInGen = this.getPopulation().reduce((a, b) => {
-      if (a.getFitness() < b.getFitness()) return b;
+      if (a.getFitness() < b.getFitness()) {
+        a.isBest = false;
+        return b;
+      }
+      b.isBest = false;
       return a;
     });
+    bestRocketInGen.isBest = true;
+    this.bestRocket = bestRocketInGen;
 
     if (bestRocketInGen.getFitness() > this.bestFitness) {
       this.bestFitness = bestRocketInGen.getFitness();

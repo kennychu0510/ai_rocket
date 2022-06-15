@@ -11,6 +11,7 @@ export class RocketAI extends Rocket {
   numOfTurns = 0;
   numOfForward = 0;
   bias: number[];
+  public isBest = false;
 
   // private color: RocketColor;
   constructor(game: Game, rocketTrainer: RocketTrainer) {
@@ -124,10 +125,7 @@ export class RocketAI extends Rocket {
   }
 
   getFitnessFromStars() {
-    return (
-      (this.game.stars.length - this.stars.length) *
-      this.rocketTrainer.starsReward
-    );
+    return this.collectedStars * this.rocketTrainer.starsReward;
   }
 
   getFitnessFromHealth() {
@@ -161,6 +159,17 @@ export class RocketAI extends Rocket {
 
   getBias() {
     return this.bias;
+  }
+
+  drawImage() {
+    const image = this.flyingTimeout ? this.image_flying : this.image_static;
+    this.game.ctx.drawImage(
+      this.isBest ? image.srcImage : image.image,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height,
+    );
   }
 }
 

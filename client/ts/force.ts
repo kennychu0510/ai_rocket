@@ -1,5 +1,6 @@
-import { getDOMElement, sigmoid } from './functions.js';
+import { degreeToRadian, getDOMElement, sigmoid } from './functions.js';
 import { Position } from './type';
+const { sin, cos, sqrt, round } = Math;
 
 const canvas = getDOMElement('canvas') as HTMLCanvasElement;
 const ctx = canvas.getContext('2d')!;
@@ -21,7 +22,7 @@ const meteorites = [
 ];
 
 export class ForceField {
-  public force: number[][];
+  public forcefield: number[][];
   public horizontalGradient: number[][];
   public verticalGradient: number[][];
   public stars: Position[];
@@ -31,7 +32,7 @@ export class ForceField {
   private verBlocks = 0;
   private maxValue = 255;
   private minValue = -255;
-  private fieldMode = true;
+  private fieldMode = false;
   private factor = 256;
   private ctx: CanvasRenderingContext2D;
   constructor(
@@ -43,7 +44,7 @@ export class ForceField {
   ) {
     this.horBlocks = width / this.blockSize;
     this.verBlocks = height / this.blockSize;
-    this.force = new Array(this.horBlocks)
+    this.forcefield = new Array(this.horBlocks)
       .fill(0)
       .map(() => new Array(this.verBlocks).fill(0));
     this.horizontalGradient = new Array(this.horBlocks)
@@ -55,9 +56,10 @@ export class ForceField {
     this.ctx = ctx;
     this.stars = stars;
     this.meteorites = meteorites;
+    this.calculate();
   }
 
-  calculate() {
+  private calculate() {
     // for (const star of this.stars) {
     //   this.force[Math.floor(star.x / this.blockSize)][
     //     Math.floor(star.y / this.blockSize)
@@ -69,28 +71,28 @@ export class ForceField {
     //   ] = this.minValue;
     // }
     const G = 100;
-    if (this.fieldMode) {
-      for (let i = 0; i < this.horBlocks; i++) {
-        for (let j = 0; j < this.verBlocks; j++) {
-          let value = 0;
-          for (const star of this.stars) {
-            const dx = Math.floor(star.x / this.blockSize) - i;
-            const dy = Math.floor(star.y / this.blockSize) - j;
-            const r2 = dx * dx + dy * dy + 1;
-            value += G / r2;
-          }
 
-          for (const meteorite of this.meteorites) {
-            const dx = Math.floor(meteorite.x / this.blockSize) - i;
-            const dy = Math.floor(meteorite.y / this.blockSize) - j;
-            const r2 = dx * dx + dy * dy + 1;
-            value += -G / r2;
-          }
-          value = (1 / (1 + Math.exp(-value))) * 2 - 1;
-          this.force[i][j] = value;
+    for (let i = 0; i < this.horBlocks; i++) {
+      for (let j = 0; j < this.verBlocks; j++) {
+        let value = 0;
+        for (const star of this.stars) {
+          const dx = Math.floor(star.x / this.blockSize) - i;
+          const dy = Math.floor(star.y / this.blockSize) - j;
+          const r2 = dx * dx + dy * dy + 1;
+          value += G / r2;
         }
+
+        for (const meteorite of this.meteorites) {
+          const dx = Math.floor(meteorite.x / this.blockSize) - i;
+          const dy = Math.floor(meteorite.y / this.blockSize) - j;
+          const r2 = dx * dx + dy * dy + 1;
+          value += -G / r2;
+        }
+        value = (1 / (1 + Math.exp(-value))) * 2 - 1;
+        this.forcefield[i][j] = value;
       }
     }
+
     for (let i = 0; i < this.horBlocks; i++) {
       for (let j = 0; j < this.verBlocks; j++) {
         let top = j - 1;
@@ -104,8 +106,10 @@ export class ForceField {
         if (top < 0) top = j;
         if (bottom >= this.verBlocks) bottom = j;
 
-        const horGrad = (this.force[right][j] - this.force[left][j]) / 2;
-        const verGrad = (this.force[i][top] - this.force[i][bottom]) / 2;
+        const horGrad =
+          (this.forcefield[right][j] - this.forcefield[left][j]) / 2;
+        const verGrad =
+          (this.forcefield[i][top] - this.forcefield[i][bottom]) / 2;
         this.horizontalGradient[i][j] = horGrad;
         this.verticalGradient[i][j] = verGrad;
       }
@@ -117,90 +121,17 @@ export class ForceField {
   }
 
   /* Return Neighbor Forces Normalized */
-  getNeighborForces(x: number, y: number, direction: number) {
+  getNeighborForces(x: number, y: number, degree: number) {
     const row = Math.floor(x / this.blockSize);
     const col = Math.floor(y / this.blockSize);
-    const forces = [];
-    let forwardLeftForce = 0;
-    let forwardRightForce = 0;
-    const myForce = this.force[row][col];
-    const rightBoundary = this.horBlocks;
-    const bottomBoundary = this.verBlocks;
-    switch ((direction - 45 + 360) % 360) {
-    case 0:
-      forwardLeftForce = this.force[validRow(row, -1)][validCol(col, -1)];
-      forwardRightForce = this.force[validRow(row, -1)][validCol(col, +1)];
-      break;
-    case 45:
-      forwardLeftForce = this.force[validRow(row, -1)][col];
-      forwardRightForce = this.force[row][validCol(col, +1)];
-      break;
-    case 90:
-      forwardLeftForce = this.force[validRow(row, -1)][validCol(col, +1)];
-      forwardRightForce = this.force[validRow(row, +1)][validCol(col, +1)];
-      break;
-    case 135:
-      forwardLeftForce = this.force[row][validCol(col, +1)];
-      forwardRightForce = this.force[validRow(row, +1)][col];
-      break;
-    case 180:
-      forwardLeftForce = this.force[validRow(row, +1)][validCol(col, +1)];
-      forwardRightForce = this.force[validRow(row, +1)][validCol(col, -1)];
-      break;
-    case 225:
-      forwardLeftForce = this.force[validRow(row, +1)][col];
-      forwardRightForce = this.force[row][validCol(col, -1)];
-      break;
-    case 270:
-      forwardLeftForce = this.force[validRow(row, +1)][validCol(col, -1)];
-      forwardRightForce = this.force[validRow(row, -1)][validCol(col, -1)];
-      break;
-    case 315:
-      forwardLeftForce = this.force[row][validCol(col, -1)];
-      forwardRightForce = this.force[validRow(row, -1)][col];
-      break;
-    }
-    function validRow(n: number, sign: number) {
-      n += sign;
-      if (n < 0) {
-        return rightBoundary - 1;
-      } else if (n >= rightBoundary) {
-        return 0;
-      } else {
-        return n;
-      }
-    }
-    function validCol(n: number, sign: number) {
-      n += sign;
-      if (n < 0) {
-        return bottomBoundary - 1;
-      } else if (n >= bottomBoundary) {
-        return 0;
-      } else {
-        return n;
-      }
-    }
-
-    // let top = row - 1;
-    // if (top < 0) top = this.verBlocks;
-    // let bot = row + 1;
-    // if (bot >= this.verBlocks) bot = 0;
-    // let left = col - 1;
-    // if (left < 0) left = this.horBlocks;
-    // let right = col + 1;
-    // if (right >= this.horBlocks) right = 0;
-
-    forwardLeftForce -= myForce;
-    forwardRightForce -= myForce;
-    // const topForce = this.force[top][col];
-    // const rightForce = this.force[row][right];
-    // const botForce = this.force[bot][col];
-    // const leftForce = this.force[row][left];
-    for (const force of [forwardLeftForce, forwardRightForce]) {
-      forces.push(force);
-    }
-    // console.log(forces);
-    return forces;
+    const forceCalculator = new ForceCalculator(this.horBlocks, this.verBlocks);
+    const neighborForces = forceCalculator.getNeighborForces(
+      row,
+      col,
+      degree,
+      this.forcefield,
+    );
+    return neighborForces;
   }
 
   draw() {
@@ -209,7 +140,7 @@ export class ForceField {
         if (this.fieldMode) {
           /* Field Mode */
 
-          const value = Math.floor((this.force[i][j] + 1) * 128);
+          const value = Math.floor((this.forcefield[i][j] + 1) * 128);
           // ctx.fillStyle = `rgb(${value}, ${value}, ${value})`;
           const forces = this.getNeighborForces(
             i * this.blockSize,
@@ -226,7 +157,7 @@ export class ForceField {
             this.blockSize,
           );
         } else {
-          const value = Math.floor((this.force[i][j] + 1) * 128);
+          const value = Math.floor((this.forcefield[i][j] + 1) * 128);
           ctx.fillStyle = `rgb(${value}, ${value}, ${value})`;
           ctx.fillRect(
             i * this.blockSize,
@@ -248,4 +179,77 @@ export class ForceField {
 function normalize(value: number, max: number) {
   return value / max;
   // return (1 / (1 + Math.exp(-value)));
+}
+
+class ForceCalculator {
+  private rightBoundary: number;
+  private bottomBoundary: number;
+
+  constructor(rightBoundary: number, bottomBoundary: number) {
+    this.rightBoundary = rightBoundary;
+    this.bottomBoundary = bottomBoundary;
+  }
+
+  private validRow(n: number, sign: number) {
+    n += sign;
+    if (n < 0) {
+      return this.rightBoundary - 1;
+    } else if (n >= this.rightBoundary) {
+      return 0;
+    } else {
+      return n;
+    }
+  }
+
+  private validCol(n: number, sign: number) {
+    n += sign;
+    if (n < 0) {
+      return this.bottomBoundary - 1;
+    } else if (n >= this.bottomBoundary) {
+      return 0;
+    } else {
+      return n;
+    }
+  }
+
+  private directionToRow(degree: number) {
+    const radians = degreeToRadian(degree);
+    return round(cos(radians) * sqrt(2) * -2);
+  }
+
+  private directionToCol(degree: number) {
+    const radians = degreeToRadian(degree);
+    return round(sin(radians) * sqrt(2) * 2);
+  }
+
+  private directionToRowCol(degree: number) {
+    return [this.directionToRow(degree), this.directionToCol(degree)];
+  }
+
+  private directionToNeighborCells(degree: number) {
+    const neighborForces = [];
+    for (let i = 0; i < 8; i++) {
+      neighborForces.push(this.directionToRowCol(degree + 45 * i));
+    }
+    return neighborForces;
+  }
+
+  getNeighborForces(
+    row: number,
+    col: number,
+    degree: number,
+    forcefield: number[][],
+  ) {
+    const neighborForces = [];
+    const neighborCoordinates = this.directionToNeighborCells(degree);
+
+    for (let i = 0; i < neighborCoordinates.length; i++) {
+      neighborForces.push(
+        forcefield[this.validRow(row, neighborCoordinates[i][0])][
+          this.validCol(col, neighborCoordinates[i][1])
+        ] - forcefield[row][col],
+      );
+    }
+    return neighborForces;
+  }
 }

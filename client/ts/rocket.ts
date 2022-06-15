@@ -48,6 +48,7 @@ export class Rocket {
   public teleportTimeout = 0;
   public flyingTimeout = 0;
   public stars: Star[];
+  protected mapID: string;
   private initialPosition: Position;
   public finishTime = 0;
   public time = 0;
@@ -61,6 +62,7 @@ export class Rocket {
       y: this.game.canvasWidth / 10,
     };
     this.stars = [];
+    this.mapID = '';
     this.reset();
   }
 
@@ -181,6 +183,8 @@ export class Rocket {
     this.position.y = this.initialPosition.y;
     if (this.game.stars) {
       this.stars = this.game.stars.map((star) => star);
+
+      this.updateMapID();
     }
 
     this.flyingTimeout = 0;
@@ -292,6 +296,7 @@ export class Rocket {
 
       if (distance < this.getC() / 4 + star.size / 2) {
         this.stars.splice(i, 1);
+        this.updateMapID();
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
           this.finishTime = time;
@@ -301,6 +306,10 @@ export class Rocket {
         // currentScore.textContent = String(this.collectedStars);
       }
     }
+  }
+
+  private updateMapID() {
+    this.mapID = this.stars.map((star) => star.id).join(';');
   }
 
   onFinish() {

@@ -1,8 +1,7 @@
 const { random } = Math;
 
 export class NeuralNetwork {
-  inputNodes = 2;
-  hiddenLayers = 0;
+  inputNodes = 8;
   outputNodes = 2;
   private output: number[];
   private input: number[];
