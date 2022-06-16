@@ -258,6 +258,7 @@ export class Game {
     this.blackholes = [];
     this.totalStars = 0;
     this.totalMeteorites = 0;
+    this.totalBlackHoles = 0;
     this.gameOnGoing = false;
     // this.userRocket.changeAcceleration(1 * this.canvasWidth);
     this.rocketTrainer.reset();

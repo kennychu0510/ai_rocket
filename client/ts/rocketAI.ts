@@ -93,8 +93,12 @@ export class RocketAI extends Rocket {
     const b = parentB.genes;
     const n = a.length;
     const c = this.genes;
-    for (let i = 0; i < n; i++) {
-      c[i] = randomBool(0.5) ? a[i] : b[i];
+    const breakpoint = floor(random() * n);
+    for (let i = 0; i < breakpoint; i++) {
+      c[i] = a[i];
+    }
+    for (let i = breakpoint; i < n; i++) {
+      c[i] = b[i];
     }
   }
 
