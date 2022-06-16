@@ -95,6 +95,7 @@ export class Game {
     this.totalStars = 0;
     this.totalMeteorites = 0;
     this.totalBlackHoles = 0;
+    this.totalMeteorites = 0;
     this.rocketTrainer = new RocketTrainer(this);
     this.startAI = false;
     this.domElements = domElements;

@@ -90,13 +90,17 @@ input {
 }
 
 button,
-input {
+input,
+select {
   margin-right: 5px;
 }
+
+
 
 #star-img {
   height: 23px;
 }
+
 #life-img,
 #blackhole-img,
 #clock-img {
@@ -131,11 +135,9 @@ input {
 }
 
 #score>*,
-#life>*
+#life>div,
 #meteorite>*,
 #blackhole>*,
-#life-mode>*,
-#meteorite-mode>*,
 #blackhole-mode>* {
   margin-right: 5px;
 }
@@ -158,4 +160,71 @@ input {
 
 .invisible {
   visibility: hidden;
+}
+
+#time>* {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* CUSTOM BUTTON WIDTHS */
+#add-star {
+  width: 80px;
+}
+
+#boundary-mode {
+  width: 130px;
+}
+
+#add-meteor,
+#add-blackhole {
+  width: 102px;
+}
+
+@media only screen and (max-width: 1150px) {
+
+  #app {
+    display: none;
+  }
+
+  /* 
+  #footer {
+    font-size: 10px;
+  }
+
+  #control-panel-1 > * {
+    margin-bottom: 0;
+  }
+
+  #boundary-mode {
+    display: none;
+  }
+
+  .panel-left > *,
+  .panel-right > * {
+    margin-bottom: 5px;
+  }
+  
+  canvas {
+    margin-top: 0px;
+    height: 250px;
+    aspect-ratio: 2.2/1;
+  }
+  #scoreboard {
+    margin: 10px;
+  }
+
+  #title {
+    visibility: hidden;
+  } */
+
+  #mobile-view {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    display: flex !important;
+  }
+
 }

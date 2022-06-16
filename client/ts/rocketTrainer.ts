@@ -328,15 +328,15 @@ export class RocketTrainer {
       freeSteps: this.moves - bestRocketInGen.getStepsTaken(),
       genes: bestRocketInGen.getGenes(),
     });
-    console.log({
-      mutationRate: this.mutationRate,
-      survivalRate: this.survivalRate,
-      starsReward: this.starsReward,
-      stepsReward: this.stepsReward,
-      healthReward: this.healthReward,
-      brightnessReward: this.brightnessReward,
-      turnReward: this.turnReward,
-      forwardReward: this.forwardReward,
-    });
+    // console.log({
+    //   mutationRate: this.mutationRate,
+    //   survivalRate: this.survivalRate,
+    //   starsReward: this.starsReward,
+    //   stepsReward: this.stepsReward,
+    //   healthReward: this.healthReward,
+    //   brightnessReward: this.brightnessReward,
+    //   turnReward: this.turnReward,
+    //   forwardReward: this.forwardReward,
+    // });
   }
 }
