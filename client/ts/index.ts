@@ -1,3 +1,4 @@
+import { format } from 'path';
 import { APIOrigin } from './api.js';
 import { Blackhole } from './blackhole.js';
 import { saveMap, saveRocketAI } from './events.js';
@@ -189,6 +190,14 @@ trainBtn.addEventListener('click', () => {
 canvas.addEventListener('click', (e) => {
   const leftOffset = canvas.getBoundingClientRect().left;
   const botOffset = scoreboard.getBoundingClientRect().bottom;
+
+
+  // const adjustNum = {
+  //   "addStarModeOn" : [2,1],
+  //   "addMeteoriteModeOn" :[2, 1.5]
+  // }
+
+
   if (addStarModeOn) {
     const x = e.clientX - leftOffset - (starSizeRatio * canvas.width) / 2;
     const y = e.clientY - botOffset - starSizeRatio * canvas.width;
@@ -206,6 +215,8 @@ canvas.addEventListener('click', (e) => {
     game.addBlackhole(position);
     game.genTeleportMap(game.blackholes.length);
   }
+
+
 });
 
 /*
@@ -416,6 +427,61 @@ easyMode.addEventListener('click', () => {
     });
 });
 
+// const diffArr = [
+//   {diff: "easy", id:1},
+//   {diff: "normal", id:2}
+// ]
+
+// let str = ``
+// for(let v of diffArr) {
+//   str += `
+//   <button id=${v.id + "diffBtn"}>${v.diff}</button>
+//   `
+
+// }
+// document.getElementById("something")!.innerHTML += str;
+// for(let v of diffArr) {
+//   document.getElementById(v.id +"diffBtn")?.addEventListener("click", async () => {
+//     fetch(APIOrigin + '/mapID/1', {
+//       method: 'GET',
+//     })
+//       .then((res) => res.json())
+//       .catch((err) => ({ error: String(err) }))
+//       .then((json) => {
+//         // console.log(json[0]);
+//         genGameMap(
+//           json[0].stars,
+//           json[0].meteorites,
+//           json[0].black_holes,
+//           json[0].black_hole_map,
+//         );
+//         game.mapID = json[0].id;
+//         // console.log(mapid);
+//         // console.log(typeof mapid);
+//       });
+//     fetch(APIOrigin + '/rocketAI/mapID/1', {
+//       method: 'GET',
+//     })
+//       .then((res) => res.json())
+//       .catch((err) => ({ error: String(err) }))
+//       .then((json) => {
+//         console.log(json);
+//         resetRocketAIDropdown();
+//         json.forEach((rocket: any) => {
+//           const rocket_ai = document.createElement('option');
+//           rocket_ai.value = rocket.id;
+//           rocket_ai.textContent = rocket.name;
+//           rocketAIdropdown.appendChild(rocket_ai);
+//         });
+//       });
+
+//   })
+
+// }
+
+
+
+
 rocketAIdropdown.addEventListener('change', () => {
   if (rocketAIdropdown.value === '0') return;
   console.log(rocketAIdropdown.value);
@@ -513,10 +579,12 @@ seedBtn.addEventListener('click', () => {
   // aiStats.classList.add('active');
 });
 
-// window.addEventListener('resize', () => {
-//   canvas.height = window.innerHeight * 0.78;
-//   canvas.width = window.innerHeight * 1.8;
-// });
+window.addEventListener('resize', () => {
+  canvas.height = window.innerHeight * 0.78;
+  canvas.width = window.innerHeight * 1.8;
+
+  console.log(canvas.height, canvas.width);
+});
 
 // loadRocketBtn.addEventListener('click', () => {
 //   fetch(APIOrigin + '/rocketAI', {
