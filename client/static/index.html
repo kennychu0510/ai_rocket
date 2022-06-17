@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Rocket</title>
+  <link rel="stylesheet" href="/sweetalert2.css">
   <link rel="stylesheet" href="/index.css">
   <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
 </head>
@@ -61,7 +62,7 @@
           <button id="save-obj" class="add-objects">Save Map</button>
         </div>
         <div class="panel-right">
-          <a href="./preview.html"><button>Custom Map</button></a>
+          <!-- <a href="./preview.html"><button>Custom Map</button></a> -->
           <select id="custom-map">
             <option value="0">Custom Map</option>
           </select>
@@ -72,7 +73,7 @@
             <a href="rankings.html"><button id="rankings">Rankings</button></a>
           </div>
         </div>
-
+        
       </div>
       <div id="control-panel-2" class="control-panel">
         <div class="panel-left">
@@ -88,6 +89,8 @@
           <input class="hidden" id="rocket-speed" type="number" min="0.5" value="5" step="0.5"></input>
         </div>
         <div class="panel-right">
+          <input id="save-best" type="checkbox">Save Best</input>
+          <input id="neural-network" type="checkbox">Neural Network</input>
           <input id="speed-up" type="checkbox">Speed up</input>
           <button id="reset">Refresh</button>
           <button id="seed">Seed</button>
@@ -101,22 +104,24 @@
           <label for="health-reward">Health Reward:</label>
           <input id="health-reward" type="number" value="1" step="1"></input>
           <label for="steps-reward">Steps Reward:</label>
-          <input id="steps-reward" type="number" value="-1" step="1"></input>
+          <input id="steps-reward" type="number" value="1" step="1"></input>
           <label for="turn-reward">Turn Reward:</label>
-          <input id="turn-reward" type="number" value="-1" step="1"></input>
+          <input id="turn-reward" type="number" value="0" step="1"></input>
           <label for="forward-reward">Forward Reward:</label>
-          <input id="forward-reward" type="number" value="1" step="1"></input>
+          <input id="forward-reward" type="number" value="0" step="1"></input>
+          <label for="brightness-reward">BR Reward:</label>
+          <input id="brightness-reward" type="number" value="1" step="1"></input>
         </div>
         <div class="panel-right">
+          <input id="show-forces" type="checkbox">Show Forces</input>
           <select id="select-rocket">
             <!-- <option value="0">Select a Rocket</option> -->
           </select>
-          <button id="load-rocket">Load Rocket</button>
           <button id="launch-rocket">Launch Rocket</button>
         </div>
       </div>
     </div>
-    <link rel="stylesheet" href="/sweetalert2.css">
+    <img id="time-travel" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);" src="/media/waiting.png" alt="time-travel" class="hidden">
     <script type="module" src="/js/index.js"></script>
 </body>
 

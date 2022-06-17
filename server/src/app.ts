@@ -5,6 +5,8 @@ import { MapService } from './map-services';
 import { MapController } from './map-controller';
 import { UserService } from './result-services';
 import { UserController } from './result-controller';
+import { UserRankingService } from './user-ranking-service';
+import { UserRankingController } from './user-ranking-controller';
 import { RocketAIServices } from './rocektAI-services';
 import { RocketAIController } from './rocketAI-controller';
 import cors from 'cors';
@@ -15,6 +17,10 @@ export const mapController = new MapController(mapService);
 const userService = new UserService(knex);
 export const userController = new UserController(userService);
 
+const userRankingService = new UserRankingService(knex);
+export const userRankingController = new UserRankingController(
+  userRankingService,
+);
 const rocketAIServices = new RocketAIServices(knex);
 export const rocketAIController = new RocketAIController(rocketAIServices);
 

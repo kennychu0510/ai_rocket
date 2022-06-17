@@ -1,49 +1,80 @@
-* {
-  font-family: sans-serif; /* Change your font family */
+html,
+body {
+  height: 100%;
+
 }
 
-.content-table {
+body {
+  margin: 0;
+  /* background: linear-gradient(45deg, #49a09d, #5f2c82); */
+  /* background-image: url('/media/space_background.png'); */
+  /* background-repeat: no-repeat;
+  background-size: cover;  */
+  font-family: sans-serif;
+  font-weight: 100;
+}
+
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+canvas {
+  position: absolute;
+
+
+  width: 100vw;
+  height: 100vh;
+
+}
+
+h1 {
+  text-align: center;
+  color: #dddddd;
+}
+
+table {
+  width: 800px;
   border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 0.9em;
-  min-width: 400px;
-  border-radius: 5px 5px 0 0;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.content-table thead tr {
-  background-color: #009879;
-  color: #ffffff;
-  text-align: left;
+tr {
+  color: #fff;
+  font-weight: larger;
   font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.2);
+
 }
 
-.content-table th,
-.content-table td {
-  padding: 12px 15px;
-}
-
-.content-table tbody tr {
-  border-bottom: 1px solid #dddddd;
-}
-
-.content-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.content-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
-}
-
-.content-table tbody tr.active-row {
+td {
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
   font-weight: bold;
-  color: #009879;
+  text-align: center;
+  border: 2px solid black;
+}
+
+th {
+  text-align: center;
+  padding: 5px;
+}
+
+tr:hover {
+  background-color: #55608f;
 }
 
 #bottom-panel {
-    margin: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  margin-right: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+#level {
+  margin-bottom: 10px
+}

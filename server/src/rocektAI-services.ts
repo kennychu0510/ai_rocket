@@ -5,8 +5,10 @@ export type RocketAIRecord = {
   mapID: number;
   fitness: number;
   starsCollected: number;
-  moves: string;
+  genes: string;
   totalMoves: number;
+  type: string;
+  bias: string;
 };
 export class RocketAIServices {
   constructor(private knex: KnexType) {}
@@ -15,33 +17,38 @@ export class RocketAIServices {
     const mapID = rocketAI.mapID;
     const fitness = rocketAI.fitness;
     const starsCollected = rocketAI.starsCollected;
-    const moves = rocketAI.moves;
+    const genes = rocketAI.genes;
     const totalMoves = rocketAI.totalMoves;
+    const type = rocketAI.type;
+    const bias = rocketAI.bias;
     const row = await this.knex
       .insert({
         name,
         map_id: mapID,
         fitness,
-        moves,
+        genes,
         stars: starsCollected,
         total_moves: totalMoves,
+        type,
+        bias,
       })
       .into('ai_rocket')
       .returning('id');
     return row[0].id;
   }
-  async getAllRocket(mapID: number): Promise<RocketAIRecord[]> {
+  async getAllRocket(mapID: number, aiMode: string): Promise<RocketAIRecord[]> {
     const results = await this.knex
-      .select('id', 'name', 'map_id', 'fitness', 'stars', 'total_moves')
-      .from('ai_rocket')
-      .where('map_id', mapID);
+      .select('id', 'name', 'map_id', 'fitness', 'stars', 'total_moves', 'type')
+      .from('ai_rocket');
+    // .where('map_id', mapID)
+    // .andWhere('type', aiMode);
     return results;
   }
   async getRocket(id: number): Promise<number[]> {
     const results = await this.knex
-      .select('moves')
+      .select('genes', 'bias', 'type')
       .from('ai_rocket')
       .where('id', id);
-    return results[0].moves.split('').map(Number);
+    return results[0];
   }
 }

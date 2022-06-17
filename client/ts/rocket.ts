@@ -1,8 +1,16 @@
-import { degreeToRadian } from './functions.js';
+import { blockSize } from './force.js';
+import {
+  degreeToRadian,
+  directionToNeighborCells,
+  drawBlock,
+  validCol,
+  validRow,
+} from './functions.js';
 import { Game } from './game.js';
 import { RocketImg, UserRocketImg } from './rocketImg.js';
 import { Star } from './star.js';
 import { Position, RocketColor } from './type.js';
+const { floor } = Math;
 
 const spaceshipImg = new Image();
 spaceshipImg.src = './media/rocket_1_static.png';
@@ -47,7 +55,8 @@ export class Rocket {
   public health = 0;
   public teleportTimeout = 0;
   public flyingTimeout = 0;
-  public stars = new Set<Star>();
+  public stars: Star[];
+  protected mapID: string;
   private initialPosition: Position;
   public finishTime = 0;
   public time = 0;
@@ -60,7 +69,8 @@ export class Rocket {
       x: this.game.canvasHeight / 4,
       y: this.game.canvasWidth / 10,
     };
-
+    this.stars = [];
+    this.mapID = '';
     this.reset();
   }
 
@@ -97,6 +107,20 @@ export class Rocket {
       this.width,
       this.height,
     );
+
+    // const row = floor(this.position.x / blockSize);
+    // const col = floor(this.position.y / blockSize);
+    // const rightBoundary = this.game.canvasWidth / blockSize;
+    // const bottomBoundary = this.game.canvasHeight / blockSize;
+
+    // const neighborCells = directionToNeighborCells(this.angle).map((cell) => {
+    //   cell[0] = validRow(row, cell[0], rightBoundary);
+    //   cell[1] = validCol(col, cell[1], bottomBoundary);
+    //   return cell;
+    // });
+    // for (let i = 0; i < neighborCells.length; i++) {
+    //   drawBlock(neighborCells[i][0], neighborCells[i][1], this.game.ctx, i);
+    // }
   }
 
   changeDirection(key: string) {
@@ -118,7 +142,11 @@ export class Rocket {
     }
     if (key === 'a') this.angle -= this.turn;
     if (key === 'd') this.angle += this.turn;
-    // console.log(this.stats());
+    if (this.angle < 0) {
+      this.angle = 360 + this.angle;
+    }
+    if (this.angle === 360) this.angle = 0;
+    // console.log(this.stats().angle_degrees);
   }
 
   slowDown() {
@@ -175,7 +203,11 @@ export class Rocket {
     this.image_flying.setSrc(spaceshipFlyingImg.src, this);
     this.position.x = this.initialPosition.x;
     this.position.y = this.initialPosition.y;
-    this.stars = new Set(this.game.stars);
+    if (this.game.stars) {
+      this.stars = this.game.stars.map((star) => star);
+
+      this.updateMapID();
+    }
 
     this.flyingTimeout = 0;
     this.finishTime = 0;
@@ -209,10 +241,10 @@ export class Rocket {
       this.finishTime = time;
       this.onDie();
     }
-    let x = String(this.health);
+    const x = String(this.health);
     this.game.domElements.currentLife.textContent = x;
-    if (x < "0"){
-      return this.game.domElements.currentLife.textContent = "0"
+    if (x < '0') {
+      return (this.game.domElements.currentLife.textContent = '0');
     }
   }
 
@@ -232,11 +264,11 @@ export class Rocket {
     if (this.teleportTimeout > 0) {
       this.teleportTimeout--;
     }
+    this.updateRocketPosition();
     this.checkRocketAndBoundary();
     this.checkStarCollection(time);
     this.checkMeteoriteCollision(time);
     this.checkBlackholeTeleportation();
-    this.updateRocketPosition();
     if (
       this.game.gameOnGoing &&
       this.collectedStars === this.game.totalStars &&
@@ -281,7 +313,8 @@ export class Rocket {
   }
 
   checkStarCollection(time: number) {
-    for (const star of this.stars) {
+    for (let i = 0; i < this.stars.length; i++) {
+      const star = this.stars[i];
       const dx =
         this.position.x + this.width / 2 - (star.getX() + star.size / 2);
       const dy =
@@ -289,7 +322,8 @@ export class Rocket {
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < this.getC() / 4 + star.size / 2) {
-        this.stars.delete(star);
+        this.stars.splice(i, 1);
+        this.updateMapID();
         this.collectedStars++;
         if (this.collectedStars === this.game.stars.length) {
           this.finishTime = time;
@@ -299,6 +333,10 @@ export class Rocket {
         // currentScore.textContent = String(this.collectedStars);
       }
     }
+  }
+
+  private updateMapID() {
+    this.mapID = this.stars.map((star) => star.id).join(';');
   }
 
   onFinish() {
@@ -360,11 +398,11 @@ export class Rocket {
   }
 
   isCollectedAllStars() {
-    return this.stars.size === 0;
+    return this.stars.length === 0;
   }
 
   addStar(star: Star) {
-    this.stars.add(star);
+    this.stars.push(star);
     // console.log(this.stars);
   }
 }

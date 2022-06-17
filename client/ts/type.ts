@@ -25,6 +25,7 @@ export type gameDOMelements = {
   life: Element;
   totalMeteorite: Element;
   totalBlackhole: Element;
+  saveBest: HTMLInputElement;
 };
 
 export type RocketColor = [r: number, g: number, b: number];

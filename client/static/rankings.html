@@ -5,20 +5,64 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Rankings</title>
+    <link rel="shortcut icon" href="/media/spaceship.png" type="image/x-icon">
 </head>
 
+
+
 <body>
-    <div id="leaderboard">
-        <div class="user"></div>
+    <canvas></canvas>
+
     
-</div>
-    
-   
-    <div id="bottom-panel"><a href="index.html"><button id="rankings">Return</button></a></div>
+    <div class="container">
+        
+        <h1>Rankings</h1>
+        <form action="" id="rankingForm">
+            <select name="level" id="level">
+                <option value="1">Easy</option>
+                <option value="2">Normal</option>
+                <option value="3">Hard</option>
+            </select>
+            <input type="number" name="page" hidden value="1" />
+            <button onclick="previous(event)">Back</button>
+            <button onclick="next(event)">Next</button>
+
+            <table>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Time</th>
+                    <th>Level</th>
+                </tr>
+                <tbody id="rankings">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tbody>
+
+            </table>
+            
+
+        </form>
+        <div id="bottom-panel"><a href="index.html"><button id="rankings">Return</button></a></div>
+    </div>
+
     <link rel="stylesheet" href="rankings.css">
-    <script type="module" src="rankings.js"></script>
+    <script type="module" src="/js/rankings.js"></script>
+    
+
+<script type="module" src="/js/bg.js"></script>
+        
+        
    
+   
+
+
+
 </body>
 
 </html>

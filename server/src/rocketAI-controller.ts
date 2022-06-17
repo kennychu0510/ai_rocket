@@ -8,21 +8,26 @@ export class RocketAIController {
     const mapID = Number(req.body.mapID);
     const starsCollected = Number(req.body.starsCollected);
     const fitness = Number(req.body.fitness);
-    const moves = String(req.body.moves);
+    const genes = String(req.body.genes);
     const totalMoves = Number(req.body.totalMoves);
+    const type = req.body.type;
+    const bias = req.body.bias;
     const addedResult = await this.rocketAIServices.saveRocketAI({
       name,
       mapID,
       fitness,
       starsCollected,
-      moves,
+      genes,
       totalMoves,
+      type,
+      bias,
     });
     res.json({ id: addedResult });
   };
   getAll = async (req: Request, res: Response) => {
     const mapID = Number(req.params.mapID);
-    res.json(await this.rocketAIServices.getAllRocket(mapID));
+    const aiMode = req.params.aiMode;
+    res.json(await this.rocketAIServices.getAllRocket(mapID, aiMode));
   };
   get = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
