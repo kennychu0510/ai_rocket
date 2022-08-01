@@ -219,8 +219,6 @@ canvas.addEventListener('click', (e) => {
     game.addBlackhole(position);
     game.genTeleportMap(game.blackholes.length);
   }
-
-
 });
 
 /*
@@ -488,9 +486,6 @@ easyMode.addEventListener('click', () => {
 //   })
 
 // }
-
-
-
 
 rocketAIdropdown.addEventListener('change', () => {
   if (rocketAIdropdown.value === '0') return;
